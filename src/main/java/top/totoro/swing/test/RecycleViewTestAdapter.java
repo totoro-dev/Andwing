@@ -3,6 +3,7 @@ package top.totoro.swing.test;
 import top.totoro.swing.widget.view.RecyclerView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,7 +43,8 @@ public class RecycleViewTestAdapter extends RecyclerView.Adapter<RecycleViewTest
         public JLabel user;
 
         public ViewHolder(JPanel parent) {
-            setSize(500, 80);
+            setBackground(Color.GREEN);
+            setSize(400, 100);
             setLayout(null);
             title = new JLabel();
             content = new JLabel();
