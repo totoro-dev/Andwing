@@ -1,6 +1,6 @@
 package top.totoro.swing.test;
 
-import top.totoro.swing.widget.view.RecyclerView;
+import top.totoro.swing.widget.simulate.RecyclerView;
 
 import javax.swing.*;
 import java.awt.*;
