@@ -1,6 +1,6 @@
 package top.totoro.swing.widget.view;
 
-import top.totoro.swing.SwingConstants;
+import top.totoro.swing.widget.util.SwingConstants;
 import top.totoro.swing.widget.util.PaintUtil;
 
 import javax.swing.*;

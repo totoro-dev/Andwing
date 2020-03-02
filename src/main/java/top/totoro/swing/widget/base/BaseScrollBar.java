@@ -1,4 +1,4 @@
-package top.totoro.swing.widget.view;
+package top.totoro.swing.widget.base;
 
 import javax.swing.*;
 import java.awt.*;

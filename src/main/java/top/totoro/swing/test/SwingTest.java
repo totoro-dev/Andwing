@@ -1,8 +1,8 @@
 package top.totoro.swing.test;
 
-import top.totoro.swing.widget.view.HorizontalScrollBar;
-import top.totoro.swing.widget.simulate.RecyclerView;
-import top.totoro.swing.widget.simulate.Toast;
+import top.totoro.swing.widget.bar.HorizontalScrollBar;
+import top.totoro.swing.widget.view.RecyclerView;
+import top.totoro.swing.widget.view.Toast;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +16,8 @@ public class SwingTest extends JFrame {
         super("Swing测试");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        testOpaque();
-//        testRecyclerView();
-        testToast();
+        testRecyclerView();
+//        testToast();
     }
 
     private void testOpaque() {
@@ -54,13 +54,13 @@ public class SwingTest extends JFrame {
         RecycleViewTestAdapter adapter = new RecycleViewTestAdapter();
         view.setAdapter(adapter);
         button.addActionListener(e -> {
-//            view.setOrientation(RecyclerView.HORIZONTAL);
+//            base.setOrientation(RecyclerView.HORIZONTAL);
             if (index % 2 == 0) {
                 RecycleViewTestAdapter.data.remove(0);
                 RecycleViewTestAdapter.data.add(0, new String[]{"第四项", "This is forth item.", "by 黄龙猫"});
                 RecycleViewTestAdapter.data.add(0, new String[]{"第四项", "This is forth item.", "by 黄龙猫"});
                 view.setOrientation(RecyclerView.VERTICAL);
-//                view.setHorizontalScrollBar(new ScrollBarTest());
+//                base.setHorizontalScrollBar(new ScrollBarTest());
                 view.setVerticalScrollBar(new ScrollBarTest());
             } else
                 RecycleViewTestAdapter.data.remove(2);

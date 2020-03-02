@@ -1,6 +1,4 @@
-package top.totoro.swing.widget.simulate;
-
-import top.totoro.swing.widget.view.ToastContent;
+package top.totoro.swing.widget.view;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,8 +1,8 @@
-package top.totoro.swing.widget.simulate;
+package top.totoro.swing.widget.view;
 
-import top.totoro.swing.widget.view.BaseScrollBar;
-import top.totoro.swing.widget.view.HorizontalScrollBar;
-import top.totoro.swing.widget.view.VerticalScrollBar;
+import top.totoro.swing.widget.base.BaseScrollBar;
+import top.totoro.swing.widget.bar.HorizontalScrollBar;
+import top.totoro.swing.widget.bar.VerticalScrollBar;
 
 import javax.swing.*;
 import java.awt.*;

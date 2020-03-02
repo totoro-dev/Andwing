@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout
+        id="linear_layout"
+        background="#ffffff"
+        width="match_parent"
+        height="match_parent"
+        orientation="horizontal">
+    <TextView
+            id="tv1"
+            text="Swing测试1！"
+            textColor="#ff0000"
+            opaque="true"
+            background="#ebebeb"
+            width="match_parent"
+            height="match_parent">
+    </TextView>
+
+    <TextView
+            id="tv2"
+            text="Swing测试2！"
+            textSize="20"
+            textColor="#ff0000"
+            opaque="true"
+            background="#cccccc"
+            width="match_parent"
+            height="wrap_content">
+    </TextView>
+    <LinearLayout
+            id="linear_layout_2"
+            background="#00ff00"
+            width="match_parent"
+            height="match_parent"
+            orientation="vertical">
+        <TextView
+                id="tv3"
+                text="Swing测试3！"
+                textColor="#ff0000"
+                opaque="true"
+                background="#ebebeb"
+                width="wrap_content"
+                height="wrap_content">
+        </TextView>
+
+        <TextView
+                id="tv4"
+                text="Swing测试4！"
+                textSize="20"
+                textColor="#ff0000"
+                opaque="true"
+                background="#cccccc"
+                width="wrap_content"
+                height="wrap_content">
+        </TextView>
+        <ImageView
+                id="iv1"
+                width="50"
+                height="50"
+                src="img/link.png"/>
+    </LinearLayout>
+</LinearLayout>
