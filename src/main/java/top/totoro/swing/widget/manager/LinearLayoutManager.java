@@ -1,5 +1,6 @@
 package top.totoro.swing.widget.manager;
 
+import com.sun.istack.internal.NotNull;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -15,6 +16,8 @@ import top.totoro.swing.widget.util.AttributeUtil;
 import top.totoro.swing.widget.util.LayoutUtil;
 import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.util.ViewUtil;
+import top.totoro.swing.widget.view.ImageView;
+import top.totoro.swing.widget.view.RecyclerView;
 import top.totoro.swing.widget.view.View;
 
 import java.io.FileNotFoundException;
@@ -33,17 +36,21 @@ public class LinearLayoutManager extends LayoutManager {
 
     private static final String LAYOUT_RESOURCE_PATH = "layout/";
     private BaseLayout mainLayout;
+    private BaseLayout mainView;
+    private LinkedList<View> sonViews;
+    private int itemWidth = 0, itemHeight = 0;
 
     public LinearLayoutManager() {
     }
 
     /**
      * 通过xml资源文件名，初始化View的关系列表，为渲染做准备
+     * 默认绑定到mainLayout上
      *
      * @param mainLayout 这个xml解析后的View要绑定的Layout节点
      * @param res        xml文件名，这个文件要放在：（项目路径）/layout下
      */
-    public void initViewListByRes(BaseLayout mainLayout, String res) {
+    public View inflate(@NotNull BaseLayout mainLayout, String res) {
         if (mainLayout.getComponent() != null) {
             mainLayout.getComponent().removeAll();
         }
@@ -53,20 +60,57 @@ public class LinearLayoutManager extends LayoutManager {
             SAXReader reader = new SAXReader();
             Document document = reader.read(url);
             Element root = document.getRootElement();
-            BaseLayout layout = LayoutUtil.createLayout(mainLayout, root.getName(), AttributeUtil.getLayoutAttribute(res, root));
-            if (layout == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
-            mainLayout.addChildView(layout);
-            attachLayout(layout, root, res);
+            LayoutAttribute layoutAttribute = AttributeUtil.getLayoutAttribute(res, root);
+            mainView = LayoutUtil.createLayout(mainLayout, root.getName(), layoutAttribute);
+            if (mainView == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
+            mainView.setId(layoutAttribute.getId());
+            mainLayout.addChildView(mainView);
+            attachLayout(mainView, root, res, true);
         } catch (FileNotFoundException | DocumentException | AttributeException e) {
             e.printStackTrace();
         }
         this.mainLayout = mainLayout;
+        return mainLayout;
+    }
+
+
+    /**
+     * 通过xml资源文件名，初始化View的关系列表，为渲染做准备
+     *
+     * @param mainLayout 这个xml解析后的View要绑定的Layout节点
+     * @param res        xml文件名，这个文件要放在：（项目路径）/layout下
+     * @param attachRoot 是否将解析后的View绑定到mainLayout的子ID列表中，不绑定的话，就不会发生id冲突，绑定的话id就要保持一个全局视图中是唯一的
+     */
+    public View inflate(BaseLayout mainLayout, String res, boolean attachRoot) {
+        Log.d("inflate", res);
+        if (mainLayout != null && mainLayout.getComponent() != null) {
+            mainLayout.getComponent().removeAll();
+        }
+        URL url = getClass().getClassLoader().getResource(LAYOUT_RESOURCE_PATH + res);
+        try {
+            if (url == null) throw new FileNotFoundException("未找到'" + res + "'资源文件");
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(url);
+            Element root = document.getRootElement();
+            LayoutAttribute layoutAttribute = AttributeUtil.getLayoutAttribute(res, root);
+            mainView = LayoutUtil.createLayout(mainLayout, root.getName(), layoutAttribute);
+            if (mainView == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
+            mainView.setId(layoutAttribute.getId());
+            attachLayout(mainView, root, res, attachRoot);
+        } catch (FileNotFoundException | DocumentException | AttributeException e) {
+            e.printStackTrace();
+        }
+        if (mainLayout != null && attachRoot) {
+            mainLayout.addChildView(mainView);
+            this.mainLayout = mainLayout;
+        }
+        return mainLayout != null && attachRoot ? mainLayout : mainView;
     }
 
     /**
      * 绑定一个Layout节点下的View
      */
-    private void attachLayout(BaseLayout root, Element rootElement, String res) {
+    private void attachLayout(BaseLayout root, Element rootElement, String res, boolean atachRoot) {
         if (root.getComponent() != null) {
             root.getComponent().removeAll();
         }
@@ -81,14 +125,24 @@ public class LinearLayoutManager extends LayoutManager {
                     childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
                     BaseLayout layout = LayoutUtil.createLayout(linearLayout, childElement.getName(), (LayoutAttribute) childAttribute);
                     if (layout != null) {
+                        layout.setId(childAttribute.getId());
                         // 以当前子节点开始绑定View
-                        attachLayout(layout, childElement, res);
+                        attachLayout(layout, childElement, res, atachRoot);
                         linearLayout.addChildView(layout);
                     }
                 } else {
                     // 这个节点是一个子View
                     childAttribute = AttributeUtil.getViewAttribute(res, childElement);
-                    linearLayout.addChildView(ViewUtil.createView(linearLayout, childElement.getName(), (ViewAttribute) childAttribute));
+                    View view = ViewUtil.createView(linearLayout, childElement.getName(), (ViewAttribute) childAttribute);
+                    if (view instanceof BaseLayout) {
+                        // 这个子节点是一个Layout
+                        childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
+                        view.setAttribute(childAttribute);
+                        linearLayout.addChildView(view);
+                    } else {
+                        linearLayout.addChildView(view);
+                    }
+                    view.setId(childAttribute.getId());
                 }
             }
         }
@@ -104,9 +158,16 @@ public class LinearLayoutManager extends LayoutManager {
             measureAllViewSizeAsValue(mainLayout);
             measureLayoutSizeAsWrap(mainLayout);
             measureSizeAsMatch(mainLayout);
+            mainLayout.remeasureMatchParentChildViewWidth();
+            mainLayout.remeasureMatchParentChildViewHeight();
             measureLocation(mainLayout);
-            Log.d(this, "end");
-        } else System.err.println("的资源文件未加载或不存在。");
+        } else if (mainView != null) {
+            measureAllViewSizeAsValue(mainView);
+            measureLayoutSizeAsWrap(mainView);
+            measureSizeAsMatch(mainView);
+            measureLocation(mainView);
+        } else System.err.println("资源文件未加载或不存在。");
+        Log.d(this, "end");
     }
 
     public void invalidate(BaseLayout startLayout) {
@@ -114,9 +175,11 @@ public class LinearLayoutManager extends LayoutManager {
             measureAllViewSizeAsValue(startLayout);
             measureLayoutSizeAsWrap(startLayout);
             measureSizeAsMatch(startLayout);
+            startLayout.remeasureMatchParentChildViewWidth();
+            startLayout.remeasureMatchParentChildViewHeight();
             measureLocation(startLayout);
-            Log.d(this, "end");
         } else System.err.println("父节点的Layout不能为空。");
+        Log.d(this, "end");
     }
 
     /**
@@ -124,10 +187,10 @@ public class LinearLayoutManager extends LayoutManager {
      */
     private void measureAllViewSizeAsValue(View item) {
         if (isWidthAsValue(item)) {
-            item.getComponent().setSize(item.getAttribute().getWidth(), item.getComponent().getHeight());
+            item.getComponent().setSize(item.getAttribute().getWidth(), item.getHeight());
         }
         if (isHeightAsValue(item)) {
-            item.getComponent().setSize(item.getComponent().getWidth(), item.getAttribute().getHeight());
+            item.getComponent().setSize(item.getWidth(), item.getAttribute().getHeight());
         }
         if (item instanceof BaseLayout) {
             // 当前节点是Layout，继续深入测量
@@ -144,10 +207,8 @@ public class LinearLayoutManager extends LayoutManager {
      * @param layout
      */
     private void measureSizeAsValueInLayout(BaseLayout layout) {
-        LinkedList<String> ids = layout.getSonIds();
-        for (String id : ids) {
-            View son = layout.findViewById(id);
-            if (son == null) continue;
+        sonViews = layout.getSonViews();
+        for (View son : sonViews) {
             if (son instanceof BaseLayout) {
                 measureSizeAsValueInLayout((BaseLayout) son);
             } else {
@@ -164,10 +225,10 @@ public class LinearLayoutManager extends LayoutManager {
     private void measureNormalViewSizeAsWrap(View item) {
         // 按节点View允许最小的大小进行设置
         if (isWidthAsWrap(item)) {
-            item.getComponent().setSize(item.getMinWidth(), item.getComponent().getHeight());
+            item.getComponent().setSize(item.getMinWidth(), item.getHeight());
         }
         if (isHeightAsWrap(item)) {
-            item.getComponent().setSize(item.getComponent().getWidth(), item.getMinHeight());
+            item.getComponent().setSize(item.getWidth(), item.getMinHeight());
         }
         Log.d("measureNormalViewSizeAsWrap", item.getAttribute().getId() + ", " + item.getComponent().getSize());
     }
@@ -184,31 +245,30 @@ public class LinearLayoutManager extends LayoutManager {
         boolean widthWrap = isWidthAsWrap(layout), heightWrap = isHeightAsWrap(layout);
         // 如果是wrap的话，layout最终应该设置为最大的值
         int maxWidth = 0, maxHeight = 0;
-        LinkedList<String> ids = layout.getSonIds();
-        for (String id : ids) {
-            View son = layout.findViewById(id);
+        sonViews = layout.getSonViews();
+        for (View son : sonViews) {
             if (son == null) continue;
-            if (son.getSonIds().size() > 0 && son instanceof BaseLayout) {
+            if (son.getSonViews().size() > 0 && son instanceof BaseLayout) {
                 measureLayoutSizeAsWrap((BaseLayout) son);
                 if (widthWrap) {
                     if (vertical) {
                         // 垂直布局，宽度以子控件宽度最大值为准
-                        if (maxWidth < son.getComponent().getWidth()) {
-                            maxWidth = son.getComponent().getWidth();
+                        if (maxWidth < son.getWidth()) {
+                            maxWidth = son.getWidth();
                         }
                     } else {
                         // 横向布局，宽度以所有子控件宽度累加为准
-                        maxWidth += son.getComponent().getWidth();
+                        maxWidth += son.getWidth();
                     }
                 }
                 if (heightWrap) {
                     if (vertical) {
                         // 垂直布局，高度以所有子控件高度累加为准
-                        maxHeight += son.getComponent().getHeight();
+                        maxHeight += son.getHeight();
                     } else {
                         // 横向布局，高度以所有子控件高度最大值为准
-                        if (maxHeight < son.getComponent().getHeight()) {
-                            maxHeight = son.getComponent().getHeight();
+                        if (maxHeight < son.getHeight()) {
+                            maxHeight = son.getHeight();
                         }
                     }
                 }
@@ -218,23 +278,23 @@ public class LinearLayoutManager extends LayoutManager {
                     measureSonNormalViewWidthMatchToWrap(son);
                     if (vertical) {
                         // 垂直布局，宽度以子控件宽度最大值为准
-                        if (maxWidth < son.getComponent().getWidth()) {
-                            maxWidth = son.getComponent().getWidth();
+                        if (maxWidth < son.getWidth()) {
+                            maxWidth = son.getWidth();
                         }
                     } else {
                         // 横向布局，宽度以所有子控件宽度累加为准
-                        maxWidth += son.getComponent().getWidth();
+                        maxWidth += son.getWidth();
                     }
                 }
                 if (heightWrap) {
                     measureSonNormalViewHeightMatchToWrap(son);
                     if (vertical) {
                         // 垂直布局，高度以所有子控件高度累加为准
-                        maxHeight += son.getComponent().getHeight();
+                        maxHeight += son.getHeight();
                     } else {
                         // 横向布局，高度以所有子控件高度最大值为准
-                        if (maxHeight < son.getComponent().getHeight()) {
-                            maxHeight = son.getComponent().getHeight();
+                        if (maxHeight < son.getHeight()) {
+                            maxHeight = son.getHeight();
                         }
                     }
                 }
@@ -262,12 +322,11 @@ public class LinearLayoutManager extends LayoutManager {
     private void remeasureSonWidthAsMatch(BaseLayout layout) {
         if (isVertical(layout)) {
             // 重置子节点为match的值
-            LinkedList<String> ids = layout.getSonIds();
-            for (String id : ids) {
-                View son = layout.findViewById(id);
+            sonViews = layout.getSonViews();
+            for (View son : sonViews) {
                 if (son == null) continue;
                 if (isWidthAsMatch(son)) {
-                    setWidth(son, layout.getComponent().getWidth());
+                    setWidth(son, layout.getWidth());
                 }
                 if (son instanceof BaseLayout) {
                     remeasureSonWidthAsMatch((BaseLayout) son);
@@ -284,12 +343,11 @@ public class LinearLayoutManager extends LayoutManager {
     private void remeasureSonHeightAsMatch(BaseLayout layout) {
         if (isHorizontal(layout)) {
             // 重置子节点为match的值
-            LinkedList<String> ids = layout.getSonIds();
-            for (String id : ids) {
-                View son = layout.findViewById(id);
+            sonViews = layout.getSonViews();
+            for (View son : sonViews) {
                 if (son == null) continue;
                 if (isHeightAsMatch(son)) {
-                    setHeight(son, layout.getComponent().getHeight());
+                    setHeight(son, layout.getHeight());
                 }
                 if (son instanceof BaseLayout) {
                     remeasureSonHeightAsMatch((BaseLayout) son);
@@ -323,23 +381,29 @@ public class LinearLayoutManager extends LayoutManager {
     }
 
     /**
-     * 测量节点以为match时的宽高大小
+     * 测量节点为match时的宽高大小
      *
      * @param item
      */
     private void measureSizeAsMatch(View item) {
+        item.invalidate();
         if (item.getParent() != null) {
             measureViewWidthAsMatch((BaseLayout) item.getParent(), item);
             measureViewHeightAsMatch((BaseLayout) item.getParent(), item);
         }
         if (item instanceof BaseLayout) {
-            LinkedList<String> ids = item.getSonIds();
-            for (String id :
-                    ids) {
-                View son = item.findViewById(id);
+            if (item.getParent() != null) {
+                ((BaseLayout) item.getParent()).remeasureMatchParentChildViewWidth();
+                ((BaseLayout) item.getParent()).remeasureMatchParentChildViewHeight();
+            }
+            sonViews = item.getSonViews();
+            for (View son : sonViews) {
                 if (son == null) continue;
                 measureSizeAsMatch(son);
             }
+            // 只有子节点都遍历结束才刷新match属性，防止抖动
+            ((BaseLayout) item).remeasureMatchParentChildViewWidth();
+            ((BaseLayout) item).remeasureMatchParentChildViewHeight();
         }
         Log.d("measureSizeAsMatch", item.getAttribute().getId() + ", " + item.getComponent().getSize());
     }
@@ -356,15 +420,14 @@ public class LinearLayoutManager extends LayoutManager {
                 if (isWidthAsMatch(son)) {
                     parent.matchParentWidthViews.add(son);
                 } else {
-                    parent.currNoMatchWidth += son.getComponent().getWidth();
+                    parent.currNoMatchWidth += son.getWidth();
                 }
-                parent.remeasureMatchParentChildViewWidth();
             } else {
                 // 父布局的宽度是wrap，说明：这个son的宽度也已被按照wrap处理了，所以match在这里是无效的
             }
         } else if (isVertical(parent)) {
             if (isWidthAsMatch(son)) {
-                setWidth(son, parent.getComponent().getWidth());
+                setWidth(son, parent.getWidth());
             }
         }
     }
@@ -381,15 +444,14 @@ public class LinearLayoutManager extends LayoutManager {
                 if (isHeightAsMatch(son)) {
                     parent.matchParentHeightViews.add(son);
                 } else {
-                    parent.currNoMatchHeight += son.getComponent().getHeight();
+                    parent.currNoMatchHeight += son.getHeight();
                 }
-                parent.remeasureMatchParentChildViewHeight();
             } else {
                 // 父布局的高度是wrap，说明：这个son的高度也已被按照wrap处理了，所以match在这里是无效的
             }
         } else if (isHorizontal(parent)) {
             if (isHeightAsMatch(son)) {
-                setHeight(son, parent.getComponent().getHeight());
+                setHeight(son, parent.getHeight());
             }
         }
     }
@@ -400,21 +462,20 @@ public class LinearLayoutManager extends LayoutManager {
      * @param parent 一个父节点，根据这个父节点，查找子节点并设置位置
      */
     private void measureLocation(View parent) {
-        LinkedList<String> ids = parent.getSonIds();
         int startX = 0, startY = 0;
-        for (String id : ids) {
-            View son = parent.findViewById(id);
+        sonViews = parent.getSonViews();
+        for (View son : sonViews) {
             if (son == null) continue;
             if (son.getParent() != null) {
                 if (isVertical((BaseLayout) son.getParent())) {
                     startY += son.getAttribute().getStartY();
                     son.getComponent().setLocation(son.getComponent().getX(), startY);
-                    startY += son.getComponent().getHeight();
+                    startY += son.getHeight();
                 }
                 if (isHorizontal((BaseLayout) son.getParent())) {
                     startX += son.getAttribute().getStartX();
                     son.getComponent().setLocation(startX, son.getComponent().getY());
-                    startX += son.getComponent().getWidth();
+                    startX += son.getWidth();
                 }
             } else {
                 son.getComponent().setLocation(son.getAttribute().getStartX(), son.getAttribute().getStartY());
@@ -429,11 +490,11 @@ public class LinearLayoutManager extends LayoutManager {
     /*********************  一些常用方法  *********************/
 
     private void setWidth(View view, int width) {
-        view.getComponent().setSize(width, view.getComponent().getHeight());
+        view.getComponent().setSize(width, view.getHeight());
     }
 
     private void setHeight(View view, int height) {
-        view.getComponent().setSize(view.getComponent().getWidth(), height);
+        view.getComponent().setSize(view.getWidth(), height);
     }
 
     private boolean isVertical(BaseLayout layout) {

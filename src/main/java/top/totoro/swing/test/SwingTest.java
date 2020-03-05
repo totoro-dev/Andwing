@@ -49,24 +49,24 @@ public class SwingTest extends JFrame {
         add(parent, BorderLayout.CENTER);
         add(button, BorderLayout.SOUTH);
         setVisible(true);
-        view = new RecyclerView(parent);
-        view.setBackground(Color.white);
-        RecycleViewTestAdapter adapter = new RecycleViewTestAdapter();
-        view.setAdapter(adapter);
-        button.addActionListener(e -> {
-//            base.setOrientation(RecyclerView.HORIZONTAL);
-            if (index % 2 == 0) {
-                RecycleViewTestAdapter.data.remove(0);
-                RecycleViewTestAdapter.data.add(0, new String[]{"第四项", "This is forth item.", "by 黄龙猫"});
-                RecycleViewTestAdapter.data.add(0, new String[]{"第四项", "This is forth item.", "by 黄龙猫"});
-                view.setOrientation(RecyclerView.VERTICAL);
-//                base.setHorizontalScrollBar(new ScrollBarTest());
-                view.setVerticalScrollBar(new ScrollBarTest());
-            } else
-                RecycleViewTestAdapter.data.remove(2);
-            index++;
-            adapter.notifyDataSetChange();
-        });
+//        view = new RecyclerView(parent);
+//        view.setBackground(Color.white);
+//        RecycleViewTestAdapter adapter = new RecycleViewTestAdapter();
+////        view.setAdapter(adapter);
+//        button.addActionListener(e -> {
+////            base.setOrientation(RecyclerView.HORIZONTAL);
+//            if (index % 2 == 0) {
+//                RecycleViewTestAdapter.data.remove(0);
+//                RecycleViewTestAdapter.data.add(0, new String[]{"第四项", "This is forth item.", "by 黄龙猫"});
+//                RecycleViewTestAdapter.data.add(0, new String[]{"第四项", "This is forth item.", "by 黄龙猫"});
+//                view.setOrientation(RecyclerView.VERTICAL);
+////                base.setHorizontalScrollBar(new ScrollBarTest());
+//                view.setVerticalScrollBar(new ScrollBarTest());
+//            } else
+//                RecycleViewTestAdapter.data.remove(2);
+//            index++;
+//            adapter.notifyDataSetChange();
+//        });
     }
 
     public void testToast(){

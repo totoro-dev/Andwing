@@ -3,11 +3,14 @@ package top.totoro.swing.widget.context;
 import top.totoro.swing.widget.base.BaseLayout;
 import top.totoro.swing.widget.interfaces.ContextWrapper;
 import top.totoro.swing.widget.layout.LinearLayout;
+import top.totoro.swing.widget.listener.InvalidateListener;
 import top.totoro.swing.widget.manager.LinearLayoutManager;
 import top.totoro.swing.widget.view.View;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Context implements ContextWrapper {
 
@@ -15,6 +18,12 @@ public class Context implements ContextWrapper {
     private Dimension size;
     private BaseLayout mainView = new LinearLayout(null);
     protected LinearLayoutManager layoutManager = new LinearLayoutManager();
+    private List<InvalidateListener> invalidateListenerList = new ArrayList<>();
+
+    public void requestInvalidateListener(InvalidateListener listener) {
+        invalidateListenerList.remove(listener);
+        invalidateListenerList.add(listener);
+    }
 
     public Context() {
         mainView.setContext(this);
@@ -54,6 +63,10 @@ public class Context implements ContextWrapper {
         if (mainView != null && layoutManager != null) {
             mainView.invalidate();
             layoutManager.invalidate();
+            for (InvalidateListener listener :
+                    invalidateListenerList) {
+                listener.onFinished();
+            }
         }
     }
 

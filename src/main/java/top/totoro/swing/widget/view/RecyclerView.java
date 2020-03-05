@@ -1,21 +1,30 @@
 package top.totoro.swing.widget.view;
 
-import top.totoro.swing.widget.base.BaseScrollBar;
 import top.totoro.swing.widget.bar.HorizontalScrollBar;
 import top.totoro.swing.widget.bar.VerticalScrollBar;
+import top.totoro.swing.widget.base.BaseLayout;
+import top.totoro.swing.widget.base.BaseScrollBar;
+import top.totoro.swing.widget.bean.LayoutAttribute;
+import top.totoro.swing.widget.layout.LinearLayout;
+import top.totoro.swing.widget.listener.InvalidateListener;
+import top.totoro.swing.widget.manager.LinearLayoutManager;
+import top.totoro.swing.widget.util.Log;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
 
-public class RecyclerView extends JComponent {
+@SuppressWarnings("Duplicates")
+public class RecyclerView extends LinearLayout implements InvalidateListener {
+
+    private LinearLayoutManager layoutManager = new LinearLayoutManager();
 
     public static final int HORIZONTAL = 1, VERTICAL = 2;
-    private JPanel parent; // 放置这个RecyclerView的容器
-    private JPanel container; // 在这个RecyclerView中放置子控件的容器
+    //    private JPanel parent; // 放置这个RecyclerView的容器
+    //    private JPanel component; // 在这个RecyclerView中放置子控件的容器
+    private BaseLayout container = new BaseLayout(null);
+    private LayoutAttribute containerAttribute = new LayoutAttribute();
     private BaseScrollBar.Vertical verticalScrollBar; // 垂直滚动条
     private BaseScrollBar.Horizontal horizontalScrollBar; // 水平滚动条
     private int orientation; // 这个RecyclerView的布局方向
@@ -27,19 +36,47 @@ public class RecyclerView extends JComponent {
     private boolean mousePressing; // 鼠标是否按住
     private boolean shiftPressing; // Shift键是否按住
 
+    private int width, height; // container的宽高
+
     private int verticalBarHeight = 0;
     private int verticalBarY = 0, clickY = 0;
     private int maxVerticalBarY = 0;
+    // 垂直方向上，滚轮滚动长度与容器高度的比例
+    private double vertical = 0;
 
     private int horizontalBarWidth = 0;
     private int horizontalBarX = 0, clickX = 0;
     private int maxHorizontalBarX = 0;
+    // 垂直方向上，滚轮滚动长度与容器高度的比例
+    double horizontal = 0;
 
-    public static abstract class Adapter<ViewHolder extends JPanel> {
+    public RecyclerView(View parent) {
+        super(parent);
+        verticalScrollBar = new VerticalScrollBar();
+        horizontalScrollBar = new HorizontalScrollBar();
+        containerAttribute.setWidth(0);
+        containerAttribute.setHeight(0);
+        container.setAttribute(containerAttribute);
+        container.setLayoutManager(layoutManager);
+        initMainListener();
+        setOrientation(VERTICAL);
+        component.setFocusable(true); // 使得RecyclerView可以监听键盘事件
+        if (context != null) {
+            context.requestInvalidateListener(this);
+        }
+    }
 
-        public abstract ViewHolder onCreateViewHolder(JPanel container);
+    @Override
+    public void onFinished() {
+        reSizeScrollBar();
+    }
 
-        public abstract void onBindViewHolder(ViewHolder holder, int position);
+
+    public static abstract class Adapter<ViewHolder extends RecyclerView.ViewHolder> {
+
+        public abstract ViewHolder onCreateViewHolder(BaseLayout parent);
+
+        public abstract void onBindViewHolder(ViewHolder holder, int position, int viewType);
 
         public abstract int getItemCount();
 
@@ -53,28 +90,216 @@ public class RecyclerView extends JComponent {
         public void notifyDataSetChange() {
             List<RecyclerView> list = instances.get(this);
             if (list == null || list.size() == 0) return;
-            for (RecyclerView instance :
-                    list) {
+            for (RecyclerView instance : list) {
                 if (instance == null) continue;
                 instance.setAdapter(this);
-                instance.validate(); // 更新滚动条状态
+//                instance.context.invalidate(); // 更新滚动条状态
             }
+        }
+
+        public int getViewType(int position) {
+            return 0;
         }
     }
 
-    public RecyclerView(JPanel parent) {
-        this.parent = parent;
-        setLayout(null);
-        parent.setLayout(null);
-        parent.add(this);
-        container = new JPanel(null);
-        verticalScrollBar = new VerticalScrollBar();
-        horizontalScrollBar = new HorizontalScrollBar();
-        setNoneBorder(); // 设置默认为无边框样式
-        setOrientation(VERTICAL); // 设置默认布局为垂直方向
-        setFocusable(true); // 使得RecyclerView可以监听键盘事件
-        initMainListener();
-        add(container);
+    public void setAdapter(Adapter adapter) {
+        this.adapter = adapter;
+        List<RecyclerView> list = instances.get(adapter);
+        if (list == null) {
+            if (list == null) list = new ArrayList<>();
+            list.add(this);
+            instances.put(adapter, list);
+        } else if (!list.contains(this)) {
+            list.add(this);
+        }
+        if (orientation == VERTICAL) {
+            setVerticalAdapter();
+        } else if (orientation == HORIZONTAL) {
+            setHorizontalAdapter();
+        }
+    }
+
+    /**
+     * 设置垂直滚动的RecyclerView对应的子控件的适配器
+     */
+    private void setVerticalAdapter() {
+        container.removeAllSon();
+        container.getComponent().removeAll();
+        containerAttribute.setWidth(component.getWidth());
+        containerAttribute.setHeight(component.getHeight());
+        container.getComponent().setLocation(0, 0);
+        container.getComponent().setSize(component.getSize());
+        component.removeAll();
+        component.add(verticalScrollBar);
+        int count = adapter.getItemCount();
+        width = 0;
+        height = 0;
+        for (int i = 0; i < count; i++) {
+            ViewHolder item = adapter.onCreateViewHolder(null);
+            item.getView().setContext(context);
+            adapter.onBindViewHolder(item, i, adapter.getViewType(i));
+            container.addChildView(item.getView());
+            layoutManager.invalidate((BaseLayout) item.getView());
+            height += item.getView().getComponent().getHeight();
+            if (width < item.getView().getComponent().getWidth()) width = item.getView().getComponent().getWidth();
+        }
+        // 不使用addChildView，是为了不将container与RecyclerView捆绑，从而发生id冲突
+        // 并且这样就不会在全局刷新时影响到container的布局
+        component.add(container.getComponent());
+        context.invalidate();
+    }
+
+    @Override
+    public void invalidate() {
+//        if (getAttribute().getWidth() == BaseAttribute.WRAP_CONTENT) {
+//            component.setSize(width > (getParent() == null ? width : getParent().getComponent().getWidth()) ? getParent().getComponent().getWidth() : width, component.getHeight());
+//            containerAttribute.setWidth(width);
+//            container.getComponent().setSize(width, container.getComponent().getHeight());
+//        }
+//        if (getAttribute().getHeight() == BaseAttribute.WRAP_CONTENT) {
+//            component.setSize(component.getWidth(), height > (getParent() == null ? height : getParent().getComponent().getHeight()) ? getParent().getComponent().getHeight() : height);
+//            containerAttribute.setHeight(height);
+//            container.getComponent().setSize(container.getComponent().getWidth(), height);
+//        }
+        super.invalidate();
+    }
+
+    /**
+     * 设置横向滚动的RecyclerView对应的子控件的适配器
+     */
+    private void setHorizontalAdapter() {
+        container.getComponent().removeAll();
+        containerAttribute.setWidth(component.getWidth());
+        containerAttribute.setHeight(component.getHeight());
+        container.getComponent().setLocation(0, 0);
+        container.getComponent().setSize(component.getSize());
+        component.removeAll();
+        component.add(horizontalScrollBar);
+        int count = adapter.getItemCount();
+        width = 0;
+        height = 0;
+        for (int i = 0; i < count; i++) {
+            ViewHolder item = adapter.onCreateViewHolder(null);
+            adapter.onBindViewHolder(item, i, adapter.getViewType(i));
+            container.addChildView(item.getView());
+            layoutManager.invalidate((BaseLayout) item.getView());
+            width += item.getView().getComponent().getWidth();
+            if (height < item.getView().getComponent().getHeight()) height = item.getView().getComponent().getHeight();
+        }
+        component.add(container.getComponent());
+        context.invalidate();
+    }
+
+    /**
+     * 垂直方向滚动布局
+     *
+     * @param gap 滚轮滚动长度
+     */
+    private boolean scrolledVertical(int gap) {
+        int tmp = gap + verticalBarY;
+        if (tmp > maxVerticalBarY) {
+            // 垂直方向上，设置滚动至底部
+            container.getComponent().setLocation(container.getComponent().getX(), component.getHeight() - container.getComponent().getHeight());
+        } else if (tmp < 0) {
+            // 垂直方向上，设置滚动至顶部
+            container.getComponent().setLocation(container.getComponent().getX(), 0);
+        } else if (gap >= 1 || gap <= -1) {
+            if (component.getHeight() == verticalBarHeight) return true;
+            // 滚动比例，带符号。"+"：垂直向下滚动；"-"：垂直向上滚动
+            // getHeight() - verticalBarHeight可滚动的长度，相当于容器的不可见长度
+            double scale = gap / (double) (component.getHeight() - verticalBarHeight);
+            int scrollHeight = (int) ((container.getComponent().getHeight() - component.getHeight()) * scale);
+            if (container.getComponent().getY() + container.getComponent().getHeight() - component.getHeight() < 0 && scrollHeight <= 0)
+                return true;
+            if (container.getComponent().getY() + component.getHeight() - container.getComponent().getHeight() > 0 && scrollHeight >= 0)
+                return true;
+            verticalBarY = tmp;
+            verticalScrollBar.setBarY(verticalBarY);
+            container.getComponent().setLocation(container.getComponent().getX(), container.getComponent().getY() - scrollHeight);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 水平方向滚动布局
+     *
+     * @param gap 滚轮滚动长度
+     */
+    private boolean scrolledHorizontal(int gap) {
+        int tmp = gap + horizontalBarX;
+        if (tmp > maxHorizontalBarX) {
+            //水平方向上，设置滚动至右端
+            container.getComponent().setLocation(component.getWidth() - container.getComponent().getWidth(), container.getComponent().getY());
+        } else if (tmp < 0) {
+            // 水平方向上，设置滚动至左端
+            container.getComponent().setLocation(0, container.getComponent().getY());
+        } else if (gap >= 1 || gap <= -1) {
+            if (component.getWidth() == horizontalBarWidth) return true;
+            // getWidth() - horizontalBarWidth可滚动的宽度，相当于容器的不可见宽度
+            // 滚动比例，带符号。"+"：水平向右滚动；"-"：水平向左滚动
+            double scale = gap / (double) (component.getWidth() - horizontalBarWidth);
+            int scrollWidth = (int) ((container.getComponent().getWidth() - component.getWidth()) * scale);
+            if (container.getComponent().getX() + container.getComponent().getWidth() - component.getWidth() < 0 && scrollWidth <= 0)
+                return true;
+            if (container.getComponent().getX() + component.getWidth() - container.getComponent().getWidth() > 0 && scrollWidth >= 0)
+                return true;
+            horizontalBarX = tmp;
+            horizontalScrollBar.setBarX(horizontalBarX);
+            container.getComponent().setLocation(container.getComponent().getX() - scrollWidth, container.getComponent().getY());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 当布局刷新之后需要由LayoutManager来刷新滚动条
+     * 因为只有全局刷新完成才会由确定的宽高，进而准确的设置
+     */
+    public void reSizeScrollBar() {
+        if (container.getComponent().getWidth() <= 0) return;
+        if (container.getComponent().getHeight() <= 0) return;
+        if (component.getWidth() >= container.getComponent().getWidth()) {
+            container.getComponent().setLocation(0, container.getComponent().getY());
+        }
+        if (component.getHeight() >= container.getComponent().getHeight()) {
+            container.getComponent().setLocation(container.getComponent().getX(), 0);
+        }
+        if (orientation == VERTICAL) {
+            containerAttribute.setWidth(component.getWidth());
+            containerAttribute.setHeight(height);
+            layoutManager.invalidate(container);
+            vertical = component.getHeight() / (double) height;
+            verticalBarHeight = (int) (component.getHeight() * vertical);
+            maxVerticalBarY = component.getHeight() - verticalBarHeight;
+            verticalScrollBar.setBarHeight(verticalBarHeight);
+            verticalBarY = -container.getComponent().getY() * maxVerticalBarY / container.getComponent().getHeight();
+            verticalScrollBar.setBarY(verticalBarY);
+            verticalScrollBar.setBounds(component.getWidth() - verticalScrollBar.getWidth(), 0, verticalScrollBar.getWidth(), component.getHeight());
+        } else if (orientation == HORIZONTAL) {
+            containerAttribute.setWidth(width);
+            containerAttribute.setHeight(component.getHeight());
+            layoutManager.invalidate(container);
+            horizontal = component.getWidth() / (double) width;
+            horizontalBarWidth = (int) (component.getWidth() * horizontal);
+            maxHorizontalBarX = component.getWidth() - horizontalBarWidth;
+            horizontalScrollBar.setBarWidth(horizontalBarWidth);
+            horizontalBarX = -container.getComponent().getX() * maxHorizontalBarX / container.getComponent().getWidth();
+            horizontalScrollBar.setBarX(horizontalBarX);
+            horizontalScrollBar.setBounds(0, component.getHeight() - horizontalScrollBar.getHeight(), component.getWidth(), horizontalScrollBar.getHeight());
+        }
+    }
+
+    public static class ViewHolder {
+        private View item;
+
+        public ViewHolder(View item) {
+            this.item = item;
+        }
+
+        public View getView() {
+            return item;
+        }
     }
 
     /**
@@ -85,39 +310,14 @@ public class RecyclerView extends JComponent {
     public void setOrientation(int orientation) {
         this.orientation = orientation;
         if (orientation == HORIZONTAL) {
+            containerAttribute.setOrientation(LayoutAttribute.HORIZONTAL);
             initHorizontalListener();
         } else if (orientation == VERTICAL) {
+            containerAttribute.setOrientation(LayoutAttribute.VERTICAL);
             initVerticalListener();
         }
         /* 如果当前的RecyclerView已经持有适配器，需要重置布局方向*/
         if (adapter != null) setAdapter(adapter);
-    }
-
-    /**
-     * 设置RecyclerView的适配器
-     *
-     * @param adapter 适配器
-     */
-    public void setAdapter(Adapter adapter) {
-        this.adapter = adapter;
-        container.removeAll();
-        List<RecyclerView> list = instances.get(adapter);
-        if (list == null) {
-            if (list == null) list = new ArrayList<>();
-            list.add(this);
-            instances.put(adapter, list);
-        } else if (!list.contains(this)) {
-            list.add(this);
-        }
-        setBounds(0, 0, parent.getWidth(), parent.getHeight());
-        if (orientation == HORIZONTAL) {
-            setHorizontalAdapter();
-        } else if (orientation == VERTICAL) {
-            setVerticalAdapter();
-        }
-        verticalScrollBar.setVisible(false);
-        horizontalScrollBar.setVisible(false);
-        repaint();
     }
 
     /**
@@ -140,78 +340,85 @@ public class RecyclerView extends JComponent {
         initHorizontalListener();
     }
 
-    /**
-     * 背景色设置
-     *
-     * @param bg 背景色
-     */
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-        if (this.container != null) this.container.setBackground(bg);
-    }
+    private void initMainListener() {
+        component.addMouseWheelListener(e -> {
+            if (component.getHeight() >= container.getComponent().getHeight() && orientation == VERTICAL) {
+                Log.d("mouseWheelMoved", "is vertical but not scroll");
+                return;
+            }
+            if (component.getWidth() >= container.getComponent().getWidth() && orientation == HORIZONTAL) {
+                Log.d("mouseWheelMoved", "is horizontal but not scroll");
+                return;
+            }
+            int gap = e.getWheelRotation() * e.getScrollAmount();
+            if (verticalScrollBar.getVisible()) {
+                scrolledVertical(gap);
+            }
+            if (horizontalScrollBar.getVisible() && shiftPressing) {
+                scrolledHorizontal(gap);
+            }
+        });
+        component.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
 
-    /**
-     * 设置无边框样式
-     */
-    public void setNoneBorder() {
-        setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.white));
-    }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                mousePressing = true;
+            }
 
-    /**
-     * 设置横向滚动的RecyclerView对应的子控件的适配器
-     */
-    private void setHorizontalAdapter() {
-        container.add(horizontalScrollBar);
-        int count = adapter.getItemCount();
-        int width = 0, height = 0;
-        JPanel[] items = new JPanel[count];
-        for (int i = 0; i < count; i++) {
-            JPanel item = adapter.onCreateViewHolder(container);
-            adapter.onBindViewHolder(item, i);
-            item.setLocation(width, 0);
-            width += item.getWidth();
-            if (height < item.getHeight()) height = item.getHeight();
-            items[i] = item;
-            container.add(item);
-        }
-        container.setBounds(0, 0, width, getHeight());
-        // 垂直方向上，滚轮滚动长度与容器高度的比例
-        double horizontal = getWidth() / (double) width;
-        horizontalBarWidth = (int) (getWidth() * horizontal);
-        maxHorizontalBarX = getWidth() - horizontalBarWidth;
-        horizontalScrollBar.setBarWidth(horizontalBarWidth);
-        horizontalBarX = 0;
-        horizontalScrollBar.setBarX(horizontalBarX);
-        horizontalScrollBar.setBounds(0, getHeight() - horizontalScrollBar.getHeight(), getWidth(), horizontalScrollBar.getHeight());
-    }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                mousePressing = false;
+            }
 
-    /**
-     * 设置垂直滚动的RecyclerView对应的子控件的适配器
-     */
-    private void setVerticalAdapter() {
-        container.add(verticalScrollBar);
-        int count = adapter.getItemCount();
-        int width = 0, height = 0;
-        JPanel[] items = new JPanel[count];
-        for (int i = 0; i < count; i++) {
-            JPanel item = adapter.onCreateViewHolder(container);
-            adapter.onBindViewHolder(item, i);
-            item.setLocation(0, height);
-            height += item.getHeight();
-            if (width < item.getWidth()) width = item.getWidth();
-            items[i] = item;
-            container.add(item);
-        }
-        container.setBounds(0, 0, getWidth(), height);
-        // 垂直方向上，滚轮滚动长度与容器高度的比例
-        double vertical = getHeight() / (double) height;
-        verticalBarHeight = (int) (getHeight() * vertical);
-        maxVerticalBarY = getHeight() - verticalBarHeight;
-        verticalScrollBar.setBarHeight(verticalBarHeight);
-        verticalBarY = 0;
-        verticalScrollBar.setBarY(verticalBarY);
-        verticalScrollBar.setBounds(getWidth() - verticalScrollBar.getWidth(), 0, verticalScrollBar.getWidth(), getHeight());
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (component.getHeight() >= container.getComponent().getHeight() && orientation == VERTICAL) {
+                    Log.d("mouseEntered", "is vertical but not visible");
+                    return;
+                }
+                if (component.getWidth() >= container.getComponent().getWidth() && orientation == HORIZONTAL) {
+                    Log.d("mouseEntered", "is horizontal but not visible");
+                    return;
+                }
+                if (orientation == VERTICAL) {
+                    verticalScrollBar.setVisible(true);
+                    verticalScrollBar.repaint();
+                }
+                if (orientation == HORIZONTAL) {
+                    horizontalScrollBar.setVisible(true);
+                    horizontalScrollBar.repaint();
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (mousePressing) return;
+                verticalScrollBar.setVisible(false);
+                horizontalScrollBar.setVisible(false);
+            }
+        });
+        component.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                    shiftPressing = true;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                    shiftPressing = false;
+                }
+            }
+        });
     }
 
     private MouseListener verticalMouseListener = new MouseListener() {
@@ -293,64 +500,6 @@ public class RecyclerView extends JComponent {
         }
     };
 
-    private void initMainListener() {
-        addMouseWheelListener(e -> {
-            int gap = e.getWheelRotation() * e.getScrollAmount();
-            if (verticalScrollBar.getVisible()) {
-                scrolledVertical(gap);
-            } else if (horizontalScrollBar.getVisible() && shiftPressing) {
-                scrolledHorizontal(gap);
-            }
-        });
-        addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                mousePressing = true;
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                mousePressing = false;
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if (orientation == VERTICAL) verticalScrollBar.setVisible(true);
-                if (orientation == HORIZONTAL) horizontalScrollBar.setVisible(true);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                if (mousePressing) return;
-                verticalScrollBar.setVisible(false);
-                horizontalScrollBar.setVisible(false);
-            }
-        });
-        addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                    shiftPressing = true;
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                    shiftPressing = false;
-                }
-            }
-        });
-    }
-
     private void initVerticalListener() {
         verticalScrollBar.setMouseListener(verticalMouseListener);
         verticalScrollBar.setMouseMotionListener(verticalMouseMotionLister);
@@ -359,76 +508,6 @@ public class RecyclerView extends JComponent {
     private void initHorizontalListener() {
         horizontalScrollBar.setMouseListener(horizontalMouseListener);
         horizontalScrollBar.setMouseMotionListener(horizontalMouseMotionLister);
-    }
-
-    /**
-     * 垂直方向滚动布局
-     *
-     * @param gap 滚轮滚动长度
-     */
-    private boolean scrolledVertical(int gap) {
-        int tmp = gap + verticalBarY;
-        if (tmp > maxVerticalBarY) {
-            // 垂直方向上，设置滚动至底部
-            container.setLocation(container.getX(), getHeight() - container.getHeight());
-            verticalScrollBar.setLocation(verticalScrollBar.getX(), -container.getY());
-            repaint();
-        } else if (tmp < 0) {
-            // 垂直方向上，设置滚动至顶部
-            container.setLocation(container.getX(), 0);
-            verticalScrollBar.setLocation(verticalScrollBar.getX(), 0);
-            repaint();
-        } else if (gap >= 1 || gap <= -1) {
-            if (getHeight() == verticalBarHeight) return true;
-            // 滚动比例，带符号。"+"：垂直向下滚动；"-"：垂直向上滚动
-            // getHeight() - verticalBarHeight可滚动的长度，相当于容器的不可见长度
-            double scale = gap / (double) (getHeight() - verticalBarHeight);
-            int scrollHeight = (int) ((container.getHeight() - getHeight()) * scale);
-            if (container.getY() + container.getHeight() - getHeight() < 0 && scrollHeight <= 0) return true;
-            if (container.getY() + getHeight() - container.getHeight() > 0 && scrollHeight >= 0) return true;
-            verticalBarY = tmp;
-            verticalScrollBar.setBarY(verticalBarY);
-            container.setLocation(container.getX(), container.getY() - scrollHeight);
-            verticalScrollBar.setLocation(verticalScrollBar.getX(), -container.getY());
-            repaint();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 水平方向滚动布局
-     *
-     * @param gap 滚轮滚动长度
-     */
-    private boolean scrolledHorizontal(int gap) {
-        int tmp = gap + horizontalBarX;
-        if (tmp > maxHorizontalBarX) {
-            //水平方向上，设置滚动至右端
-            container.setLocation(getWidth() - container.getWidth(), container.getY());
-            horizontalScrollBar.setLocation(-container.getX(), horizontalScrollBar.getY());
-            repaint();
-        } else if (tmp < 0) {
-            // 水平方向上，设置滚动至左端
-            container.setLocation(0, container.getY());
-            horizontalScrollBar.setLocation(-container.getX(), horizontalScrollBar.getY());
-            repaint();
-        } else if (gap >= 1 || gap <= -1) {
-            if (getWidth() == horizontalBarWidth) return true;
-            // getWidth() - horizontalBarWidth可滚动的宽度，相当于容器的不可见宽度
-            // 滚动比例，带符号。"+"：水平向右滚动；"-"：水平向左滚动
-            double scale = gap / (double) (getWidth() - horizontalBarWidth);
-            int scrollWidth = (int) ((container.getWidth() - getWidth()) * scale);
-            if (container.getX() + container.getWidth() - getWidth() < 0 && scrollWidth <= 0) return true;
-            if (container.getX() + getWidth() - container.getWidth() > 0 && scrollWidth >= 0) return true;
-            horizontalBarX = tmp;
-            horizontalScrollBar.setBarX(horizontalBarX);
-            container.setLocation(container.getX() - scrollWidth, container.getY());
-            horizontalScrollBar.setLocation(-container.getX(), horizontalScrollBar.getY());
-            repaint();
-            return true;
-        }
-        return false;
     }
 
 }

@@ -25,7 +25,8 @@ public class TextView extends View<ViewAttribute, JLabel> {
     /**
      * 重新计算view的大小属性
      */
-    private void remeasureSize() {
+    @SuppressWarnings("Duplicates")
+    protected void remeasureSize() {
         // minHeight = size + size / 5 中：size / 5用于防止像g等会出现下脚的内容被遮挡
         int size = attribute.getTextSize(), minWidth = 0, minHeight = size + size / 5;
         String text = attribute.getText();
@@ -61,7 +62,7 @@ public class TextView extends View<ViewAttribute, JLabel> {
     public void setText(String text) {
         attribute.setText(text);
         component.setText(text);
-        context.invalidate();
+        invalidateSuper();
     }
 
     /**
@@ -73,7 +74,7 @@ public class TextView extends View<ViewAttribute, JLabel> {
         if (attribute.getTextSize() == size) return;
         attribute.setTextSize(size);
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
-        context.invalidate();
+        invalidateSuper();
     }
 
     /**

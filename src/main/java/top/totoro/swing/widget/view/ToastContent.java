@@ -30,7 +30,7 @@ public class ToastContent extends JComponent {
     public void paint(Graphics g) {
 //        super.paint(g);
 //        PaintUtil.drawBorderFifteenRadius(g, Color.decode("#b0b0b0"), Color.decode("#b0b0b0"),x,y, getWidth(),getHeight());
-        PaintUtil.drawBorderFiveRadius(g, Color.decode("#b0b0b0"), getWidth());
+        PaintUtil.drawButtonRadius(g, Color.decode("#b0b0b0"), getWidth());
         g.setColor(Color.WHITE);
         g.setFont(SwingConstants.TOAST_FONT);
         g.drawString(text, 15, 20);

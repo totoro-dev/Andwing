@@ -72,7 +72,7 @@ public class DefaultActivityResizeMouseListener implements MouseListener, MouseM
     }
 
     @Override
-    public synchronized void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e) {
         if (prepareResize && resizing && resizeListener != null) {
             resizeListener.onResizeDoing(resizeType, e.getX(), e.getY());
         }
@@ -116,7 +116,7 @@ public class DefaultActivityResizeMouseListener implements MouseListener, MouseM
 
     public final OnActivityResizeListener DEFAULT_RESIZE_LISTENER = new OnActivityResizeListener() {
         @Override
-        public synchronized void onResizeDoing(int type, int x, int y) {
+        public void onResizeDoing(int type, int x, int y) {
             int lx = activity.getFrame().getX(), ly = activity.getFrame().getY(), w = activity.getFrame().getWidth(), h = activity.getFrame().getHeight();
             switch (type) {
                 case LEFT_TOP:

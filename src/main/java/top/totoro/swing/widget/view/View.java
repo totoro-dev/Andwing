@@ -3,23 +3,30 @@ package top.totoro.swing.widget.view;
 import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.context.Context;
+import top.totoro.swing.widget.listener.OnClickListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class View<Attribute extends BaseAttribute, Component extends JComponent> {
+//import javax.swing.JComponent;
+//import java.awt.Color;
+
+public class View<Attribute extends BaseAttribute, Component extends JComponent> implements MouseListener {
 
     private int minWidth = 0;
     private int minHeight = 0;
 
     private View parent;
     private String parentId = "";
-    private LinkedList<String> sonIds = new LinkedList<>();
+    private LinkedList<View> sonViews = new LinkedList<>();
     private Map<String, View> containViewsById = new ConcurrentHashMap<>();
     private top.totoro.swing.widget.base.LayoutManager layoutManager;
+    private OnClickListener clickListener;
     protected Attribute attribute;
     protected Component component;
     protected Context context;
@@ -32,8 +39,17 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         }
     }
 
-    public LinkedList<String> getSonIds() {
-        return sonIds;
+    public void addOnClickListener(OnClickListener clickListener) {
+        this.clickListener = clickListener;
+        component.addMouseListener(this);
+    }
+
+    public void removeAllSon() {
+        sonViews.clear();
+    }
+
+    public LinkedList<View> getSonViews() {
+        return sonViews;
     }
 
     public top.totoro.swing.widget.base.LayoutManager getLayoutManager() {
@@ -45,12 +61,39 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     }
 
     /**
+     * 当前布局刷新时，确定可以冒泡刷新的最大范围
+     */
+    protected void invalidateSuper() {
+        if (context != null) {
+            context.invalidate();
+        } else if (getLayoutManager() != null) {
+            getLayoutManager().invalidate();
+        } else if (getParent() != null) {
+            getParent().invalidate();
+        } else {
+            invalidate();
+        }
+    }
+
+    public void setSize(int width, int height) {
+        component.setSize(width, height);
+    }
+
+    public int getWidth() {
+        return component.getWidth();
+    }
+
+    public int getHeight() {
+        return component.getHeight();
+    }
+
+    /**
      * 添加一个子View，只有Layout需要添加子View
      *
      * @param son 子View
      */
     public void addSon(View son) {
-        sonIds.add(son.attribute.getId());
+        sonViews.add(son);
     }
 
     /**
@@ -59,8 +102,8 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      * @param index 子View的位置
      * @return 子View的ID，不存在则返回“”
      */
-    public String getSonId(int index) {
-        return sonIds.size() == 0 ? "" : sonIds.get(index);
+    public View getSonByIndex(int index) {
+        return sonViews.size() == 0 ? null : sonViews.get(index);
     }
 
     /**
@@ -103,8 +146,9 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     }
 
     public void setAttribute(Attribute attribute) {
+        if (attribute == null) return;
         this.attribute = attribute;
-        setId(attribute == null ? "0" : attribute.getId());
+//        setId(attribute.getId());
         component.setVisible(attribute.getVisible() == ViewAttribute.VISIBLE);
         component.setOpaque(attribute.getOpaque() == ViewAttribute.OPAQUE);
         if (attribute.getBackground().startsWith("#")) {
@@ -187,8 +231,36 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 
     }
 
-    public void resumeSize() {
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        clickListener.onClick(this);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
 
     }
 
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        if (clickListener != null) {
+            component.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        if (clickListener != null) {
+            component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
+
+    public void setParent(View parent) {
+        this.parent = parent;
+    }
 }

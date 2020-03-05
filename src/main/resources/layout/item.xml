@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout
+        id="item_ll"
+        width="match_parent"
+        height="wrap_content">
+    <TextView
+            id="item_tv"
+            text="测试多布局加载"
+            width="match_parent"
+            height="match_parent"/>
+    <ImageView
+            src="img/divider.png"
+            id="item_iv"
+            width="match_parent"
+            height="3"/>
+</LinearLayout>

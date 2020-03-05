@@ -5,6 +5,11 @@
         width="match_parent"
         height="match_parent"
         orientation="horizontal">
+    <RecyclerView
+            id="rv1"
+            background="#ababab"
+            width="match_parent"
+            height="match_parent"/>
     <TextView
             id="tv1"
             text="Swing测试1！"
@@ -15,16 +20,16 @@
             height="match_parent">
     </TextView>
 
-    <TextView
-            id="tv2"
-            text="Swing测试2！"
-            textSize="20"
-            textColor="#ff0000"
-            opaque="true"
-            background="#cccccc"
-            width="match_parent"
-            height="wrap_content">
-    </TextView>
+    <!--<TextView-->
+            <!--id="tv2"-->
+            <!--text="Swing测试2！"-->
+            <!--textSize="20"-->
+            <!--textColor="#ff0000"-->
+            <!--opaque="true"-->
+            <!--background="#cccccc"-->
+            <!--width="match_parent"-->
+            <!--height="wrap_content">-->
+    <!--</TextView>-->
     <LinearLayout
             id="linear_layout_2"
             background="#00ff00"
@@ -46,7 +51,7 @@
                 text="Swing测试4！"
                 textSize="20"
                 textColor="#ff0000"
-                opaque="true"
+                opaque="false"
                 background="#cccccc"
                 width="wrap_content"
                 height="wrap_content">
@@ -56,5 +61,14 @@
                 width="50"
                 height="50"
                 src="img/link.png"/>
+        <Button
+                id="btn1"
+                text="按钮"
+                background="#15a5e5"
+                textColor="#ffffff"
+                textSize="20"
+                width="wrap_content"
+                height="wrap_content"/>
+
     </LinearLayout>
 </LinearLayout>

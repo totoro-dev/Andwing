@@ -1,6 +1,7 @@
 package top.totoro.swing.widget.base;
 
 import top.totoro.swing.widget.bean.LayoutAttribute;
+import top.totoro.swing.widget.context.Context;
 import top.totoro.swing.widget.view.View;
 
 import javax.swing.*;
@@ -20,6 +21,16 @@ public class BaseLayout extends View<LayoutAttribute, JPanel> {
         component.setLayout(null);
     }
 
+    @Override
+    public void setContext(Context context) {
+        super.setContext(context);
+        // 向子View继续设置Context，使之能够拥有上下文，进行更多的操作，因为可能有的view是动态添加的
+        List<View> sons = getSonViews();
+        for (View son : sons) {
+            son.setContext(context);
+        }
+    }
+
     /**
      * 向布局中添加子控件或子布局
      *
@@ -27,6 +38,7 @@ public class BaseLayout extends View<LayoutAttribute, JPanel> {
      */
     public void addChildView(View childView) {
         if (childView == null) return;
+        childView.setParent(this);
         component.add(childView.getComponent());
         addSon(childView);
     }
@@ -65,10 +77,8 @@ public class BaseLayout extends View<LayoutAttribute, JPanel> {
         currNoMatchHeight = 0;
         matchParentWidthViews.clear();
         matchParentHeightViews.clear();
-        LinkedList<String> ids = getSonIds();
-        for (String id :
-                ids) {
-            View son = findViewById(id);
+        LinkedList<View> sonViews = getSonViews();
+        for (View son : sonViews) {
             if (son == null) continue;
             son.invalidate();
         }

@@ -12,8 +12,15 @@ import top.totoro.swing.widget.util.SwingConstants;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class Activity extends Context implements OnActionBarClickListener, OnActivityDragListener, OnActionBarResizeListener {
+
+    private ScheduledExecutorService resizeExecutor = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture resizeFuture;
 
     private JFrame frame;
     private OnActivityResizeListener resizeListener;
@@ -21,7 +28,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     private boolean resizeable = true; // 是否允许窗口缩放
     private ActionBar mainBar;
     private JPanel actionBarPanel = new JPanel(null);
-    private Point normalLocaltion;
+    private Point normalLocation;
     private Dimension normalSize;
 
     public Activity() {
@@ -97,7 +104,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
         defaultActivityResizeMouseListener.init(this);
 
-        normalLocaltion = frame.getLocation();
+        normalLocation = frame.getLocation();
         normalSize = getSize();
 
         // 设置ActionBar
@@ -203,13 +210,23 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     /**
      * 重置窗体大小
      */
-    public void resetSize() {
+    private void resetSize() {
         resetActionBar();
+        try {
+            // 持续缩放窗口将不会进行立刻刷新，只有当间隔时间超过25ms才会全局刷新
+            if (resizeFuture != null) resizeFuture.cancel(true);
+            resizeFuture = resizeExecutor.schedule(resizeTask, 25, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Runnable resizeTask = () -> {
         getMainView().getComponent().setLocation(0, actionBarPanel.getHeight());
         getMainView().getComponent().setSize(frame.getWidth(), frame.getHeight() - actionBarPanel.getHeight());
         invalidate();
         defaultActivityResizeMouseListener.resetFrameBoundRect();
-    }
+    };
 
     /**
      * 重置窗口位置
@@ -254,7 +271,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         getMainView().getComponent().setLocation(0, actionBarPanel.getHeight());
         getMainView().getComponent().setSize(frame.getWidth(), frame.getHeight() - actionBarPanel.getHeight());
         getMainView().setLayoutManager(layoutManager);
-        layoutManager.initViewListByRes(getMainView(), resName);
+        layoutManager.inflate(getMainView(), resName);
         layoutManager.invalidate();
         frame.getContentPane().add(getMainView().getComponent());
         onStart();
@@ -272,14 +289,14 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
     @Override
     public void onMidClick() {
-        resetLocation(normalLocaltion.x, normalLocaltion.y);
+        resetLocation(normalLocation.x, normalLocation.y);
         resetSize(normalSize.width, normalSize.height);
     }
 
     @Override
     public void onMaxClick() {
         normalSize = frame.getSize();
-        normalLocaltion = frame.getLocation();
+        normalLocation = frame.getLocation();
         Dimension screen = SwingConstants.getScreenSize();
         resetLocation(0, 0);
         resetSize(screen.width, screen.height);

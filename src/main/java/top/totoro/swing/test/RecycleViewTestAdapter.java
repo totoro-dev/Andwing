@@ -1,15 +1,20 @@
 package top.totoro.swing.test;
 
+import top.totoro.swing.widget.base.BaseLayout;
+import top.totoro.swing.widget.layout.LayoutInflater;
+import top.totoro.swing.widget.view.ImageView;
 import top.totoro.swing.widget.view.RecyclerView;
+import top.totoro.swing.widget.view.TextView;
+import top.totoro.swing.widget.view.View;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class RecycleViewTestAdapter extends RecyclerView.Adapter<RecycleViewTestAdapter.ViewHolder> {
 
     public static List<String[]> data = new LinkedList<>();
+
+    public int size = 30;
 
     static {
         data.add(new String[]{"第一项", "This is first item.", "by 黄龙淼"});
@@ -19,42 +24,30 @@ public class RecycleViewTestAdapter extends RecyclerView.Adapter<RecycleViewTest
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(JPanel parent) {
-        return new ViewHolder(parent);
+    public ViewHolder onCreateViewHolder(BaseLayout parent) {
+        return new ViewHolder(LayoutInflater.inflate(parent, "item.xml", false));
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        String[] item = data.get(position);
-        viewHolder.title.setText(item[0]);
-        viewHolder.content.setText(item[1]);
-        viewHolder.user.setText(item[2]);
+    public void onBindViewHolder(ViewHolder viewHolder, int position, int viewType) {
+//        viewHolder.tv.setText("abc");
+//        viewHolder.iv.setBackgroundImage("img/collect.png");
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return size;
     }
 
-    public class ViewHolder extends JPanel {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public JLabel title;
-        public JLabel content;
-        public JLabel user;
+        public TextView tv;
+        public ImageView iv;
 
-        public ViewHolder(JPanel parent) {
-            setBackground(Color.GREEN);
-            setSize(400, 100);
-            setLayout(null);
-            title = new JLabel();
-            content = new JLabel();
-            user = new JLabel();
-            title.setBounds(0, 0, 100, 30);
-            content.setBounds(0, 30, 100, 30);
-            user.setBounds(0, 60, 100, 20);
-            add(title);
-            add(content);
-            add(user);
+        public ViewHolder(View item) {
+            super(item);
+            tv = (TextView) item.findViewById("item_tv");
+            iv = (ImageView) item.findViewById("item_iv");
         }
     }
 }

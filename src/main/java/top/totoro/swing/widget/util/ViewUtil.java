@@ -1,5 +1,6 @@
 package top.totoro.swing.widget.util;
 
+import top.totoro.swing.widget.base.BaseLayout;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.exception.LayoutException;
 import top.totoro.swing.widget.view.View;
@@ -21,6 +22,9 @@ public class ViewUtil {
                 clazz = Class.forName(VIEW_PACKAGE + viewName);
             }
             T layout = (T) clazz.getConstructor(View.class).newInstance(parent);
+            if (layout instanceof BaseLayout) {
+                return layout;
+            }
             layout.setAttribute(attribute);
             return layout;
         } catch (LayoutException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
