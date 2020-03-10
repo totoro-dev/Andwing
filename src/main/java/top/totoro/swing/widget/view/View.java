@@ -27,6 +27,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     private Map<String, View> containViewsById = new ConcurrentHashMap<>();
     private top.totoro.swing.widget.base.LayoutManager layoutManager;
     private OnClickListener clickListener;
+    private Cursor enterCursor = new Cursor(Cursor.DEFAULT_CURSOR);
     protected Attribute attribute;
     protected Component component;
     protected Context context;
@@ -58,6 +59,10 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 
     public void setLayoutManager(top.totoro.swing.widget.base.LayoutManager layoutManager) {
         this.layoutManager = layoutManager;
+    }
+
+    public void setEnterCursor(Cursor enterCursor) {
+        this.enterCursor = enterCursor;
     }
 
     /**
@@ -248,8 +253,8 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        if (clickListener != null) {
-            component.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        if (enterCursor != null && clickListener != null) {
+            component.setCursor(enterCursor);
         }
     }
 
