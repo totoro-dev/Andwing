@@ -27,7 +27,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
     private JLabel back = new JLabel("", JLabel.CENTER), min = new JLabel("", JLabel.CENTER), mid = new JLabel("", JLabel.CENTER), max = new JLabel("", JLabel.CENTER), close = new JLabel("", JLabel.CENTER);
     private JPanel content = new JPanel(null);
     private String titleText = "";
-    private JLabel title = new JLabel(titleText, JLabel.CENTER);
+    private JLabel title = new JLabel(titleText);
     private Point startDragLocation;
     private OnActionBarClickListener clickListener;
     private OnActivityDragListener dragListener;
@@ -35,18 +35,20 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
 
     public ActionBar(JComponent parent) {
         this.parent = parent;
-        setBackground(Color.white);
-        setLayout(null);
-        setLocation(0, 0);
         parent.add(this);
+        setBackground(Color.white);
+        setLocation(0, 0);
+        setLayout(null);
         add(back);
         add(min);
         add(mid);
         add(max);
         add(close);
         add(content);
+        title.setLocation(10, 0);
         content.add(title);
         initListener();
+        setBorder(1, Color.decode("#dbdbdb"));
     }
 
     private void initListener() {
@@ -61,9 +63,18 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
 
     public void resize() {
         int width = parent.getWidth(), height = 0;
-        if (this.height == Height.MIN) height = 25;
-        if (this.height == Height.MID) height = 30;
-        if (this.height == Height.MAX) height = 45;
+        if (this.height == Height.MIN) {
+            height = 25;
+            title.setFont(new Font(Font.SERIF, Font.PLAIN, 15));
+        }
+        if (this.height == Height.MID) {
+            height = 30;
+            title.setFont(new Font(Font.SERIF, Font.PLAIN, 18));
+        }
+        if (this.height == Height.MAX) {
+            height = 40;
+            title.setFont(new Font(Font.SERIF, Font.PLAIN, 21));
+        }
         setSize(width, height);
         parent.setSize(width, height);
         back.setSize(height, height);
@@ -86,6 +97,8 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
             content.setSize(width - 3 * height, height);
             content.setLocation(0, 0);
         }
+        // 标题的文本框大小有可能改变
+        setTitleText(titleText);
     }
 
     public void addOnActionBarClickListener(OnActionBarClickListener clickListener) {
@@ -118,6 +131,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
             resize();
             resizeListener.onResize();
         }
+        resetIcon();
     }
 
     // 不支持自定义宽度，必须占满父窗口的宽度
@@ -126,6 +140,11 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
     public void setTitleText(String titleText) {
         this.titleText = titleText;
         title.setText(titleText);
+        title.setSize(content.getWidth(), getHeight());
+    }
+
+    public void setTitleColor(Color color) {
+        title.setForeground(color);
     }
 
     public int getOrientation() {
@@ -151,9 +170,11 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
      */
     public void setBorder(int pixel, Color color) {
         if (orientation == HORIZONTAL) {
-            super.setBorder(BorderFactory.createMatteBorder(0, 0, pixel, 0, color));
+            setBorder(BorderFactory.createMatteBorder(0, 0, pixel, 0, color));
+            content.setBorder(BorderFactory.createMatteBorder(0, 0, pixel, 0, color));
         } else if (orientation == VERTICAL) {
-            super.setBorder(BorderFactory.createMatteBorder(0, 0, 0, pixel, color));
+            setBorder(BorderFactory.createMatteBorder(0, 0, 0, pixel, color));
+            content.setBorder(BorderFactory.createMatteBorder(0, 0, 0, pixel, color));
         }
     }
 

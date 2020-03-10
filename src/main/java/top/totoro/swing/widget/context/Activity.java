@@ -164,6 +164,22 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         onStop();
     }
 
+    protected void setActionBarHeight(ActionBar.Height height) {
+        mainBar.setHeight(height);
+    }
+
+    protected void setActionBarBorderColor(Color color) {
+        mainBar.setBorder(1, color);
+    }
+
+    protected void setTitle(String title) {
+        mainBar.setTitleText(title);
+    }
+
+    protected void setTitleColor(Color color) {
+        mainBar.setTitleColor(color);
+    }
+
     /**
      * 窗口变化时ActionBar会被重置
      */
