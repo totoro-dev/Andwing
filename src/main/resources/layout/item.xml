@@ -5,7 +5,7 @@
         height="wrap_content">
     <TextView
             id="item_tv"
-            text="测试多布局加载"
+            text="RecyclerView滑动布局测试"
             width="match_parent"
             height="match_parent"/>
     <ImageView

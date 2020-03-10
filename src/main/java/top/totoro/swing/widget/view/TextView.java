@@ -12,6 +12,7 @@ public class TextView extends View<ViewAttribute, JLabel> {
         component = new JLabel("", JLabel.CENTER);
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public void setAttribute(ViewAttribute attribute) {
         super.setAttribute(attribute);

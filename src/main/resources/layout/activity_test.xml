@@ -12,7 +12,7 @@
             height="match_parent"/>
     <TextView
             id="tv1"
-            text="Swing测试1！"
+            text="文本框测试！"
             textColor="#ff0000"
             opaque="true"
             background="#ebebeb"
@@ -20,55 +20,41 @@
             height="match_parent">
     </TextView>
 
-    <!--<TextView-->
-            <!--id="tv2"-->
-            <!--text="Swing测试2！"-->
-            <!--textSize="20"-->
-            <!--textColor="#ff0000"-->
-            <!--opaque="true"-->
-            <!--background="#cccccc"-->
-            <!--width="match_parent"-->
-            <!--height="wrap_content">-->
-    <!--</TextView>-->
     <LinearLayout
             id="linear_layout_2"
             background="#00ff00"
             width="match_parent"
             height="match_parent"
             orientation="vertical">
-        <TextView
-                id="tv3"
-                text="Swing测试3！"
-                textColor="#ff0000"
-                opaque="true"
-                background="#ebebeb"
-                width="wrap_content"
-                height="wrap_content">
-        </TextView>
-
-        <TextView
-                id="tv4"
-                text="Swing测试4！"
-                textSize="20"
-                textColor="#ff0000"
-                opaque="false"
-                background="#cccccc"
-                width="wrap_content"
-                height="wrap_content">
-        </TextView>
-        <ImageView
-                id="iv1"
-                width="50"
-                height="50"
-                src="img/link.png"/>
+        <LinearLayout
+                id="linear_layout_3"
+                background="#00ff00"
+                width="match_parent"
+                height="wrap_content"
+                orientation="horizontal">
+            <ImageView
+                    id="iv1"
+                    width="50"
+                    height="50"
+                    src="img/link.png"/>
+            <TextView
+                    opaque="false"
+                    text="ImageView测试"
+                    width="wrap_content"
+                    height="match_parent"/>
+        </LinearLayout>
         <Button
                 id="btn1"
-                text="按钮"
+                text="按钮测试"
                 background="#15a5e5"
                 textColor="#ffffff"
                 textSize="20"
                 width="wrap_content"
                 height="wrap_content"/>
-
+        <EditText
+                background="#ffffff"
+                width="match_parent"
+                height="wrap_content"
+                text="输入框测试"/>
     </LinearLayout>
 </LinearLayout>
