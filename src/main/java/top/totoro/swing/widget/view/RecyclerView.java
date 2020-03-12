@@ -41,14 +41,10 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
     private int verticalBarHeight = 0;
     private int verticalBarY = 0, clickY = 0;
     private int maxVerticalBarY = 0;
-    // 垂直方向上，滚轮滚动长度与容器高度的比例
-    private double vertical = 0;
 
     private int horizontalBarWidth = 0;
     private int horizontalBarX = 0, clickX = 0;
     private int maxHorizontalBarX = 0;
-    // 垂直方向上，滚轮滚动长度与容器高度的比例
-    double horizontal = 0;
 
     public RecyclerView(View parent) {
         super(parent);
@@ -93,7 +89,6 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             for (RecyclerView instance : list) {
                 if (instance == null) continue;
                 instance.setAdapter(this);
-//                instance.context.invalidate(); // 更新滚动条状态
             }
         }
 
@@ -106,7 +101,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         this.adapter = adapter;
         List<RecyclerView> list = instances.get(adapter);
         if (list == null) {
-            if (list == null) list = new ArrayList<>();
+            list = new ArrayList<>();
             list.add(this);
             instances.put(adapter, list);
         } else if (!list.contains(this)) {
@@ -147,21 +142,6 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         // 并且这样就不会在全局刷新时影响到container的布局
         component.add(container.getComponent());
         context.invalidate();
-    }
-
-    @Override
-    public void invalidate() {
-//        if (getAttribute().getWidth() == BaseAttribute.WRAP_CONTENT) {
-//            component.setSize(width > (getParent() == null ? width : getParent().getComponent().getWidth()) ? getParent().getComponent().getWidth() : width, component.getHeight());
-//            containerAttribute.setWidth(width);
-//            container.getComponent().setSize(width, container.getComponent().getHeight());
-//        }
-//        if (getAttribute().getHeight() == BaseAttribute.WRAP_CONTENT) {
-//            component.setSize(component.getWidth(), height > (getParent() == null ? height : getParent().getComponent().getHeight()) ? getParent().getComponent().getHeight() : height);
-//            containerAttribute.setHeight(height);
-//            container.getComponent().setSize(container.getComponent().getWidth(), height);
-//        }
-        super.invalidate();
     }
 
     /**
@@ -269,7 +249,8 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             containerAttribute.setWidth(component.getWidth());
             containerAttribute.setHeight(height);
             layoutManager.invalidate(container);
-            vertical = component.getHeight() / (double) height;
+            // 垂直方向上，滚轮滚动长度与容器高度的比例
+            double vertical = component.getHeight() / (double) height;
             verticalBarHeight = (int) (component.getHeight() * vertical);
             maxVerticalBarY = component.getHeight() - verticalBarHeight;
             verticalScrollBar.setBarHeight(verticalBarHeight);
@@ -280,7 +261,8 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             containerAttribute.setWidth(width);
             containerAttribute.setHeight(component.getHeight());
             layoutManager.invalidate(container);
-            horizontal = component.getWidth() / (double) width;
+            // 垂直方向上，滚轮滚动长度与容器高度的比例
+            double horizontal = component.getWidth() / (double) width;
             horizontalBarWidth = (int) (component.getWidth() * horizontal);
             maxHorizontalBarX = component.getWidth() - horizontalBarWidth;
             horizontalScrollBar.setBarWidth(horizontalBarWidth);

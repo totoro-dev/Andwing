@@ -38,6 +38,7 @@
                     height="50"
                     src="img/link.png"/>
             <TextView
+                    id="tv_2"
                     opaque="false"
                     text="ImageView测试"
                     width="wrap_content"
@@ -55,6 +56,7 @@
                 background="#ffffff"
                 width="match_parent"
                 height="wrap_content"
+                hintText="请输入"
                 text="输入框测试"/>
     </LinearLayout>
 </LinearLayout>

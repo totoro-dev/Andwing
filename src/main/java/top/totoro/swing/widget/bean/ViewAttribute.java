@@ -13,6 +13,8 @@ public class ViewAttribute extends BaseAttribute {
     private String textColor = AttributeDefaultValue.BLACK; // View中显示的文字颜色，默认黑色
     private int textSize = 16; // View中显示的文字大小
 
+    private String hintText = ""; // View中的默认文字
+
     public String getText() {
         return text;
     }
@@ -75,15 +77,24 @@ public class ViewAttribute extends BaseAttribute {
         this.textColor = textColor;
     }
 
+    public String getHintText() {
+        return hintText;
+    }
+
+    public void setHintText(String hintText) {
+        this.hintText = hintText;
+    }
+
     @Override
     public String toString() {
         return "ViewAttribute{" +
                 super.toString() + '\n' +
-                ", text='" + text + '\'' +
+                "  text='" + text + '\'' +
                 ", textStyle='" + textStyle + '\'' +
                 ", textFont='" + textFont + '\'' +
                 ", textColor='" + textColor + '\'' +
                 ", textSize=" + textSize +
+                ", hintText='" + hintText + '\'' +
                 '}';
     }
 }

@@ -16,11 +16,25 @@ public class EditText extends View<ViewAttribute, JTextField> {
     @Override
     public void setAttribute(ViewAttribute attribute) {
         super.setAttribute(attribute);
-        component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
-        component.setText(attribute.getText());
-        component.setForeground(Color.decode(attribute.getTextColor()));
         remeasureSize();
         component.setSize(attribute.getWidth(), attribute.getHeight());
+        if (!"".equals(attribute.getHintText())) {
+            setHint();
+        } else {
+            setContentText(attribute.getText());
+        }
+    }
+
+    private void setHint() {
+        component.setFont(new Font(attribute.getTextStyle(), Font.ITALIC, attribute.getTextSize()));
+        component.setForeground(Color.decode("#ababab"));
+        component.setText(attribute.getHintText());
+    }
+
+    private void setContentText(String text) {
+        component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
+        component.setText(text);
+        component.setForeground(Color.decode(attribute.getTextColor()));
     }
 
     /**

@@ -166,7 +166,7 @@ public class BaseAttribute {
     }
 
     public boolean isColor(String value) {
-        if (value == null || value.length() != 7 || !value.startsWith("#")) return false;
+        if (value == null || !value.startsWith("#") || value.length() != 7) return false;
         char[] cs = value.substring(1).toCharArray();
         for (char c : cs) {
             int ascii = Integer.parseInt(Integer.toString(c));
@@ -181,10 +181,7 @@ public class BaseAttribute {
     public boolean isSrcPath(String value) {
         if (value == null || value.length() == 0) return false;
         URL url = getClass().getClassLoader().getResource(value);
-        if (url == null) {
-            return false;
-        }
-        return true;
+        return url != null;
     }
 
     public String getResName() {

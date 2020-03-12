@@ -20,25 +20,31 @@ public class ActivityTest extends Activity {
         super.onCreate();
         setResizeable(true);
         setContentView("activity_test.xml");
+        // 测试Activity中的ActionBar
         setTitle("Java自适应UI框架");
         setTitleColor(Color.decode("#15a5e5"));
-//        setActionBarHeight(ActionBar.Height.MIN);
+        setActionBarHeight(ActionBar.Height.MID);
+        // 测试RecyclerView滑动布局的动态加载
         RecycleViewTestAdapter adapter = new RecycleViewTestAdapter();
+        RecyclerView rv = (RecyclerView) findViewById("rv1");
+        rv.setAdapter(adapter);
         Executors.newScheduledThreadPool(1).schedule(() -> {
-//            resetSize(400, 400);
+            // 测试窗口的大小动态改变后的内容自适应
+            resetSize(800, 500);
+            // 测试TextView文本框的属性修改
             TextView tv1 = (TextView) findViewById("tv1");
             tv1.setText("文本框测试：文本改变了!");
-//            tv1.setTextSize(16);
+            tv1.setTextSize(14);
             tv1.setTextColor(Color.BLACK);
             tv1.setTextStyle(AttributeDefaultValue.MONOSPACED);
             tv1.setTextFont(AttributeDefaultValue.ITALIC);
+            // 测试ImageView图片的动态变换
             ((ImageView) findViewById("iv1")).setBackgroundImage("img/collect.png");
-            RecyclerView rv = (RecyclerView) findViewById("rv1");
-            rv.setAdapter(adapter);
-        }, 500, TimeUnit.MILLISECONDS);
-//        Executors.newScheduledThreadPool(1).schedule(() -> {
-//            adapter.size = 60;
-//            adapter.notifyDataSetChange();
-//        }, 3000, TimeUnit.MILLISECONDS);
+        }, 3000, TimeUnit.MILLISECONDS);
+        Executors.newScheduledThreadPool(1).schedule(() -> {
+            // 测试RecyclerView内容动态更换
+            adapter.size = 60;
+            adapter.notifyDataSetChange();
+        }, 4000, TimeUnit.MILLISECONDS);
     }
 }

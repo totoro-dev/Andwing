@@ -18,9 +18,11 @@ public class AttributeUtil {
         LayoutAttribute layoutAttribute = new LayoutAttribute();
         // 验证属性中必须包含正确的height和width属性
         if (initialNecessaryAttribute(layoutAttribute, resName, nodeName, layout)) {
-            List<Attribute> attrs = layout.attributes();
-            for (Attribute attr :
-                    attrs) {
+            List attrs = layout.attributes();
+            for (Object object : attrs) {
+                Attribute attr;
+                if (object instanceof Attribute) attr = (Attribute) object;
+                else continue;
                 String name = attr.getName();
                 switch (name) {
                     case AttributeKey.HEIGHT:
@@ -50,23 +52,26 @@ public class AttributeUtil {
         ViewAttribute viewAttribute = new ViewAttribute();
         // 验证属性中必须包含正确的height和width属性
         if (initialNecessaryAttribute(viewAttribute, resName, nodeName, view)) {
-            List<Attribute> attrs = view.attributes();
-            for (Attribute attr :
-                    attrs) {
+            List attrs = view.attributes();
+            for (Object object : attrs) {
+                Attribute attr;
+                if (object instanceof Attribute) attr = (Attribute) object;
+                else continue;
                 String name = attr.getName();
                 switch (name) {
+                    case AttributeKey.HEIGHT:
+                    case AttributeKey.WIDTH:
+                        continue;
                     case AttributeKey.ID:
                     case AttributeKey.TEXT:
                     case AttributeKey.TEXT_STYLE:
                     case AttributeKey.TEXT_FONT:
                     case AttributeKey.TEXT_COLOR:
+                    case AttributeKey.HINT_TEXT:
                         invokeSet(name, attr.getValue(), String.class, viewAttribute);
                         continue;
                     case AttributeKey.TEXT_SIZE:
                         invokeSet(name, Integer.parseInt(attr.getValue()), int.class, viewAttribute);
-                        continue;
-                    case AttributeKey.HEIGHT:
-                    case AttributeKey.WIDTH:
                         continue;
                 }
                 getBaseAttribute(name, attr, viewAttribute);
@@ -132,7 +137,7 @@ public class AttributeUtil {
                         // 判断是什么属性的错误
                         if (name.equals(AttributeKey.BACKGROUND)) {
                             throw AttributeException.getValueInvalid(baseAttribute, name, attr.getValue(), "必须是颜色值或图片资源");
-                        }else if (name.equals(AttributeKey.SRC)) {
+                        } else if (name.equals(AttributeKey.SRC)) {
                             throw AttributeException.getValueInvalid(baseAttribute, name, attr.getValue(), "必须是颜色值或图片资源");
                         } else {
                             throw AttributeException.getValueInvalid(baseAttribute, name, attr.getValue(), "是非法的");
