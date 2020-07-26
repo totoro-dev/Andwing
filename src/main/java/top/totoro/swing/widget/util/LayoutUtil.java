@@ -25,6 +25,9 @@ public class LayoutUtil {
             }
             T layout = (T) clazz.getConstructor(View.class).newInstance(parent);
             layout.setAttribute(attribute);
+            /* add by HLM on 2020/7/26 解决点击其它视图，下拉框可以被隐藏的功能 */
+            layout.getComponent().addMouseListener(layout);
+            layout.setParentListener(parent);
             return layout;
         } catch (LayoutException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();

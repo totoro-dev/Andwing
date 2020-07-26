@@ -47,6 +47,10 @@ public class BaseLayout extends View<LayoutAttribute, JPanel> {
      * 重新测量所有含match_parent属性的子控件的宽度
      */
     public void remeasureMatchParentChildViewWidth() {
+        if (getAttribute().getVisible() == BaseAttribute.GONE){
+            getComponent().setSize(0, 0);
+            return;
+        }
         if (matchParentWidthViews.size() == 0) return;
         if (getAttribute().getWidth() == BaseAttribute.WRAP_CONTENT) return;
         int width = (component.getWidth() - currNoMatchWidth) / matchParentWidthViews.size();
@@ -60,6 +64,10 @@ public class BaseLayout extends View<LayoutAttribute, JPanel> {
      * 重新测量所有含match_parent属性的子控件的高度
      */
     public void remeasureMatchParentChildViewHeight() {
+        if (getAttribute().getVisible() == BaseAttribute.GONE){
+            getComponent().setSize(0, 0);
+            return;
+        }
         if (matchParentHeightViews.size() == 0) return;
         if (getAttribute().getHeight() == BaseAttribute.WRAP_CONTENT) return;
         int height = (component.getHeight() - currNoMatchHeight) / matchParentHeightViews.size();

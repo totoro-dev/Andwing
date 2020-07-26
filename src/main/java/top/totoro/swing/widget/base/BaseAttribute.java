@@ -1,12 +1,15 @@
 package top.totoro.swing.widget.base;
 
 import org.dom4j.Attribute;
+import org.dom4j.Element;
 import top.totoro.swing.widget.exception.AttributeException;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
 
 import java.net.URL;
 
 public class BaseAttribute {
+    /* 布局节点元素，不同的视图可以自己处理自己想要的属性 */
+    private Element element;
 
     private String resName = "";
     private String nodeName = "";
@@ -31,6 +34,14 @@ public class BaseAttribute {
 
     private String background = "#ffffff";
     private String src = "";
+
+    public Element getElement() {
+        return element;
+    }
+
+    public void setElement(Element element) {
+        this.element = element;
+    }
 
     public String getId() {
         return id;

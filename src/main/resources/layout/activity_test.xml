@@ -20,6 +20,14 @@
             height="match_parent">
     </TextView>
 
+    <Spinner
+            width="200"
+            height="30"
+            array="1,2"
+            enterColor="#dbdbdb"
+            selectedColor="#15a5e5"
+            text="下拉框"/>
+
     <LinearLayout
             id="linear_layout_2"
             background="#00ff00"

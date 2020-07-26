@@ -47,4 +47,8 @@ public class ActivityTest extends Activity {
             adapter.notifyDataSetChange();
         }, 4000, TimeUnit.MILLISECONDS);
     }
+
+    public static void main(String[] args) {
+        newInstance(new Dimension(600, 600)).startActivity(ActivityTest.class);
+    }
 }

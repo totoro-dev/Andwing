@@ -95,7 +95,10 @@ public class LinearLayoutManager extends LayoutManager {
             LayoutAttribute layoutAttribute = AttributeUtil.getLayoutAttribute(res, root);
             mainView = LayoutUtil.createLayout(mainLayout, root.getName(), layoutAttribute);
             if (mainView == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
-            mainView.setId(layoutAttribute.getId());
+            /* add by HLM on 2020/7/26 解决子布局加载时发生id冲突 */
+            if (attachRoot) {
+                mainView.setId(layoutAttribute.getId());
+            }
             attachLayout(mainView, root, res, attachRoot);
         } catch (FileNotFoundException | DocumentException | AttributeException e) {
             e.printStackTrace();
@@ -186,6 +189,11 @@ public class LinearLayoutManager extends LayoutManager {
      * 首先测量可以有确定值设置的控件（Layout、View）
      */
     private void measureAllViewSizeAsValue(View item) {
+        if (item.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setWidth(item, 0);
+            setHeight(item, 0);
+            return;
+        }
         if (isWidthAsValue(item)) {
             item.getComponent().setSize(item.getAttribute().getWidth(), item.getHeight());
         }
@@ -207,6 +215,11 @@ public class LinearLayoutManager extends LayoutManager {
      * @param layout
      */
     private void measureSizeAsValueInLayout(BaseLayout layout) {
+        if (layout.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setWidth(layout, 0);
+            setHeight(layout, 0);
+            return;
+        }
         sonViews = layout.getSonViews();
         for (View son : sonViews) {
             if (son instanceof BaseLayout) {
@@ -223,6 +236,11 @@ public class LinearLayoutManager extends LayoutManager {
      * @param item
      */
     private void measureNormalViewSizeAsWrap(View item) {
+        if (item.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setWidth(item, 0);
+            setHeight(item, 0);
+            return;
+        }
         // 按节点View允许最小的大小进行设置
         if (isWidthAsWrap(item)) {
             item.getComponent().setSize(item.getMinWidth(), item.getHeight());
@@ -239,6 +257,11 @@ public class LinearLayoutManager extends LayoutManager {
      * @param layout
      */
     private void measureLayoutSizeAsWrap(BaseLayout layout) {
+        if (layout.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setWidth(layout, 0);
+            setHeight(layout, 0);
+            return;
+        }
         // layout的布局方向
         boolean vertical = isVertical(layout), horizontal = isHorizontal(layout);
         // layout是否是wrap的
@@ -320,6 +343,10 @@ public class LinearLayoutManager extends LayoutManager {
      * @param layout
      */
     private void remeasureSonWidthAsMatch(BaseLayout layout) {
+        if (layout.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setWidth(layout, 0);
+            return;
+        }
         if (isVertical(layout)) {
             // 重置子节点为match的值
             sonViews = layout.getSonViews();
@@ -341,6 +368,10 @@ public class LinearLayoutManager extends LayoutManager {
      * @param layout
      */
     private void remeasureSonHeightAsMatch(BaseLayout layout) {
+        if (layout.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setHeight(layout, 0);
+            return;
+        }
         if (isHorizontal(layout)) {
             // 重置子节点为match的值
             sonViews = layout.getSonViews();
@@ -362,6 +393,10 @@ public class LinearLayoutManager extends LayoutManager {
      * @param son Layout宽度为wrap的子控件
      */
     private void measureSonNormalViewWidthMatchToWrap(View son) {
+        if (son.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setWidth(son, 0);
+            return;
+        }
         if (!isWidthAsValue(son)) {
             // 只有子View没有指定确定值时才设置为wrap
             setWidth(son, son.getMinWidth());
@@ -374,6 +409,10 @@ public class LinearLayoutManager extends LayoutManager {
      * @param son Layout宽度为match的子控件
      */
     private void measureSonNormalViewHeightMatchToWrap(View son) {
+        if (son.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setHeight(son, 0);
+            return;
+        }
         if (!isHeightAsValue(son)) {
             // 只有子View没有指定确定值时才设置为wrap
             setHeight(son, son.getMinHeight());
@@ -390,6 +429,11 @@ public class LinearLayoutManager extends LayoutManager {
         if (item.getParent() != null) {
             measureViewWidthAsMatch((BaseLayout) item.getParent(), item);
             measureViewHeightAsMatch((BaseLayout) item.getParent(), item);
+        }
+        if (item.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setWidth(item, 0);
+            setHeight(item, 0);
+            return;
         }
         if (item instanceof BaseLayout) {
             if (item.getParent() != null) {
@@ -415,6 +459,10 @@ public class LinearLayoutManager extends LayoutManager {
      * @param son    子View（可能也是一个layout）
      */
     private void measureViewWidthAsMatch(BaseLayout parent, View son) {
+        if (son.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setWidth(son, 0);
+            return;
+        }
         if (isHorizontal(parent)) {
             if (isWidthAsMatch(parent)) {
                 if (isWidthAsMatch(son)) {
@@ -439,6 +487,10 @@ public class LinearLayoutManager extends LayoutManager {
      * @param son    子View（可能也是一个layout）
      */
     private void measureViewHeightAsMatch(BaseLayout parent, View son) {
+        if (son.getAttribute().getVisible() == BaseAttribute.GONE) {
+            setHeight(son, 0);
+            return;
+        }
         if (isVertical(parent)) {
             if (isHeightAsMatch(parent)) {
                 if (isHeightAsMatch(son)) {
@@ -462,10 +514,12 @@ public class LinearLayoutManager extends LayoutManager {
      * @param parent 一个父节点，根据这个父节点，查找子节点并设置位置
      */
     private void measureLocation(View parent) {
+        if (parent.getAttribute().getVisible() == BaseAttribute.GONE) return;
         int startX = 0, startY = 0;
         sonViews = parent.getSonViews();
         for (View son : sonViews) {
             if (son == null) continue;
+            if (son.getAttribute().getVisible() == BaseAttribute.GONE) continue;
             if (son.getParent() != null) {
                 if (isVertical((BaseLayout) son.getParent())) {
                     startY += son.getAttribute().getStartY();

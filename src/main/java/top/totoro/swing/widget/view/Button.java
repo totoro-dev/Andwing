@@ -15,7 +15,7 @@ public class Button extends TextView {
         component = new JLabel("", JLabel.CENTER) {
             @Override
             public void paint(Graphics g) {
-                paintBoder(g); // 绘制按钮边框
+                Button.this.paintBorder(g); // 绘制按钮边框
                 super.paint(g);
             }
         };
@@ -61,7 +61,7 @@ public class Button extends TextView {
         this.bg = bg;
     }
 
-    private void paintBoder(Graphics g) {
+    private void paintBorder(Graphics g) {
         PaintUtil.drawButtonRadius(g, bg, component.getWidth(), component.getHeight());
     }
 }

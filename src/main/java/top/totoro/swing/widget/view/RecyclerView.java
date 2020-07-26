@@ -131,7 +131,9 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         height = 0;
         for (int i = 0; i < count; i++) {
             ViewHolder item = adapter.onCreateViewHolder(null);
-            item.getView().setContext(context);
+//            item.getView().setContext(context);
+//            item.getView().setLayoutManager(layoutManager);
+            item.getView().setParentListener(this);
             adapter.onBindViewHolder(item, i, adapter.getViewType(i));
             container.addChildView(item.getView());
             layoutManager.invalidate((BaseLayout) item.getView());
@@ -160,6 +162,8 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         height = 0;
         for (int i = 0; i < count; i++) {
             ViewHolder item = adapter.onCreateViewHolder(null);
+            item.getView().setLayoutManager(layoutManager);
+            item.getView().setParentListener(this);
             adapter.onBindViewHolder(item, i, adapter.getViewType(i));
             container.addChildView(item.getView());
             layoutManager.invalidate((BaseLayout) item.getView());
@@ -419,6 +423,14 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
 
         @Override
         public void mouseEntered(MouseEvent e) {
+            if (component.getHeight() >= container.getComponent().getHeight() && orientation == VERTICAL) {
+                Log.d("mouseEntered", "is vertical but not visible");
+                return;
+            }
+            if (component.getWidth() >= container.getComponent().getWidth() && orientation == HORIZONTAL) {
+                Log.d("mouseEntered", "is horizontal but not visible");
+                return;
+            }
             verticalScrollBar.setVisible(true);
         }
 
@@ -459,6 +471,14 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
 
         @Override
         public void mouseEntered(MouseEvent e) {
+            if (component.getHeight() >= container.getComponent().getHeight() && orientation == VERTICAL) {
+                Log.d("mouseEntered", "is vertical but not visible");
+                return;
+            }
+            if (component.getWidth() >= container.getComponent().getWidth() && orientation == HORIZONTAL) {
+                Log.d("mouseEntered", "is horizontal but not visible");
+                return;
+            }
             horizontalScrollBar.setVisible(true);
         }
 
@@ -492,4 +512,18 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         horizontalScrollBar.setMouseMotionListener(horizontalMouseMotionLister);
     }
 
+    /* 解决被ViewHolder拦截，无法监听到鼠标事件的问题 */
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        super.mouseEntered(e);
+        verticalMouseListener.mouseEntered(e);
+        horizontalMouseListener.mouseEntered(e);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        super.mouseExited(e);
+        verticalMouseListener.mouseExited(e);
+        horizontalMouseListener.mouseExited(e);
+    }
 }

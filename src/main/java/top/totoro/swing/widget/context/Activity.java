@@ -9,6 +9,7 @@ import top.totoro.swing.widget.listener.OnActivityDragListener;
 import top.totoro.swing.widget.listener.OnActivityResizeListener;
 import top.totoro.swing.widget.listener.deafultImpl.DefaultActivityResizeMouseListener;
 import top.totoro.swing.widget.util.SwingConstants;
+import top.totoro.swing.widget.view.View;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     private OnActivityResizeListener resizeListener;
     private DefaultActivityResizeMouseListener defaultActivityResizeMouseListener;
     private boolean resizeable = true; // 是否允许窗口缩放
-    private ActionBar mainBar;
+    public ActionBar mainBar;
     private JPanel actionBarPanel = new JPanel(null);
     private Point normalLocation;
     private Dimension normalSize;
@@ -65,10 +66,6 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         return activity;
     }
 
-    public static void main(String[] args) {
-        newInstance(new Dimension(600, 600)).startActivity(ActivityTest.class);
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -100,6 +97,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         } else {
             // 默认居中
             frame.setLocationRelativeTo(null);
+            setLocation(frame.getLocation());
         }
 
         defaultActivityResizeMouseListener.init(this);
@@ -242,6 +240,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         getMainView().getComponent().setSize(frame.getWidth(), frame.getHeight() - actionBarPanel.getHeight());
         invalidate();
         defaultActivityResizeMouseListener.resetFrameBoundRect();
+        /* add by HLM on 2020/7/26 解决显示中的下拉框跟随窗口移动的功能 */
+        if (View.mShowingSpinner != null) {
+            View.mShowingSpinner.moveTo();
+        }
     };
 
     /**
@@ -252,6 +254,11 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
      */
     public void resetLocation(int x, int y) {
         frame.setLocation(x, y);
+        setLocation(frame.getLocation());
+        /* add by HLM on 2020/7/26 解决显示中的下拉框跟随窗口移动的功能 */
+        if (View.mShowingSpinner != null) {
+            View.mShowingSpinner.moveTo();
+        }
     }
 
     /**

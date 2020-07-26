@@ -170,10 +170,10 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
      */
     public void setBorder(int pixel, Color color) {
         if (orientation == HORIZONTAL) {
-            setBorder(BorderFactory.createMatteBorder(0, 0, pixel, 0, color));
-            content.setBorder(BorderFactory.createMatteBorder(0, 0, pixel, 0, color));
+            setBorder(BorderFactory.createMatteBorder(pixel, pixel, pixel, pixel, color));
+            content.setBorder(BorderFactory.createMatteBorder(pixel, pixel, pixel, 0, color));
         } else if (orientation == VERTICAL) {
-            setBorder(BorderFactory.createMatteBorder(0, 0, 0, pixel, color));
+            setBorder(BorderFactory.createMatteBorder(pixel, pixel, pixel, pixel, color));
             content.setBorder(BorderFactory.createMatteBorder(0, 0, 0, pixel, color));
         }
     }

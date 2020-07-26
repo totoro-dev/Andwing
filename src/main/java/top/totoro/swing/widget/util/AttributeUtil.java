@@ -16,6 +16,7 @@ public class AttributeUtil {
     public static LayoutAttribute getLayoutAttribute(String resName, Element layout) {
         String nodeName = layout.getName();
         LayoutAttribute layoutAttribute = new LayoutAttribute();
+        layoutAttribute.setElement(layout);
         // 验证属性中必须包含正确的height和width属性
         if (initialNecessaryAttribute(layoutAttribute, resName, nodeName, layout)) {
             List attrs = layout.attributes();
@@ -50,6 +51,8 @@ public class AttributeUtil {
     public static ViewAttribute getViewAttribute(String resName, Element view) {
         String nodeName = view.getName();
         ViewAttribute viewAttribute = new ViewAttribute();
+        // add by HLM on 2020/7/26 解决不同视图可以自定义属性功能，避免ViewAttribute太过冗余 */
+        viewAttribute.setElement(view);
         // 验证属性中必须包含正确的height和width属性
         if (initialNecessaryAttribute(viewAttribute, resName, nodeName, view)) {
             List attrs = view.attributes();

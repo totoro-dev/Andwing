@@ -4,8 +4,10 @@ import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.context.Context;
 import top.totoro.swing.widget.listener.OnClickListener;
+import top.totoro.swing.widget.util.Log;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -27,10 +29,15 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     private Map<String, View> containViewsById = new ConcurrentHashMap<>();
     private top.totoro.swing.widget.base.LayoutManager layoutManager;
     private OnClickListener clickListener;
+    /* 对应上一级视图的事件监听，由于每个View都直接实现了Listener，所以只需要传入对应的上一级视图即可。 */
+    /* 可以将当前视图的事件通过该监听传递给上一级视图，避免被拦截，与parent不同的是不会发生视图的绑定 */
+    private View<BaseAttribute, JComponent> parentListener;
     private Cursor enterCursor = new Cursor(Cursor.DEFAULT_CURSOR);
     protected Attribute attribute;
     protected Component component;
     protected Context context;
+    /* 当前正在显示的下拉框 */
+    public static Spinner mShowingSpinner;
 
     public View(View parent) {
         this.parent = parent;
@@ -43,6 +50,10 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     public void addOnClickListener(OnClickListener clickListener) {
         this.clickListener = clickListener;
         component.addMouseListener(this);
+    }
+
+    public void setParentListener(View<BaseAttribute, JComponent> parentListener) {
+        this.parentListener = parentListener;
     }
 
     public void removeAllSon() {
@@ -68,7 +79,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     /**
      * 当前布局刷新时，确定可以冒泡刷新的最大范围
      */
-    protected void invalidateSuper() {
+    public void invalidateSuper() {
         if (context != null) {
             context.invalidate();
         } else if (getLayoutManager() != null) {
@@ -161,6 +172,10 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         }
     }
 
+    public void setBorder(Border border) {
+        component.setBorder(border);
+    }
+
     public int getMinWidth() {
         return minWidth;
     }
@@ -236,9 +251,27 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 
     }
 
+    public void setVisible(int visible) {
+        attribute.setVisible(visible);
+        component.setVisible(attribute.getVisible() == ViewAttribute.VISIBLE);
+        invalidateSuper();
+    }
+
+    public boolean getVisible() {
+        return attribute.getVisible() == ViewAttribute.VISIBLE;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
-        clickListener.onClick(this);
+        if (mShowingSpinner != null && !(this instanceof Spinner)) {
+            mShowingSpinner.dismiss();
+        }
+        if (clickListener != null) {
+            clickListener.onClick(this);
+        }
+        if (parentListener != null) {
+            parentListener.mouseClicked(e);
+        }
     }
 
     @Override
@@ -256,12 +289,18 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         if (enterCursor != null && clickListener != null) {
             component.setCursor(enterCursor);
         }
+        if (parentListener != null) {
+            parentListener.mouseEntered(e);
+        }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         if (clickListener != null) {
             component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
+        if (parentListener != null) {
+            parentListener.mouseExited(e);
         }
     }
 
