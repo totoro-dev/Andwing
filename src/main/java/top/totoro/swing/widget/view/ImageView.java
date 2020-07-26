@@ -105,7 +105,7 @@ public class ImageView extends View<ViewAttribute, JLabel> implements Invalidate
     }
 
     @Override
-    public void onFinished() {
+    public void onInvalidateFinished() {
         reSizeAsComponentSize();
     }
 }

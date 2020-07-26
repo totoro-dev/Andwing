@@ -63,7 +63,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
     }
 
     @Override
-    public void onFinished() {
+    public void onInvalidateFinished() {
         reSizeScrollBar();
     }
 
@@ -131,9 +131,12 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         height = 0;
         for (int i = 0; i < count; i++) {
             ViewHolder item = adapter.onCreateViewHolder(null);
+            /* remove by HLM on 2020/7/26 解决ViewHolder的刷新影响全局刷新的问题 */
 //            item.getView().setContext(context);
-//            item.getView().setLayoutManager(layoutManager);
+            /* remove end */
+            /* add by HLM on 2020/7/26 解决鼠标等事件被ViewHolder中的view拦截问题 */
             item.getView().setParentListener(this);
+            /* add end */
             adapter.onBindViewHolder(item, i, adapter.getViewType(i));
             container.addChildView(item.getView());
             layoutManager.invalidate((BaseLayout) item.getView());
@@ -143,6 +146,9 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         // 不使用addChildView，是为了不将container与RecyclerView捆绑，从而发生id冲突
         // 并且这样就不会在全局刷新时影响到container的布局
         component.add(container.getComponent());
+        /* add by HLM on 2020/04/23 解决无法显示的问题 */
+        containerAttribute.setHeight(height);
+        /* add end */
         context.invalidate();
     }
 
@@ -162,8 +168,10 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         height = 0;
         for (int i = 0; i < count; i++) {
             ViewHolder item = adapter.onCreateViewHolder(null);
-            item.getView().setLayoutManager(layoutManager);
+//            item.getView().setLayoutManager(layoutManager);
+            /* add by HLM on 2020/7/26 解决鼠标等事件被ViewHolder中的view拦截问题 */
             item.getView().setParentListener(this);
+            /* add end */
             adapter.onBindViewHolder(item, i, adapter.getViewType(i));
             container.addChildView(item.getView());
             layoutManager.invalidate((BaseLayout) item.getView());
@@ -171,6 +179,9 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             if (height < item.getView().getComponent().getHeight()) height = item.getView().getComponent().getHeight();
         }
         component.add(container.getComponent());
+        /* add by HLM on 2020/04/23 解决无法显示的问题 */
+        containerAttribute.setWidth(width);
+        /* add end */
         context.invalidate();
     }
 

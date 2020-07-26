@@ -65,7 +65,7 @@ public class Context implements ContextWrapper {
             layoutManager.invalidate();
             for (InvalidateListener listener :
                     invalidateListenerList) {
-                listener.onFinished();
+                listener.onInvalidateFinished();
             }
         }
     }

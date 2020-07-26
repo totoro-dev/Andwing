@@ -339,12 +339,12 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     }
 
     @Override
-    public void onDrag(Point start, int x, int y) {
+    public void onActivityDrag(Point start, int x, int y) {
         resetLocation(frame.getX() - start.x + x, frame.getY() - start.y + y);
     }
 
     @Override
-    public void onResize() {
+    public void onActionBarResize() {
         resetSize();
     }
 }

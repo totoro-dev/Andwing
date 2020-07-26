@@ -272,6 +272,7 @@ public class LinearLayoutManager extends LayoutManager {
         for (View son : sonViews) {
             if (son == null) continue;
             if (son.getSonViews().size() > 0 && son instanceof BaseLayout) {
+                // 这个子控件是一个layout
                 measureLayoutSizeAsWrap((BaseLayout) son);
                 if (widthWrap) {
                     if (vertical) {
@@ -287,7 +288,11 @@ public class LinearLayoutManager extends LayoutManager {
                 if (heightWrap) {
                     if (vertical) {
                         // 垂直布局，高度以所有子控件高度累加为准
-                        maxHeight += son.getHeight();
+                        if (isHeightAsWrap(son) || isHeightAsMatch(son)) {
+                            maxHeight += son.getMinHeight();
+                        } else {
+                            maxHeight += son.getHeight();
+                        }
                     } else {
                         // 横向布局，高度以所有子控件高度最大值为准
                         if (maxHeight < son.getHeight()) {
@@ -313,7 +318,12 @@ public class LinearLayoutManager extends LayoutManager {
                     measureSonNormalViewHeightMatchToWrap(son);
                     if (vertical) {
                         // 垂直布局，高度以所有子控件高度累加为准
-                        maxHeight += son.getHeight();
+                        if (isHeightAsWrap(son) || isHeightAsMatch(son)) {
+                            maxHeight += son.getMinHeight();
+                            setHeight(son,son.getMinHeight());
+                        } else {
+                            maxHeight += son.getHeight();
+                        }
                     } else {
                         // 横向布局，高度以所有子控件高度最大值为准
                         if (maxHeight < son.getHeight()) {

@@ -129,7 +129,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
         if (resizeListener != null) {
             this.height = height;
             resize();
-            resizeListener.onResize();
+            resizeListener.onActionBarResize();
         }
         resetIcon();
     }
@@ -299,7 +299,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
     @Override
     public void mouseDragged(MouseEvent e) {
         if (e.getSource() == content && dragListener != null) {
-            dragListener.onDrag(startDragLocation, e.getX(), e.getY());
+            dragListener.onActivityDrag(startDragLocation, e.getX(), e.getY());
         }
     }
 
