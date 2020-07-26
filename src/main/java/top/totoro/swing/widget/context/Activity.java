@@ -240,7 +240,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         getMainView().getComponent().setSize(frame.getWidth(), frame.getHeight() - actionBarPanel.getHeight());
         invalidate();
         defaultActivityResizeMouseListener.resetFrameBoundRect();
-        /* add by HLM on 2020/7/26 解决显示中的下拉框跟随窗口移动的功能 */
+        /* add by HLM on 2020/7/26 解决显示中的下拉框由于窗口大小拉伸而跟随移动的功能 */
         if (View.mShowingSpinner != null) {
             View.mShowingSpinner.moveTo();
         }
@@ -307,6 +307,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
     @Override
     public void onMinClick() {
+        /* add by HLM on 2020/7/27 解决显示中的下拉框在窗体最小化时的隐藏功能 */
+        if (View.mShowingSpinner != null) {
+            View.mShowingSpinner.dismiss();
+        }
         frame.setExtendedState(JFrame.ICONIFIED);
     }
 
@@ -327,6 +331,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
     @Override
     public void onCloseClick() {
+        /* add by HLM on 2020/7/27 解决显示中的下拉框在窗体销毁时的隐藏功能 */
+        if (View.mShowingSpinner != null) {
+            View.mShowingSpinner.dismiss();
+        }
         frame.dispose();
     }
 
