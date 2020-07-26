@@ -82,7 +82,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
         mid.setSize(height, height);
         max.setSize(height, height);
         close.setSize(height, height);
-        back.setLocation(10, 0);
+        back.setLocation(0, 0);
         min.setLocation(width - 3 * height, 0);
         mid.setLocation(width - 2 * height, 0);
         max.setLocation(width - 2 * height, 0);
@@ -118,6 +118,11 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
         canMax = !can;
         mid.setVisible(canMid);
         max.setVisible(canMax);
+    }
+
+    public void canBack(boolean can){
+        canBack = can;
+        resize();
     }
 
     /**

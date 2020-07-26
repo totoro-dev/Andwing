@@ -18,7 +18,7 @@ public class Context implements ContextWrapper {
     private Dimension size;
     private BaseLayout mainView = new LinearLayout(null);
     protected LinearLayoutManager layoutManager = new LinearLayoutManager();
-    private List<InvalidateListener> invalidateListenerList = new ArrayList<>();
+    protected List<InvalidateListener> invalidateListenerList = new ArrayList<>();
 
     public void requestInvalidateListener(InvalidateListener listener) {
         invalidateListenerList.remove(listener);

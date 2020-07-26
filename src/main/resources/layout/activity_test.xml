@@ -61,10 +61,18 @@
                 width="wrap_content"
                 height="wrap_content"/>
         <EditText
+                id="et1"
                 background="#ffffff"
                 width="match_parent"
                 height="wrap_content"
                 hintText="请输入"
-                text="输入框测试"/>
+                text="输入框测试1"/>
+        <EditText
+                id="et2"
+                background="#ffffff"
+                width="match_parent"
+                height="wrap_content"
+                hintText="请输入"
+                text="输入框测试2"/>
     </LinearLayout>
 </LinearLayout>

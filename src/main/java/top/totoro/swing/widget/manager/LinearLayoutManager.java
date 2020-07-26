@@ -16,8 +16,6 @@ import top.totoro.swing.widget.util.AttributeUtil;
 import top.totoro.swing.widget.util.LayoutUtil;
 import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.util.ViewUtil;
-import top.totoro.swing.widget.view.ImageView;
-import top.totoro.swing.widget.view.RecyclerView;
 import top.totoro.swing.widget.view.View;
 
 import java.io.FileNotFoundException;

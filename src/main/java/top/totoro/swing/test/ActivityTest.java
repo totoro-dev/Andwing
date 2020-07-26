@@ -2,8 +2,10 @@ package top.totoro.swing.test;
 
 import top.totoro.swing.widget.bar.ActionBar;
 import top.totoro.swing.widget.context.Activity;
+import top.totoro.swing.widget.listener.OnTextChangeListener;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
 import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.view.EditText;
 import top.totoro.swing.widget.view.ImageView;
 import top.totoro.swing.widget.view.RecyclerView;
 import top.totoro.swing.widget.view.TextView;
@@ -24,6 +26,15 @@ public class ActivityTest extends Activity {
         setTitle("Java自适应UI框架");
         setTitleColor(Color.decode("#15a5e5"));
         setActionBarHeight(ActionBar.Height.MID);
+
+        EditText et1 = (EditText) findViewById("et1");
+        et1.addOnTextChangeListener(new OnTextChangeListener() {
+            @Override
+            public void onChange(String currentText) {
+//                System.out.println(currentText);
+            }
+        });
+//        setCanBack(true);
         // 测试RecyclerView滑动布局的动态加载
         RecycleViewTestAdapter adapter = new RecycleViewTestAdapter();
         RecyclerView rv = (RecyclerView) findViewById("rv1");

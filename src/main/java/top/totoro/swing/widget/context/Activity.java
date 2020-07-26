@@ -1,6 +1,5 @@
 package top.totoro.swing.widget.context;
 
-import top.totoro.swing.test.ActivityTest;
 import top.totoro.swing.widget.bar.ActionBar;
 import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.listener.OnActionBarClickListener;
@@ -178,6 +177,12 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         mainBar.setTitleColor(color);
     }
 
+    public void setCanBack(boolean canBack) {
+        if (mainBar != null) {
+            mainBar.canBack(canBack);
+        }
+    }
+
     /**
      * 窗口变化时ActionBar会被重置
      */
@@ -300,11 +305,17 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         onStart();
     }
 
+    /**
+     * 点击了返回按钮
+     */
     @Override
     public void onBackClick() {
-
+        System.out.println("返回");
     }
 
+    /**
+     * 窗体最小化
+     */
     @Override
     public void onMinClick() {
         /* add by HLM on 2020/7/27 解决显示中的下拉框在窗体最小化时的隐藏功能 */
@@ -314,12 +325,18 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         frame.setExtendedState(JFrame.ICONIFIED);
     }
 
+    /**
+     * 窗体恢复大小
+     */
     @Override
     public void onMidClick() {
         resetLocation(normalLocation.x, normalLocation.y);
         resetSize(normalSize.width, normalSize.height);
     }
 
+    /**
+     * 窗体最大化
+     */
     @Override
     public void onMaxClick() {
         normalSize = frame.getSize();
@@ -329,6 +346,9 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         resetSize(screen.width, screen.height);
     }
 
+    /**
+     * 关闭窗口
+     */
     @Override
     public void onCloseClick() {
         /* add by HLM on 2020/7/27 解决显示中的下拉框在窗体销毁时的隐藏功能 */
@@ -338,11 +358,21 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         frame.dispose();
     }
 
+    /**
+     * 窗体拖拽
+     *
+     * @param start 鼠标开始按住的位置
+     * @param x     鼠标当前的x坐标
+     * @param y     鼠标当前的y坐标
+     */
     @Override
     public void onActivityDrag(Point start, int x, int y) {
         resetLocation(frame.getX() - start.x + x, frame.getY() - start.y + y);
     }
 
+    /**
+     * 标题栏的大小发生改变
+     */
     @Override
     public void onActionBarResize() {
         resetSize();
