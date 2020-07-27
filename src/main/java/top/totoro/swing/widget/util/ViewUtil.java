@@ -21,13 +21,14 @@ public class ViewUtil {
             } else {
                 clazz = Class.forName(VIEW_PACKAGE + viewName);
             }
+            Thread.sleep(1);
             T layout = (T) clazz.getConstructor(View.class).newInstance(parent);
             if (layout instanceof BaseLayout) {
                 return layout;
             }
             layout.setAttribute(attribute);
             return layout;
-        } catch (LayoutException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (LayoutException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | InterruptedException e) {
             if (e instanceof ClassNotFoundException) {
                 new LayoutException(attribute.getResName() + "文件中的 " + viewName + " 不存在。").printStackTrace();
                 return null;

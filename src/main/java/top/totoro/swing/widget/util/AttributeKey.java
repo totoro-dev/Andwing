@@ -24,4 +24,13 @@ public final class AttributeKey {
 
     public static final String HINT_TEXT = "hintText";
 
+    public static final String arrayAttrKey = "array";
+    public static final String selectedColorKey = "selectedColor";
+    public static final String enterColorKey = "enterColor";
+
+    public static final String switchOnKey = "switchOn";
+    public static final String switchOffKey = "switchOff";
+    public static final String isSwitchOnKey = "isSwitchOn";
+
+
 }

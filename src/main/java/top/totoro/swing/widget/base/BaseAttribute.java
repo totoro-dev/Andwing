@@ -5,7 +5,10 @@ import org.dom4j.Element;
 import top.totoro.swing.widget.exception.AttributeException;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
 
+import java.awt.*;
 import java.net.URL;
+
+import static top.totoro.swing.widget.util.AttributeDefaultValue.WHITE_COLOR;
 
 public class BaseAttribute {
     /* 布局节点元素，不同的视图可以自己处理自己想要的属性 */
@@ -32,8 +35,16 @@ public class BaseAttribute {
     private int height = 0;
     private int visible = VISIBLE;
 
-    private String background = "#ffffff";
+    private String background = DefaultAttribute.defaultBackgroundColor;
     private String src = "";
+
+    /* add by HLM on 2020/7/27 增加边框设置 */
+    public String borderColor = DefaultAttribute.defaultBorderColor;
+    private int topBorder = 0;
+    private int bottomBorder = 0;
+    private int leftBorder = 0;
+    private int rightBorder = 0;
+    /* add end */
 
     public Element getElement() {
         return element;
@@ -99,8 +110,8 @@ public class BaseAttribute {
         this.visible = visible;
     }
 
-    public String getBackground() {
-        return background;
+    public Color getBackground() {
+        return Color.decode(background);
     }
 
     public void setBackground(String background) {
@@ -113,6 +124,46 @@ public class BaseAttribute {
 
     public void setSrc(String src) {
         this.src = src;
+    }
+
+    public Color getBorderColor() {
+        return Color.decode(borderColor);
+    }
+
+    public void setBorderColor(String borderColor) {
+        this.borderColor = borderColor;
+    }
+
+    public int getTopBorder() {
+        return topBorder;
+    }
+
+    public void setTopBorder(int topBorder) {
+        this.topBorder = topBorder;
+    }
+
+    public int getBottomBorder() {
+        return bottomBorder;
+    }
+
+    public void setBottomBorder(int bottomBorder) {
+        this.bottomBorder = bottomBorder;
+    }
+
+    public int getLeftBorder() {
+        return leftBorder;
+    }
+
+    public void setLeftBorder(int leftBorder) {
+        this.leftBorder = leftBorder;
+    }
+
+    public int getRightBorder() {
+        return rightBorder;
+    }
+
+    public void setRightBorder(int rightBorder) {
+        this.rightBorder = rightBorder;
     }
 
     public boolean checkHeightValue(Attribute attr) {
@@ -176,16 +227,17 @@ public class BaseAttribute {
         return true;
     }
 
-    public boolean isColor(String value) {
-        if (value == null || !value.startsWith("#") || value.length() != 7) return false;
-        char[] cs = value.substring(1).toCharArray();
-        for (char c : cs) {
-            int ascii = Integer.parseInt(Integer.toString(c));
-            if ((ascii >= 48 && ascii <= 57) || (ascii >= 65 && ascii <= 70) || (ascii >= 97 && ascii <= 102)) {
-                continue;
+    public static boolean isColor(String value) {
+        if (value != null && value.startsWith("#") && (value.length() == 4 || value.length() == 7 || value.length() == 9)) {
+            char[] cs = value.substring(1).toCharArray();
+            for (char c : cs) {
+                int ascii = Integer.parseInt(Integer.toString(c));
+                if ((ascii >= 48 && ascii <= 57) || (ascii >= 65 && ascii <= 70) || (ascii >= 97 && ascii <= 102)) {
+                    continue;
+                }
+                return false;
             }
-            return false;
-        }
+        } else return false;
         return true;
     }
 

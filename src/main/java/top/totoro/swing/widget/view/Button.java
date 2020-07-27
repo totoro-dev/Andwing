@@ -25,7 +25,7 @@ public class Button extends TextView {
     public void setAttribute(ViewAttribute attribute) {
         super.setAttribute(attribute);
         component.setOpaque(false); // 默认按钮的背景需要透明
-        bg = Color.decode(attribute.getBackground());
+        bg = attribute.getBackground();
     }
 
     /**

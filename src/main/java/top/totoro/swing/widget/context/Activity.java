@@ -1,6 +1,7 @@
 package top.totoro.swing.widget.context;
 
 import top.totoro.swing.widget.bar.ActionBar;
+import top.totoro.swing.widget.base.DefaultAttribute;
 import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.listener.OnActionBarClickListener;
 import top.totoro.swing.widget.listener.OnActionBarResizeListener;
@@ -33,6 +34,9 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
     public Activity() {
         super();
+        /* add by HLM on 2020/7/27 预先加载全局默认属性值 */
+        DefaultAttribute.loadDefaultAttribute(getClass());
+        /* add end */
         defaultActivityResizeMouseListener = new DefaultActivityResizeMouseListener();
         addOnActivityResizeListener(defaultActivityResizeMouseListener.DEFAULT_RESIZE_LISTENER);
         defaultActivityResizeMouseListener.setOnActivityResizeListener(resizeListener);

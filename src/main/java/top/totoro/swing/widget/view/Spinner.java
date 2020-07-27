@@ -2,10 +2,8 @@ package top.totoro.swing.widget.view;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import top.totoro.swing.widget.bar.ActionBar;
+import top.totoro.swing.widget.base.DefaultAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
-import top.totoro.swing.widget.context.Activity;
-import top.totoro.swing.widget.listener.InvalidateListener;
 import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.listener.OnItemSelectedListener;
 
@@ -14,6 +12,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Objects;
+
+import static top.totoro.swing.widget.util.AttributeKey.*;
 
 public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListener {
     private JLabel mSelectedLabel;
@@ -25,10 +25,6 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
     private Color mSelectedColor = Color.white;
     private Color mEnterColor = Color.white;
 
-    private String arrayAttrKey = "array";
-    private String selectedColorKey = "selectedColor";
-    private String enterColorKey = "enterColor";
-
     public Spinner(View parent) {
         super(parent);
         mDropDownWindow = new JWindow();
@@ -39,8 +35,29 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
         component.add(mDropDownButton, BorderLayout.EAST);
         mDropDownWindow.setAlwaysOnTop(true);
         mDropDownWindow.getContentPane().setBackground(Color.white);
-        mDropDownWindow.getRootPane().setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#dbdbdb")));
         addOnClickListener(this);
+    }
+
+    public void setSelectedItem(String item) {
+        if (mStringArray == null || mStringArray.length == 0) return;
+        for (int i = 0; i < mStringArray.length; i++) {
+            if (mStringArray[i].equals(item)) {
+                mSelectedPosition = i;
+                mSelectedLabel.setText(item);
+                if (onItemSelectedListener != null) {
+                    onItemSelectedListener.onSelected(attribute.getId(), i, item);
+                }
+            }
+        }
+    }
+
+    public void setSelectedItem(int position) {
+        if (mStringArray == null || mStringArray.length == 0 || position < 0 || position >= mStringArray.length) return;
+        mSelectedPosition = position;
+        mSelectedLabel.setText(mStringArray[position]);
+        if (onItemSelectedListener != null) {
+            onItemSelectedListener.onSelected(attribute.getId(), position, mStringArray[position]);
+        }
     }
 
     @SuppressWarnings("Duplicates")
@@ -51,7 +68,14 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
         mSelectedLabel.setText(attribute.getText());
         mSelectedLabel.setForeground(Color.decode(attribute.getTextColor()));
         component.setSize(attribute.getWidth(), attribute.getHeight());
-        component.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.decode("#dbdbdb")));
+
+        /* add by HLM on 2020/7/27 为下拉框的window设置边框 */
+        setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1,
+                attribute.getBorderColor()));
+        mDropDownWindow.getRootPane().setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1,
+                attribute.getBorderColor()));
+        /* add end */
+
         Element element = attribute.getElement();
         Attribute arrayAttr = element.attribute(arrayAttrKey);
         if (arrayAttr != null) {
@@ -60,7 +84,7 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
         Attribute enterColorAttr = element.attribute(enterColorKey);
         if (enterColorAttr != null) {
             String colorVal = enterColorAttr.getValue();
-            if (colorVal.startsWith("#") && (colorVal.length() == 4 || colorVal.length() == 7)) {
+            if (colorVal.startsWith("#") && (colorVal.length() == 4 || colorVal.length() == 7 || colorVal.length() == 9)) {
                 mEnterColor = Color.decode(colorVal);
             }
         }
@@ -71,6 +95,7 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
                 mSelectedColor = Color.decode(colorVal);
             }
         }
+        setSelectedItem(0);
     }
 
     @Override
@@ -119,7 +144,7 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
                     mSelectedLabel.setText(mStringArray[finalI]);
                     mDropDownWindow.dispose();
                     if (onItemSelectedListener != null) {
-                        onItemSelectedListener.onSelected(finalI, mStringArray[finalI]);
+                        onItemSelectedListener.onSelected(attribute.getId(), finalI, mStringArray[finalI]);
                     }
                 }
 

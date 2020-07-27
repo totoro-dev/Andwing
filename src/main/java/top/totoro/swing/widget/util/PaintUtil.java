@@ -6,6 +6,28 @@ import java.awt.image.BufferedImage;
 @SuppressWarnings("Duplicates")
 public class PaintUtil {
 
+    public static void drawRadius(Graphics g, Color color, int radius, int startX, int startY) {
+        Color origin = g.getColor();
+        g.setColor(color);
+        int r = radius;
+        for (int i = 0; i < 2; i++) {
+            for (int j = -radius; j < 0; j++) {
+                int x = j;
+                int y1 = (int) Math.sqrt(radius * radius - x * x);
+                int y2 = -y1;
+                x += startX + radius;
+                y1 = startY + radius - y1;
+                y2 = startY + 2 * radius - (y1 - startY);
+                drawPoint(g, color, x, y1);
+                drawPoint(g, color, x, y2);
+            }
+            startX++;
+            startY++;
+            radius--;
+        }
+        g.setColor(origin);
+    }
+
     /**
      * 绘制高度为30的5像素半径的边框
      *

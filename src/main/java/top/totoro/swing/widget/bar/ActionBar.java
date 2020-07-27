@@ -1,5 +1,6 @@
 package top.totoro.swing.widget.bar;
 
+import top.totoro.swing.widget.base.DefaultAttribute;
 import top.totoro.swing.widget.listener.OnActionBarClickListener;
 import top.totoro.swing.widget.listener.OnActionBarResizeListener;
 import top.totoro.swing.widget.listener.OnActivityDragListener;
@@ -24,10 +25,14 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
     private Color bg = Color.BLACK;
     private int iconColor = 1;
     private ImageIcon backIcon, minIcon, midIcon, maxIcon, closeIcon;
-    private JLabel back = new JLabel("", JLabel.CENTER), min = new JLabel("", JLabel.CENTER), mid = new JLabel("", JLabel.CENTER), max = new JLabel("", JLabel.CENTER), close = new JLabel("", JLabel.CENTER);
-    private JPanel content = new JPanel(null);
+    private final JLabel back = new JLabel("", JLabel.CENTER);
+    private final JLabel min = new JLabel("", JLabel.CENTER);
+    private final JLabel mid = new JLabel("", JLabel.CENTER);
+    private final JLabel max = new JLabel("", JLabel.CENTER);
+    private final JLabel close = new JLabel("", JLabel.CENTER);
+    private final JPanel content = new JPanel(null);
     private String titleText = "";
-    private JLabel title = new JLabel(titleText);
+    private final JLabel title = new JLabel(titleText);
     private Point startDragLocation;
     private OnActionBarClickListener clickListener;
     private OnActivityDragListener dragListener;
@@ -48,7 +53,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
         title.setLocation(10, 0);
         content.add(title);
         initListener();
-        setBorder(1, Color.decode("#dbdbdb"));
+        setBorder(1, Color.decode(DefaultAttribute.defaultBorderColor));
     }
 
     private void initListener() {

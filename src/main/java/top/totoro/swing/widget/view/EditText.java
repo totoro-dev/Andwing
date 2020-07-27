@@ -9,27 +9,25 @@ import java.awt.event.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class EditText extends View<ViewAttribute, JTextField> {
+public class EditText extends View<ViewAttribute, JTextArea> {
 
     private OnTextChangeListener onTextChangeListener;
     private String origin = "";
 
     public EditText(View parent) {
         super(parent);
-        component = new JTextField();
-        component.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.decode("#dbdbdb")));
+        component = new JTextArea();
         component.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 if (component.getText().equals(attribute.getHintText())) {
-                    component.setForeground(Color.decode(attribute.getTextColor()));
-                    component.setText("");
+                    setText("");
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (component.getText().equals("")){
+                if (component.getText().equals("")) {
                     setHint(attribute.getHintText());
                 }
             }
@@ -89,16 +87,20 @@ public class EditText extends View<ViewAttribute, JTextField> {
         } else {
             setText(attribute.getText());
         }
+        setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, attribute.getBorderColor()));
     }
 
     public void setHint(String hint) {
         component.setFont(new Font(attribute.getTextStyle(), Font.ITALIC, attribute.getTextSize()));
         component.setForeground(Color.decode("#ababab"));
         component.setText(hint);
-//        component.setForeground(Color.decode(attribute.getTextColor()));
+        attribute.setHintText(hint);
     }
 
     public void setText(String text) {
+        if (text == null || "".equals(text)) {
+            setHint(attribute.getHintText());
+        }
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
         component.setForeground(Color.decode(attribute.getTextColor()));
         component.setText(text);

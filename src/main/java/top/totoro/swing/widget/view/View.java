@@ -167,9 +167,18 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 //        setId(attribute.getId());
         component.setVisible(attribute.getVisible() == ViewAttribute.VISIBLE);
         component.setOpaque(attribute.getOpaque() == ViewAttribute.OPAQUE);
-        if (attribute.getBackground().startsWith("#")) {
-            component.setBackground(Color.decode(attribute.getBackground()));
-        }
+        component.setBackground(attribute.getBackground());
+        if (attribute.getTopBorder() == 0
+                && attribute.getBottomBorder() == 0
+                && attribute.getLeftBorder() == 0
+                && attribute.getRightBorder() == 0)
+            return;
+        setBorder(BorderFactory.createMatteBorder(
+                attribute.getTopBorder(),
+                attribute.getLeftBorder(),
+                attribute.getBottomBorder(),
+                attribute.getRightBorder(),
+                attribute.getBorderColor()));
     }
 
     public void setBorder(Border border) {

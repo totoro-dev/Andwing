@@ -10,7 +10,7 @@ public class ViewAttribute extends BaseAttribute {
     private String text = ""; // View中显示的文字
     private String textStyle = AttributeDefaultValue.SERIF; // View中显示的文字字体，默认serif
     private String textFont = AttributeDefaultValue.PLAIN; // View中显示的文字样式，默认正常
-    private String textColor = AttributeDefaultValue.BLACK; // View中显示的文字颜色，默认黑色
+    private String textColor = AttributeDefaultValue.BLACK_COLOR; // View中显示的文字颜色，默认黑色
     private int textSize = 16; // View中显示的文字大小
 
     private String hintText = ""; // View中的默认文字

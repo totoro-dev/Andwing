@@ -11,6 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import static top.totoro.swing.widget.util.AttributeKey.*;
+
 public class AttributeUtil {
 
     public static LayoutAttribute getLayoutAttribute(String resName, Element layout) {
@@ -26,13 +28,13 @@ public class AttributeUtil {
                 else continue;
                 String name = attr.getName();
                 switch (name) {
-                    case AttributeKey.HEIGHT:
-                    case AttributeKey.WIDTH:
+                    case HEIGHT:
+                    case WIDTH:
                         continue;
-                    case AttributeKey.ID:
+                    case ID:
                         invokeSet(name, attr.getValue(), String.class, layoutAttribute);
                         continue;
-                    case AttributeKey.ORIENTATION:
+                    case ORIENTATION:
                         if (attr.getValue().equals(AttributeDefaultValue.VERTICAL)) {
                             invokeSet(name, LayoutAttribute.VERTICAL, int.class, layoutAttribute);
                             continue;
@@ -62,18 +64,18 @@ public class AttributeUtil {
                 else continue;
                 String name = attr.getName();
                 switch (name) {
-                    case AttributeKey.HEIGHT:
-                    case AttributeKey.WIDTH:
+                    case HEIGHT:
+                    case WIDTH:
                         continue;
-                    case AttributeKey.ID:
-                    case AttributeKey.TEXT:
-                    case AttributeKey.TEXT_STYLE:
-                    case AttributeKey.TEXT_FONT:
-                    case AttributeKey.TEXT_COLOR:
-                    case AttributeKey.HINT_TEXT:
+                    case ID:
+                    case TEXT:
+                    case TEXT_STYLE:
+                    case TEXT_FONT:
+                    case TEXT_COLOR:
+                    case HINT_TEXT:
                         invokeSet(name, attr.getValue(), String.class, viewAttribute);
                         continue;
-                    case AttributeKey.TEXT_SIZE:
+                    case TEXT_SIZE:
                         invokeSet(name, Integer.parseInt(attr.getValue()), int.class, viewAttribute);
                         continue;
                 }
@@ -96,8 +98,8 @@ public class AttributeUtil {
     private static boolean initialNecessaryAttribute(BaseAttribute baseAttribute, String resName, String nodeName, Element ele) {
         baseAttribute.setResName(resName);
         baseAttribute.setNodeName(nodeName);
-        Attribute height = ele.attribute(AttributeKey.HEIGHT);
-        Attribute width = ele.attribute(AttributeKey.WIDTH);
+        Attribute height = ele.attribute(HEIGHT);
+        Attribute width = ele.attribute(WIDTH);
         return baseAttribute.checkHeightValue(height) && baseAttribute.checkWidthValue(width);
 
     }
@@ -115,6 +117,18 @@ public class AttributeUtil {
             if (attr.getValue().length() == 0) {
                 throw AttributeException.getValueInvalid(baseAttribute, name, "", "必须赋值");
             }
+            /* add by HLM on 2020/7/27 排除各个自定义控件的属性检查 */
+            switch (name) {
+                case arrayAttrKey:
+                case enterColorKey:
+                case selectedColorKey:
+                case switchOnKey:
+                case switchOffKey:
+                case isSwitchOnKey:
+                    /* 这些属性属于不同控件自有的，不需要在这里做初始化 */
+                    return;
+            }
+            /* add end */
             boolean isInt = true;
             Object value;
             switch (attr.getValue()) {
@@ -138,9 +152,9 @@ public class AttributeUtil {
                         value = attr.getValue();
                     } else {
                         // 判断是什么属性的错误
-                        if (name.equals(AttributeKey.BACKGROUND)) {
+                        if (name.equals(BACKGROUND)) {
                             throw AttributeException.getValueInvalid(baseAttribute, name, attr.getValue(), "必须是颜色值或图片资源");
-                        } else if (name.equals(AttributeKey.SRC)) {
+                        } else if (name.equals(SRC)) {
                             throw AttributeException.getValueInvalid(baseAttribute, name, attr.getValue(), "必须是颜色值或图片资源");
                         } else {
                             throw AttributeException.getValueInvalid(baseAttribute, name, attr.getValue(), "是非法的");

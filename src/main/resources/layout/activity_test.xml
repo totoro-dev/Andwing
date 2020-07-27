@@ -20,13 +20,21 @@
             height="match_parent">
     </TextView>
 
-    <Spinner
+    <LinearLayout
             width="200"
-            height="30"
-            array="1,2"
-            enterColor="#dbdbdb"
-            selectedColor="#15a5e5"
-            text="下拉框"/>
+            height="match_parent"
+            orientation="vertical">
+        <Spinner
+                width="200"
+                height="30"
+                array="1,2"
+                enterColor="#dbdbdb"
+                selectedColor="#15a5e5"
+                text="下拉框"/>
+        <SwitchButton
+                width="50"
+                height="30"/>
+    </LinearLayout>
 
     <LinearLayout
             id="linear_layout_2"

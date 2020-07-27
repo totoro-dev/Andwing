@@ -11,11 +11,13 @@ import top.totoro.swing.widget.base.LayoutManager;
 import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.exception.AttributeException;
+import top.totoro.swing.widget.layout.CenterLayout;
 import top.totoro.swing.widget.layout.LinearLayout;
 import top.totoro.swing.widget.util.AttributeUtil;
 import top.totoro.swing.widget.util.LayoutUtil;
 import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.util.ViewUtil;
+import top.totoro.swing.widget.view.Span;
 import top.totoro.swing.widget.view.View;
 
 import java.io.FileNotFoundException;
@@ -62,7 +64,9 @@ public class LinearLayoutManager extends LayoutManager {
             mainView = LayoutUtil.createLayout(mainLayout, root.getName(), layoutAttribute);
             if (mainView == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
             mainView.setId(layoutAttribute.getId());
-            mainLayout.addChildView(mainView);
+            /* change by HLM on 2020/7/27 增加Centerlayoutd的加载逻辑 */
+            addChildView(mainLayout, mainView, mainLayout.getAttribute());
+            /* change end */
             attachLayout(mainView, root, res, true);
         } catch (FileNotFoundException | DocumentException | AttributeException e) {
             e.printStackTrace();
@@ -98,14 +102,57 @@ public class LinearLayoutManager extends LayoutManager {
                 mainView.setId(layoutAttribute.getId());
             }
             attachLayout(mainView, root, res, attachRoot);
+            if (mainLayout != null && attachRoot) {
+                /* change by HLM on 2020/7/27 增加Centerlayoutd的加载逻辑 */
+                addChildView(mainLayout, mainView, mainLayout.getAttribute());
+                /* change end */
+                this.mainLayout = mainLayout;
+            }
         } catch (FileNotFoundException | DocumentException | AttributeException e) {
             e.printStackTrace();
         }
-        if (mainLayout != null && attachRoot) {
-            mainLayout.addChildView(mainView);
-            this.mainLayout = mainLayout;
-        }
         return mainLayout != null && attachRoot ? mainLayout : mainView;
+    }
+
+    /**
+     * 向layout布局中添加子控件，需要判断当前layout的类型，并作相应的调整。
+     * 如果layout是CenterLayout，需要在要添加的控件的前后各添加一个Span来达到居中的效果。
+     *
+     * @param layout          父布局
+     * @param son             子控件，如果是要居中，则需要有明确的大小
+     * @param layoutAttribute 父布局的布局属性
+     */
+    private void addChildView(BaseLayout layout, View son, LayoutAttribute layoutAttribute) {
+        if (layout instanceof CenterLayout) {
+            Span left = new Span(layout);
+            ViewAttribute leftAttr = new ViewAttribute();
+            // 根据layout的Orientation属性确定是上下居中还是左右居中
+            if (layoutAttribute.getOrientation() == LayoutAttribute.VERTICAL) {
+                leftAttr.setHeight(BaseAttribute.MATCH_PARENT);
+                leftAttr.setWidth(0);
+            } else {
+                leftAttr.setWidth(BaseAttribute.MATCH_PARENT);
+                leftAttr.setHeight(0);
+            }
+            left.setAttribute(leftAttr);
+            layout.addChildView(left);
+        }
+
+        layout.addChildView(son);
+
+        if (layout instanceof CenterLayout) {
+            Span right = new Span(layout);
+            ViewAttribute rightAttr = new ViewAttribute();
+            if (layoutAttribute.getOrientation() == LayoutAttribute.VERTICAL) {
+                rightAttr.setHeight(BaseAttribute.MATCH_PARENT);
+                rightAttr.setWidth(0);
+            } else {
+                rightAttr.setWidth(BaseAttribute.MATCH_PARENT);
+                rightAttr.setHeight(0);
+            }
+            right.setAttribute(rightAttr);
+            layout.addChildView(right);
+        }
     }
 
     /**
@@ -115,38 +162,71 @@ public class LinearLayoutManager extends LayoutManager {
         if (root.getComponent() != null) {
             root.getComponent().removeAll();
         }
-        // 解析线性布局
-        if (root instanceof LinearLayout) {
-            LinearLayout linearLayout = (LinearLayout) root;
-            List<Element> childElements = rootElement.elements();
-            for (Element childElement : childElements) {
-                BaseAttribute childAttribute;
-                if (childElement.elements().size() > 0) {
+        if (root instanceof CenterLayout) {           // 解析居中布局
+            attachAsCenterLayout(root, rootElement, res, atachRoot);
+        } else if (root instanceof LinearLayout) {    // 解析线性布局
+            attachAsLinearLayout(root, rootElement, res, atachRoot);
+        }
+    }
+
+    private void attachAsLinearLayout(BaseLayout root, Element rootElement, String res, boolean atachRoot) {
+        LinearLayout linearLayout = (LinearLayout) root;
+        List<Element> childElements = rootElement.elements();
+        for (Element childElement : childElements) {
+            BaseAttribute childAttribute;
+            if (childElement.elements().size() > 0) {
+                // 这个子节点是一个Layout
+                childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
+                BaseLayout layout = LayoutUtil.createLayout(linearLayout, childElement.getName(), (LayoutAttribute) childAttribute);
+                if (layout != null) {
+                    layout.setId(childAttribute.getId());
+                    // 以当前子节点开始绑定View
+                    attachLayout(layout, childElement, res, atachRoot);
+                    linearLayout.addChildView(layout);
+                }
+            } else {
+                // 这个节点是一个子View
+                childAttribute = AttributeUtil.getViewAttribute(res, childElement);
+                View view = ViewUtil.createView(linearLayout, childElement.getName(), (ViewAttribute) childAttribute);
+                if (view instanceof BaseLayout) {
                     // 这个子节点是一个Layout
                     childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
-                    BaseLayout layout = LayoutUtil.createLayout(linearLayout, childElement.getName(), (LayoutAttribute) childAttribute);
-                    if (layout != null) {
-                        layout.setId(childAttribute.getId());
-                        // 以当前子节点开始绑定View
-                        attachLayout(layout, childElement, res, atachRoot);
-                        linearLayout.addChildView(layout);
-                    }
+                    view.setAttribute(childAttribute);
+                    linearLayout.addChildView(view);
                 } else {
-                    // 这个节点是一个子View
-                    childAttribute = AttributeUtil.getViewAttribute(res, childElement);
-                    View view = ViewUtil.createView(linearLayout, childElement.getName(), (ViewAttribute) childAttribute);
-                    if (view instanceof BaseLayout) {
-                        // 这个子节点是一个Layout
-                        childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
-                        view.setAttribute(childAttribute);
-                        linearLayout.addChildView(view);
-                    } else {
-                        linearLayout.addChildView(view);
-                    }
-                    view.setId(childAttribute.getId());
+                    linearLayout.addChildView(view);
                 }
+                view.setId(childAttribute.getId());
             }
         }
+    }
+
+    private void attachAsCenterLayout(BaseLayout root, Element rootElement, String res, boolean atachRoot) {
+        Span left = new Span(root);
+        ViewAttribute leftAttr = new ViewAttribute();
+        if (root.getAttribute().getOrientation() == LayoutAttribute.VERTICAL) {
+            leftAttr.setHeight(BaseAttribute.MATCH_PARENT);
+            leftAttr.setWidth(0);
+        } else {
+            leftAttr.setWidth(BaseAttribute.MATCH_PARENT);
+            leftAttr.setHeight(0);
+        }
+        left.setAttribute(leftAttr);
+        root.addChildView(left);
+
+        attachAsLinearLayout(root, rootElement, res, atachRoot);
+
+        Span right = new Span(root);
+        ViewAttribute rightAttr = new ViewAttribute();
+        if (root.getAttribute().getOrientation() == LayoutAttribute.VERTICAL) {
+            rightAttr.setHeight(BaseAttribute.MATCH_PARENT);
+            rightAttr.setWidth(0);
+        } else {
+            rightAttr.setWidth(BaseAttribute.MATCH_PARENT);
+            rightAttr.setHeight(0);
+        }
+        right.setAttribute(rightAttr);
+        root.addChildView(right);
     }
 
     /**
@@ -318,7 +398,7 @@ public class LinearLayoutManager extends LayoutManager {
                         // 垂直布局，高度以所有子控件高度累加为准
                         if (isHeightAsWrap(son) || isHeightAsMatch(son)) {
                             maxHeight += son.getMinHeight();
-                            setHeight(son,son.getMinHeight());
+                            setHeight(son, son.getMinHeight());
                         } else {
                             maxHeight += son.getHeight();
                         }

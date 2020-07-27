@@ -3,7 +3,8 @@ package top.totoro.swing.widget.util;
 public class AttributeDefaultValue {
 
     // 白色背景
-    public static final String BACKGROUND = "#ffffff";
+    public static final String WHITE_COLOR = "#ffffff";
+    public static final String BLACK_COLOR = "#000000";
 
     // 组件自适应
     public static final String MATCH_PARENT = "match_parent";
@@ -32,7 +33,5 @@ public class AttributeDefaultValue {
     public static final String PLAIN = "plain";
     public static final String BOLD = "bold";
     public static final String ITALIC = "italic";
-
-    public static final String BLACK = "#000000";
 
 }
