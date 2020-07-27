@@ -8,8 +8,6 @@ import top.totoro.swing.widget.util.AttributeDefaultValue;
 import java.awt.*;
 import java.net.URL;
 
-import static top.totoro.swing.widget.util.AttributeDefaultValue.WHITE_COLOR;
-
 public class BaseAttribute {
     /* 布局节点元素，不同的视图可以自己处理自己想要的属性 */
     private Element element;
@@ -27,7 +25,9 @@ public class BaseAttribute {
     public static final int GONE = 0;
     public static final int VISIBLE = 1;
 
-    private String id = String.valueOf(System.currentTimeMillis());
+    /* change by HLM on 2020/7/27 解决没有主动设置id时报错 */
+    private String id = null;
+    /* change end */
     private int opaque = OPAQUE; // 背景是否透明，默认不透明
     private int startX = 0;
     private int startY = 0;

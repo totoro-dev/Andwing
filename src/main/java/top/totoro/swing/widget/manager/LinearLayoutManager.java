@@ -63,7 +63,9 @@ public class LinearLayoutManager extends LayoutManager {
             LayoutAttribute layoutAttribute = AttributeUtil.getLayoutAttribute(res, root);
             mainView = LayoutUtil.createLayout(mainLayout, root.getName(), layoutAttribute);
             if (mainView == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
-            mainView.setId(layoutAttribute.getId());
+            if (layoutAttribute.getId() != null) {
+                mainView.setId(layoutAttribute.getId());
+            }
             /* change by HLM on 2020/7/27 增加Centerlayoutd的加载逻辑 */
             addChildView(mainLayout, mainView, mainLayout.getAttribute());
             /* change end */
@@ -98,7 +100,7 @@ public class LinearLayoutManager extends LayoutManager {
             mainView = LayoutUtil.createLayout(mainLayout, root.getName(), layoutAttribute);
             if (mainView == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
             /* add by HLM on 2020/7/26 解决子布局加载时发生id冲突 */
-            if (attachRoot) {
+            if (attachRoot && layoutAttribute.getId() != null) {
                 mainView.setId(layoutAttribute.getId());
             }
             attachLayout(mainView, root, res, attachRoot);
@@ -179,7 +181,9 @@ public class LinearLayoutManager extends LayoutManager {
                 childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
                 BaseLayout layout = LayoutUtil.createLayout(linearLayout, childElement.getName(), (LayoutAttribute) childAttribute);
                 if (layout != null) {
-                    layout.setId(childAttribute.getId());
+                    if (childAttribute.getId() != null) {
+                        layout.setId(childAttribute.getId());
+                    }
                     // 以当前子节点开始绑定View
                     attachLayout(layout, childElement, res, atachRoot);
                     linearLayout.addChildView(layout);
@@ -196,7 +200,9 @@ public class LinearLayoutManager extends LayoutManager {
                 } else {
                     linearLayout.addChildView(view);
                 }
-                view.setId(childAttribute.getId());
+                if (childAttribute.getId()!=null) {
+                    view.setId(childAttribute.getId());
+                }
             }
         }
     }
