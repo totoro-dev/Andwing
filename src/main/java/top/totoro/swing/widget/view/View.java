@@ -261,6 +261,9 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     }
 
     public void setVisible(int visible) {
+        /* add by HLM on 2020/7/28 解决无效设置导致布局继续刷新的问题 */
+        if (visible == attribute.getVisible()) return;
+        /* add end */
         attribute.setVisible(visible);
         component.setVisible(attribute.getVisible() == ViewAttribute.VISIBLE);
         invalidateSuper();

@@ -54,6 +54,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
         content.add(title);
         initListener();
         setBorder(1, Color.decode(DefaultAttribute.defaultBorderColor));
+        setTitleColor(Color.decode(DefaultAttribute.defaultThemeColor));
     }
 
     private void initListener() {
