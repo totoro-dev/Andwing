@@ -132,7 +132,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
     }
 
     /**
-     * 设置ActionBar的高度：MIN ==> 允许的最小值, MID ==> 默认值, MAX ==> 允许的最大值
+     * 设置ActionBar的高度：MIN  允许的最小值, MID  默认值, MAX  允许的最大值
      *
      * @param height 期望高度
      */

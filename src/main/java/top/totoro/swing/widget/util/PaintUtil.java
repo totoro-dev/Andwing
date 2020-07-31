@@ -140,6 +140,7 @@ public class PaintUtil {
      * @param bg          背景色
      * @param borderColor 边框色
      * @param width       主体宽度
+     * @param height      主题宽度
      */
     public static void drawBorderFifteenRadius(Graphics g, Color bg, Color borderColor, int width, int height) {
         Color origin = g.getColor();

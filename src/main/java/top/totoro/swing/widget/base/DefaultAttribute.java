@@ -20,6 +20,7 @@ public final class DefaultAttribute {
 
     /**
      * 加载应用的默认属性，给布局控件使用
+     * @param app 要加载的默认属性的应用
      */
     public static void loadDefaultAttribute(Class<?> app) {
         URL url = app.getClassLoader().getResource(DEFAULT_ATTRIBUTE_CONFIG_FILE);

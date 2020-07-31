@@ -16,6 +16,8 @@ public final class AttributeKey {
     public static final String WIDTH = "width";
     public static final String HEIGHT = "height";
 
+    public static final String VISIBLE = "visible";
+
     public static final String TEXT = "text";
     public static final String TEXT_SIZE = "textSize";
     public static final String TEXT_STYLE = "textStyle";
@@ -28,8 +30,8 @@ public final class AttributeKey {
     public static final String selectedColorKey = "selectedColor";
     public static final String enterColorKey = "enterColor";
 
-    public static final String switchOnKey = "switchOn";
-    public static final String switchOffKey = "switchOff";
+    public static final String switchOnKey = "switchOnIcon";
+    public static final String switchOffKey = "switchOffIcon";
     public static final String isSwitchOnKey = "isSwitchOn";
 
 

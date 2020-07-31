@@ -1,6 +1,5 @@
 package top.totoro.swing.widget.manager;
 
-import com.sun.istack.internal.NotNull;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -50,7 +49,7 @@ public class LinearLayoutManager extends LayoutManager {
      * @param mainLayout 这个xml解析后的View要绑定的Layout节点
      * @param res        xml文件名，这个文件要放在：（项目路径）/layout下
      */
-    public View inflate(@NotNull BaseLayout mainLayout, String res) {
+    public View inflate(BaseLayout mainLayout, String res) {
         if (mainLayout.getComponent() != null) {
             mainLayout.getComponent().removeAll();
         }
@@ -157,9 +156,6 @@ public class LinearLayoutManager extends LayoutManager {
         }
     }
 
-    /**
-     * 绑定一个Layout节点下的View
-     */
     private void attachLayout(BaseLayout root, Element rootElement, String res, boolean atachRoot) {
         if (root.getComponent() != null) {
             root.getComponent().removeAll();
@@ -237,8 +233,6 @@ public class LinearLayoutManager extends LayoutManager {
 
     /**
      * 渲染指定的资源文件的视图，这个资源文件必须是在这之前，通过initViewListByRes方法初始化过的。
-     *
-     * @param res
      */
     public void invalidate() {
         if (mainLayout != null) {

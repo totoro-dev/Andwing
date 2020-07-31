@@ -4,7 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>top.totoro-dev</groupId>
+    <name>SwingPro</name>
+    <description>这是针对桌面应用开发的UI框架，提供了与Android开发一致的xml布局方式，并且拥有一整套窗口管理功能</description>
+    <url>https://totoro-dev.github.io/SwingPro</url>
+
+    <groupId>io.github.totoro-dev</groupId>
     <artifactId>SwingPro</artifactId>
     <version>1.0.0</version>
 
@@ -45,20 +49,24 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Javadoc -->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-<!--                <version>2.9.1</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>jar</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+<!--             Javadoc-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <charset>UTF-8</charset>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- GPG -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -111,7 +119,7 @@
     </scm>
     <developers>
         <developer>
-            <name>HuangLongmiao</name>
+            <name>totoro-dev</name>
             <email>649676485@qq.com</email>
             <organization>none</organization>
         </developer>

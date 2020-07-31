@@ -134,7 +134,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     /**
      * 获取父View，正常的话是个Layout
      *
-     * @return
+     * @return 父视图
      */
     public View getParent() {
         return parent;
