@@ -98,10 +98,10 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
         max.setVisible(canMax);
         if (canBack) {
             content.setSize(width - 4 * height, height);
-            content.setLocation(height, 0);
+            content.setLocation(height+1, 0);
         } else {
             content.setSize(width - 3 * height, height);
-            content.setLocation(0, 0);
+            content.setLocation(1, 0);
         }
         // 标题的文本框大小有可能改变
         setTitleText(titleText);
@@ -182,7 +182,7 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
     public void setBorder(int pixel, Color color) {
         if (orientation == HORIZONTAL) {
             setBorder(BorderFactory.createMatteBorder(pixel, pixel, pixel, pixel, color));
-            content.setBorder(BorderFactory.createMatteBorder(pixel, pixel, pixel, 0, color));
+            content.setBorder(BorderFactory.createMatteBorder(pixel, 0, pixel, 0, color));
         } else if (orientation == VERTICAL) {
             setBorder(BorderFactory.createMatteBorder(pixel, pixel, pixel, pixel, color));
             content.setBorder(BorderFactory.createMatteBorder(0, 0, 0, pixel, color));

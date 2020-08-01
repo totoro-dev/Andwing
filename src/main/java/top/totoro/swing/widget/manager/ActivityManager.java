@@ -1,0 +1,129 @@
+package top.totoro.swing.widget.manager;
+
+import top.totoro.swing.widget.base.Location;
+import top.totoro.swing.widget.base.Size;
+import top.totoro.swing.widget.context.Activity;
+import top.totoro.swing.widget.util.Log;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class ActivityManager {
+    private static final String TAG = ActivityManager.class.getSimpleName();
+    private static Activity mTopActivity = null;
+    private static final Map<Class<? extends Activity>, Object> CREATED_ACTIVITY = new ConcurrentHashMap<>();
+
+    /**
+     * 设置当前的顶层窗口，但是新的窗口必须不为空，不然新的窗口不会被置为顶层窗口
+     *
+     * @param activity 新的窗口
+     */
+    public static void setTopActivity(Activity activity) {
+        if (activity == null) return;
+        mTopActivity = activity;
+    }
+
+    /**
+     * 通过该方法可以获取到当前应用存在的窗口对象（Activity）
+     * 如果窗口还没有被创建过的话，会根据提供的target，创建一个对应类型的窗口对象
+     * 并将窗口对象添加到CREATED_ACTIVITY中。
+     *
+     * @param target 目标窗口的类
+     * @param <A>    要获取的窗口的类型定义
+     * @return 匹配target类型的窗口对象
+     */
+    @SuppressWarnings("unchecked")
+    public static <A extends Activity> A getOrCreateActivity(Class<A> target) {
+        AtomicBoolean isNewActivity = new AtomicBoolean(false);
+        A targetActivity = (A) CREATED_ACTIVITY.computeIfAbsent(target, targetActivityType -> {
+            Log.d(TAG, "getOrCreateActivity create a new activity type = " + target);
+            isNewActivity.set(true);
+            // CREATED_ACTIVITY中不存在target类型的窗口 需要重新创建一个窗口并添加到CREATED_ACTIVITY中。
+            A activity = null;
+            if (mTopActivity == null) {
+                // 当前不存在任何窗口，创建一个没有指定大小和位置的窗口
+                try {
+                    activity = target.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    // 根据顶层窗口的位置和大小创建一个新的窗口
+                    activity = target.newInstance();
+                    target.getMethod("setLocation", Location.class).invoke(activity, mTopActivity.getLocation());
+                    target.getMethod("setSize", Size.class).invoke(activity, mTopActivity.getSize());
+//                    target.getMethod("onCreate").invoke(object);
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+            return activity;
+        });
+        Log.d(TAG, "get activity is " + targetActivity);
+        if (targetActivity != null)
+            targetActivity.setOnRestart(!isNewActivity.get());
+        return targetActivity;
+    }
+
+    /**
+     * 可以获取到指定大小的的窗口对象
+     * 会通过CREATED_ACTIVITY查找是否存在同一类型的窗口，不存在则创建新的窗口
+     * 如果窗口准备完成，则设置指定的大小
+     *
+     * @param target     目标窗口的类
+     * @param targetSize 窗口的目标大小
+     * @param <A>        要获取的窗口的类型定义
+     * @return 一个具有指定大小的窗口
+     */
+    public static <A extends Activity> A getOrCreateActivityWithSize(Class<A> target, Size targetSize) {
+        A targetActivity = getOrCreateActivity(target);
+        if (targetActivity != null) {
+            targetActivity.setSize(targetSize);
+        }
+        return targetActivity;
+    }
+
+    /**
+     * 可以获取到指定位置的的窗口对象
+     * 会通过CREATED_ACTIVITY查找是否存在同一类型的窗口，不存在则创建新的窗口
+     * 如果窗口准备完成，则设置指定的位置
+     *
+     * @param target         目标窗口的类
+     * @param targetLocation 窗口的目标位置
+     * @param <A>            要获取的窗口的类型定义
+     * @return 一个具有指定位置的窗口
+     */
+    public static <A extends Activity> A getOrCreateActivityWithLocation(Class<A> target, Location targetLocation) {
+        A targetActivity = getOrCreateActivity(target);
+        if (targetActivity != null) {
+            targetActivity.setLocation(targetLocation);
+        }
+        return targetActivity;
+    }
+
+    /**
+     * 可以获取到指定大小和位置的的窗口对象
+     * 会通过CREATED_ACTIVITY查找是否存在同一类型的窗口，不存在则创建新的窗口
+     * 如果窗口准备完成，则设置指定的大小和位置
+     *
+     * @param target         目标窗口的类
+     * @param targetLocation 窗口的目标大小和位置
+     * @param <A>            要获取的窗口的类型定义
+     * @return 一个具有指定大小和位置的窗口
+     */
+    public static <A extends Activity> A getOrCreateActivityWithSizeAndLocation(Class<A> target, Size targetSize, Location targetLocation) {
+        // 先处理窗口的大小
+        A targetActivity = getOrCreateActivityWithSize(target, targetSize);
+        if (targetActivity != null) {
+            targetActivity.setLocation(targetLocation);
+        }
+        return targetActivity;
+    }
+
+    public static void removeActivity(Activity removeActivity) {
+        CREATED_ACTIVITY.remove(removeActivity.getClass());
+    }
+}

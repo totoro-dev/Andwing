@@ -1,21 +1,27 @@
 package top.totoro.swing.widget.context;
 
+import com.sun.istack.internal.NotNull;
 import top.totoro.swing.widget.base.BaseLayout;
+import top.totoro.swing.widget.base.Location;
+import top.totoro.swing.widget.base.Size;
 import top.totoro.swing.widget.interfaces.ContextWrapper;
 import top.totoro.swing.widget.layout.LinearLayout;
 import top.totoro.swing.widget.listener.InvalidateListener;
+import top.totoro.swing.widget.manager.ActivityManager;
 import top.totoro.swing.widget.manager.LinearLayoutManager;
+import top.totoro.swing.widget.util.AnimateUtil;
 import top.totoro.swing.widget.view.View;
 
-import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class Context implements ContextWrapper {
 
-    private Point location;
-    private Dimension size;
+    private Location location;
+    private Size size;
     private BaseLayout mainView = new LinearLayout(null);
     protected LinearLayoutManager layoutManager = new LinearLayoutManager();
     protected List<InvalidateListener> invalidateListenerList = new ArrayList<>();
@@ -29,26 +35,41 @@ public class Context implements ContextWrapper {
         mainView.setContext(this);
     }
 
-    public void startActivity(Context context, Class<? extends Context> target) {
-        try {
-            Object object = target.newInstance();
-            target.getMethod("setLocation", Point.class).invoke(object, context.location);
-            target.getMethod("setSize", Dimension.class).invoke(object, context.size);
-            target.getMethod("onCreate").invoke(object);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
+    public void startActivity(@NotNull Context context, Class<? extends Activity> target) {
+        Activity activity = ActivityManager.getOrCreateActivity(target);
+        if (context instanceof Activity) {
+            activity.setParentActivity((Activity) context);
+            activity.resetLocation(((Activity) context).getFrame().getLocation().x, ((Activity) context).getFrame().getLocation().y);
+            if (activity.isOnRestart()) {
+                activity.onStart();
+            } else {
+                activity.setSize(context.size);
+                activity.onCreate();
+            }
+            AnimateUtil.fadeAway((Activity) context, 0.5f, () -> {
+                context.onStop();
+                AnimateUtil.fadeCome(activity, 0.75f, () -> activity.setCanBack(true));
+            });
+        } else {
+            activity.setParentActivity(null);
+            activity.setCanBack(false);
+            activity.setLocation(null);
+            AnimateUtil.zoomIn(activity, new Size(500, 500), 0.75f);
         }
     }
 
-    public void startActivity(Class<? extends Context> target) {
-        try {
-            Object object = target.newInstance();
-            target.getMethod("setLocation", Point.class).invoke(object, location);
-            target.getMethod("setSize", Dimension.class).invoke(object, size);
-            target.getMethod("onCreate").invoke(object);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
+    public void startActivity(Class<? extends Activity> target) {
+        Activity activity = ActivityManager.getOrCreateActivity(target);
+        if (activity.isOnRestart()) {
+            activity.onStart();
+        } else {
+            activity.setLocation(location);
+            activity.setSize(size);
+            activity.onCreate();
         }
+        AnimateUtil.fadeCome(activity, 0.75f, () -> {
+            activity.setSize(size);
+        });
     }
 
     public View findViewById(String id) {
@@ -97,27 +118,27 @@ public class Context implements ContextWrapper {
 
     }
 
-    public void setLocation(Point location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 
     public void setLocation(int x, int y) {
-        this.location = new Point(x, y);
+        this.location = new Location(x, y);
     }
 
-    public Point getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public Dimension getSize() {
+    public Size getSize() {
         return size;
     }
 
-    public void setSize(Dimension size) {
+    public void setSize(Size size) {
         this.size = size;
     }
 
     public void setSize(int width, int height) {
-        this.size = new Dimension(width, height);
+        this.size = new Size(width, height);
     }
 }

@@ -1,6 +1,7 @@
 package top.totoro.swing.test;
 
 import top.totoro.swing.widget.bar.ActionBar;
+import top.totoro.swing.widget.base.Size;
 import top.totoro.swing.widget.context.Activity;
 import top.totoro.swing.widget.listener.OnTextChangeListener;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
@@ -60,6 +61,6 @@ public class ActivityTest extends Activity {
     }
 
     public static void main(String[] args) {
-        newInstance(new Dimension(600, 600)).startActivity(ActivityTest.class);
+        newInstance(new Size(600, 600)).startActivity(ActivityTest.class);
     }
 }

@@ -2,12 +2,17 @@ package top.totoro.swing.widget.context;
 
 import top.totoro.swing.widget.bar.ActionBar;
 import top.totoro.swing.widget.base.DefaultAttribute;
+import top.totoro.swing.widget.base.Location;
+import top.totoro.swing.widget.base.Size;
 import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.listener.OnActionBarClickListener;
 import top.totoro.swing.widget.listener.OnActionBarResizeListener;
 import top.totoro.swing.widget.listener.OnActivityDragListener;
 import top.totoro.swing.widget.listener.OnActivityResizeListener;
 import top.totoro.swing.widget.listener.deafultImpl.DefaultActivityResizeMouseListener;
+import top.totoro.swing.widget.manager.ActivityManager;
+import top.totoro.swing.widget.util.AnimateUtil;
+import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.util.SwingConstants;
 import top.totoro.swing.widget.view.View;
 
@@ -29,8 +34,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     private boolean resizeable = true; // 是否允许窗口缩放
     public ActionBar mainBar;
     private JPanel actionBarPanel = new JPanel(null);
-    private Point normalLocation;
-    private Dimension normalSize;
+    private Location normalLocation;
+    private Size normalSize;
+    private boolean isOnRestart;
+    private Activity parentActivity;
 
     public Activity() {
         super();
@@ -42,7 +49,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         defaultActivityResizeMouseListener.setOnActivityResizeListener(resizeListener);
     }
 
-    public static Activity newInstance(Dimension size) {
+    public static Activity newInstance(Size size) {
         Activity activity = new Activity();
         try {
             if (size != null) {
@@ -54,7 +61,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         return activity;
     }
 
-    public static Activity newInstance(Dimension size, Point location) {
+    public static Activity newInstance(Size size, Location location) {
         Activity activity = new Activity();
         try {
             if (size != null) {
@@ -67,6 +74,19 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
             e.printStackTrace();
         }
         return activity;
+    }
+
+    public void setOnRestart(boolean onRestart) {
+        isOnRestart = onRestart;
+    }
+
+    public boolean isOnRestart() {
+        return isOnRestart;
+    }
+
+    public void setParentActivity(Activity parentActivity) {
+        Log.d(this, "setParentActivity = " + parentActivity);
+        this.parentActivity = parentActivity;
     }
 
     @Override
@@ -88,7 +108,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
         // 设置窗体大小
         if (getSize() != null) {
-            frame.setSize(getSize());
+            frame.setSize(getSize().width, getSize().height);
         } else {
             // 默认全屏
             frame.setSize(SwingConstants.getScreenSize());
@@ -96,16 +116,16 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
         // 设置窗体位置
         if (getLocation() != null) {
-            frame.setLocation(getLocation());
+            frame.setLocation(getLocation().xOnParent, getLocation().yOnParent);
         } else {
             // 默认居中
             frame.setLocationRelativeTo(null);
-            setLocation(frame.getLocation());
+            setLocation(Location.getLocation(frame));
         }
 
         defaultActivityResizeMouseListener.init(this);
 
-        normalLocation = frame.getLocation();
+        normalLocation = getLocation();
         normalSize = getSize();
 
         // 设置ActionBar
@@ -118,13 +138,15 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     @Override
     public void onStart() {
         super.onStart();
+        if (isOnRestart) {
+            onRestart();
+        }
         onResume();
     }
 
     @Override
     public void onRestart() {
         super.onRestart();
-        onResume();
     }
 
     /**
@@ -134,8 +156,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     public void onResume() {
         super.onResume();
         // 设置窗体可见
-        if (!frame.isVisible()) {
+        if (frame != null && !frame.isVisible()) {
             frame.setVisible(true);
+            setLocation(Location.getLocation(frame));
+            Log.d(this, "x = " + getLocation().xOnParent + ", y = " + getLocation().yOnParent);
         }
 
         mainBar.addOnActionBarClickListener(this);
@@ -150,7 +174,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     public void onStop() {
         super.onStop();
         // 设置窗体不可见
-        if (frame.isVisible()) {
+        if (frame != null && frame.isVisible()) {
             frame.setVisible(false);
         }
     }
@@ -163,6 +187,22 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         super.onDestroy();
         onPause();
         onStop();
+    }
+
+    public void finish() {
+        AnimateUtil.fadeAway(this, 0.5f, () -> {
+            frame.setVisible(false);
+            frame.dispose();
+            if (parentActivity != null) {
+                parentActivity.onStart();
+                AnimateUtil.fadeCome(parentActivity, 0.75f, () -> {
+                    ActivityManager.removeActivity(this);
+                    ActivityManager.setTopActivity(parentActivity);
+                });
+            } else {
+                ActivityManager.setTopActivity(null);
+            }
+        });
     }
 
     protected void setActionBarHeight(ActionBar.Height height) {
@@ -182,8 +222,9 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     }
 
     public void setCanBack(boolean canBack) {
-        if (mainBar != null) {
-            mainBar.canBack(canBack);
+        if (mainBar != null && parentActivity != null) {
+            Log.d(this, "canBack : " + canBack);
+            mainBar.canBack(true);
         }
     }
 
@@ -226,6 +267,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
      * @param height 新的窗体高度
      */
     public void resetSize(int width, int height) {
+        if (frame == null) return;
         frame.setSize(width, height);
         resetSize();
     }
@@ -262,8 +304,9 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
      * @param y 纵坐标
      */
     public void resetLocation(int x, int y) {
+        if (frame == null) return;
         frame.setLocation(x, y);
-        setLocation(frame.getLocation());
+        setLocation(new Location(frame.getLocation().x, frame.getLocation().y));
         /* add by HLM on 2020/7/26 解决显示中的下拉框跟随窗口移动的功能 */
         if (View.mShowingSpinner != null) {
             View.mShowingSpinner.moveTo();
@@ -300,8 +343,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         attribute.setHeight(LayoutAttribute.MATCH_PARENT);
         getMainView().getComponent().removeAll();
         getMainView().setAttribute(attribute);
-        getMainView().getComponent().setLocation(0, actionBarPanel.getHeight());
-        getMainView().getComponent().setSize(frame.getWidth(), frame.getHeight() - actionBarPanel.getHeight());
+        // changed by HLM 解决窗体边框的颜色设置，通过缩小容器1个像素的大小，用来设置边框，边框的颜色为默认属性的border颜色，用户可以自行配置
+        getMainView().getComponent().setLocation(1, actionBarPanel.getHeight());
+        getMainView().getComponent().setSize(frame.getWidth() - 2, frame.getHeight() - actionBarPanel.getHeight() - 1);
+        getMainView().getComponent().setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.decode(DefaultAttribute.defaultBorderColor)));
         getMainView().setLayoutManager(layoutManager);
         layoutManager.inflate(getMainView(), resName);
         layoutManager.invalidate();
@@ -314,7 +359,15 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
      */
     @Override
     public void onBackClick() {
-        System.out.println("返回");
+        if (parentActivity == null) return;
+        // 只有存在父窗口时才能够被设置为可返回的
+        AnimateUtil.fadeAway(this, 0.5f, () -> {
+            onStop();
+            // 需要重新显示父窗口
+            parentActivity.onStart();
+            ActivityManager.setTopActivity(parentActivity);
+            AnimateUtil.fadeCome(parentActivity, 0.75f);
+        });
     }
 
     /**
@@ -334,8 +387,12 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
      */
     @Override
     public void onMidClick() {
-        resetLocation(normalLocation.x, normalLocation.y);
-        resetSize(normalSize.width, normalSize.height);
+        if (normalLocation != null) {
+            resetLocation(normalLocation.xOnParent, normalLocation.yOnScreen);
+        }
+        if (normalSize != null) {
+            resetSize(normalSize.width, normalSize.height);
+        }
     }
 
     /**
@@ -343,8 +400,8 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
      */
     @Override
     public void onMaxClick() {
-        normalSize = frame.getSize();
-        normalLocation = frame.getLocation();
+        normalSize = new Size(frame.getSize().width, frame.getSize().height);
+        normalLocation = new Location(frame.getLocation().x, frame.getLocation().y);
         Dimension screen = SwingConstants.getScreenSize();
         resetLocation(0, 0);
         resetSize(screen.width, screen.height);
@@ -359,7 +416,8 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         if (View.mShowingSpinner != null) {
             View.mShowingSpinner.dismiss();
         }
-        frame.dispose();
+        finish();
+//        frame.dispose();
     }
 
     /**
