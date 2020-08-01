@@ -16,9 +16,9 @@ public class ActivityManager {
     private static final Map<Class<? extends Activity>, Object> CREATED_ACTIVITY = new ConcurrentHashMap<>();
 
     /**
-     * ÉèÖÃµ±Ç°µÄ¶¥²ã´°¿Ú£¬µ«ÊÇĞÂµÄ´°¿Ú±ØĞë²»Îª¿Õ£¬²»È»ĞÂµÄ´°¿Ú²»»á±»ÖÃÎª¶¥²ã´°¿Ú
+     * è®¾ç½®å½“å‰çš„é¡¶å±‚çª—å£ï¼Œä½†æ˜¯æ–°çš„çª—å£å¿…é¡»ä¸ä¸ºç©ºï¼Œä¸ç„¶æ–°çš„çª—å£ä¸ä¼šè¢«ç½®ä¸ºé¡¶å±‚çª—å£
      *
-     * @param activity ĞÂµÄ´°¿Ú
+     * @param activity æ–°çš„çª—å£
      */
     public static void setTopActivity(Activity activity) {
         if (activity == null) return;
@@ -26,13 +26,13 @@ public class ActivityManager {
     }
 
     /**
-     * Í¨¹ı¸Ã·½·¨¿ÉÒÔ»ñÈ¡µ½µ±Ç°Ó¦ÓÃ´æÔÚµÄ´°¿Ú¶ÔÏó£¨Activity£©
-     * Èç¹û´°¿Ú»¹Ã»ÓĞ±»´´½¨¹ıµÄ»°£¬»á¸ù¾İÌá¹©µÄtarget£¬´´½¨Ò»¸ö¶ÔÓ¦ÀàĞÍµÄ´°¿Ú¶ÔÏó
-     * ²¢½«´°¿Ú¶ÔÏóÌí¼Óµ½CREATED_ACTIVITYÖĞ¡£
+     * é€šè¿‡è¯¥æ–¹æ³•å¯ä»¥è·å–åˆ°å½“å‰åº”ç”¨å­˜åœ¨çš„çª—å£å¯¹è±¡ï¼ˆActivityï¼‰
+     * å¦‚æœçª—å£è¿˜æ²¡æœ‰è¢«åˆ›å»ºè¿‡çš„è¯ï¼Œä¼šæ ¹æ®æä¾›çš„targetï¼Œåˆ›å»ºä¸€ä¸ªå¯¹åº”ç±»å‹çš„çª—å£å¯¹è±¡
+     * å¹¶å°†çª—å£å¯¹è±¡æ·»åŠ åˆ°CREATED_ACTIVITYä¸­ã€‚
      *
-     * @param target Ä¿±ê´°¿ÚµÄÀà
-     * @param <A>    Òª»ñÈ¡µÄ´°¿ÚµÄÀàĞÍ¶¨Òå
-     * @return Æ¥ÅätargetÀàĞÍµÄ´°¿Ú¶ÔÏó
+     * @param target ç›®æ ‡çª—å£çš„ç±»
+     * @param <A>    è¦è·å–çš„çª—å£çš„ç±»å‹å®šä¹‰
+     * @return åŒ¹é…targetç±»å‹çš„çª—å£å¯¹è±¡
      */
     @SuppressWarnings("unchecked")
     public static <A extends Activity> A getOrCreateActivity(Class<A> target) {
@@ -40,10 +40,10 @@ public class ActivityManager {
         A targetActivity = (A) CREATED_ACTIVITY.computeIfAbsent(target, targetActivityType -> {
             Log.d(TAG, "getOrCreateActivity create a new activity type = " + target);
             isNewActivity.set(true);
-            // CREATED_ACTIVITYÖĞ²»´æÔÚtargetÀàĞÍµÄ´°¿Ú ĞèÒªÖØĞÂ´´½¨Ò»¸ö´°¿Ú²¢Ìí¼Óµ½CREATED_ACTIVITYÖĞ¡£
+            // CREATED_ACTIVITYä¸­ä¸å­˜åœ¨targetç±»å‹çš„çª—å£ éœ€è¦é‡æ–°åˆ›å»ºä¸€ä¸ªçª—å£å¹¶æ·»åŠ åˆ°CREATED_ACTIVITYä¸­ã€‚
             A activity = null;
             if (mTopActivity == null) {
-                // µ±Ç°²»´æÔÚÈÎºÎ´°¿Ú£¬´´½¨Ò»¸öÃ»ÓĞÖ¸¶¨´óĞ¡ºÍÎ»ÖÃµÄ´°¿Ú
+                // å½“å‰ä¸å­˜åœ¨ä»»ä½•çª—å£ï¼Œåˆ›å»ºä¸€ä¸ªæ²¡æœ‰æŒ‡å®šå¤§å°å’Œä½ç½®çš„çª—å£
                 try {
                     activity = target.newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
@@ -51,7 +51,7 @@ public class ActivityManager {
                 }
             } else {
                 try {
-                    // ¸ù¾İ¶¥²ã´°¿ÚµÄÎ»ÖÃºÍ´óĞ¡´´½¨Ò»¸öĞÂµÄ´°¿Ú
+                    // æ ¹æ®é¡¶å±‚çª—å£çš„ä½ç½®å’Œå¤§å°åˆ›å»ºä¸€ä¸ªæ–°çš„çª—å£
                     activity = target.newInstance();
                     target.getMethod("setLocation", Location.class).invoke(activity, mTopActivity.getLocation());
                     target.getMethod("setSize", Size.class).invoke(activity, mTopActivity.getSize());
@@ -69,14 +69,14 @@ public class ActivityManager {
     }
 
     /**
-     * ¿ÉÒÔ»ñÈ¡µ½Ö¸¶¨´óĞ¡µÄµÄ´°¿Ú¶ÔÏó
-     * »áÍ¨¹ıCREATED_ACTIVITY²éÕÒÊÇ·ñ´æÔÚÍ¬Ò»ÀàĞÍµÄ´°¿Ú£¬²»´æÔÚÔò´´½¨ĞÂµÄ´°¿Ú
-     * Èç¹û´°¿Ú×¼±¸Íê³É£¬ÔòÉèÖÃÖ¸¶¨µÄ´óĞ¡
+     * å¯ä»¥è·å–åˆ°æŒ‡å®šå¤§å°çš„çš„çª—å£å¯¹è±¡
+     * ä¼šé€šè¿‡CREATED_ACTIVITYæŸ¥æ‰¾æ˜¯å¦å­˜åœ¨åŒä¸€ç±»å‹çš„çª—å£ï¼Œä¸å­˜åœ¨åˆ™åˆ›å»ºæ–°çš„çª—å£
+     * å¦‚æœçª—å£å‡†å¤‡å®Œæˆï¼Œåˆ™è®¾ç½®æŒ‡å®šçš„å¤§å°
      *
-     * @param target     Ä¿±ê´°¿ÚµÄÀà
-     * @param targetSize ´°¿ÚµÄÄ¿±ê´óĞ¡
-     * @param <A>        Òª»ñÈ¡µÄ´°¿ÚµÄÀàĞÍ¶¨Òå
-     * @return Ò»¸ö¾ßÓĞÖ¸¶¨´óĞ¡µÄ´°¿Ú
+     * @param target     ç›®æ ‡çª—å£çš„ç±»
+     * @param targetSize çª—å£çš„ç›®æ ‡å¤§å°
+     * @param <A>        è¦è·å–çš„çª—å£çš„ç±»å‹å®šä¹‰
+     * @return ä¸€ä¸ªå…·æœ‰æŒ‡å®šå¤§å°çš„çª—å£
      */
     public static <A extends Activity> A getOrCreateActivityWithSize(Class<A> target, Size targetSize) {
         A targetActivity = getOrCreateActivity(target);
@@ -87,14 +87,14 @@ public class ActivityManager {
     }
 
     /**
-     * ¿ÉÒÔ»ñÈ¡µ½Ö¸¶¨Î»ÖÃµÄµÄ´°¿Ú¶ÔÏó
-     * »áÍ¨¹ıCREATED_ACTIVITY²éÕÒÊÇ·ñ´æÔÚÍ¬Ò»ÀàĞÍµÄ´°¿Ú£¬²»´æÔÚÔò´´½¨ĞÂµÄ´°¿Ú
-     * Èç¹û´°¿Ú×¼±¸Íê³É£¬ÔòÉèÖÃÖ¸¶¨µÄÎ»ÖÃ
+     * å¯ä»¥è·å–åˆ°æŒ‡å®šä½ç½®çš„çš„çª—å£å¯¹è±¡
+     * ä¼šé€šè¿‡CREATED_ACTIVITYæŸ¥æ‰¾æ˜¯å¦å­˜åœ¨åŒä¸€ç±»å‹çš„çª—å£ï¼Œä¸å­˜åœ¨åˆ™åˆ›å»ºæ–°çš„çª—å£
+     * å¦‚æœçª—å£å‡†å¤‡å®Œæˆï¼Œåˆ™è®¾ç½®æŒ‡å®šçš„ä½ç½®
      *
-     * @param target         Ä¿±ê´°¿ÚµÄÀà
-     * @param targetLocation ´°¿ÚµÄÄ¿±êÎ»ÖÃ
-     * @param <A>            Òª»ñÈ¡µÄ´°¿ÚµÄÀàĞÍ¶¨Òå
-     * @return Ò»¸ö¾ßÓĞÖ¸¶¨Î»ÖÃµÄ´°¿Ú
+     * @param target         ç›®æ ‡çª—å£çš„ç±»
+     * @param targetLocation çª—å£çš„ç›®æ ‡ä½ç½®
+     * @param <A>            è¦è·å–çš„çª—å£çš„ç±»å‹å®šä¹‰
+     * @return ä¸€ä¸ªå…·æœ‰æŒ‡å®šä½ç½®çš„çª—å£
      */
     public static <A extends Activity> A getOrCreateActivityWithLocation(Class<A> target, Location targetLocation) {
         A targetActivity = getOrCreateActivity(target);
@@ -105,17 +105,17 @@ public class ActivityManager {
     }
 
     /**
-     * ¿ÉÒÔ»ñÈ¡µ½Ö¸¶¨´óĞ¡ºÍÎ»ÖÃµÄµÄ´°¿Ú¶ÔÏó
-     * »áÍ¨¹ıCREATED_ACTIVITY²éÕÒÊÇ·ñ´æÔÚÍ¬Ò»ÀàĞÍµÄ´°¿Ú£¬²»´æÔÚÔò´´½¨ĞÂµÄ´°¿Ú
-     * Èç¹û´°¿Ú×¼±¸Íê³É£¬ÔòÉèÖÃÖ¸¶¨µÄ´óĞ¡ºÍÎ»ÖÃ
+     * å¯ä»¥è·å–åˆ°æŒ‡å®šå¤§å°å’Œä½ç½®çš„çš„çª—å£å¯¹è±¡
+     * ä¼šé€šè¿‡CREATED_ACTIVITYæŸ¥æ‰¾æ˜¯å¦å­˜åœ¨åŒä¸€ç±»å‹çš„çª—å£ï¼Œä¸å­˜åœ¨åˆ™åˆ›å»ºæ–°çš„çª—å£
+     * å¦‚æœçª—å£å‡†å¤‡å®Œæˆï¼Œåˆ™è®¾ç½®æŒ‡å®šçš„å¤§å°å’Œä½ç½®
      *
-     * @param target         Ä¿±ê´°¿ÚµÄÀà
-     * @param targetLocation ´°¿ÚµÄÄ¿±ê´óĞ¡ºÍÎ»ÖÃ
-     * @param <A>            Òª»ñÈ¡µÄ´°¿ÚµÄÀàĞÍ¶¨Òå
-     * @return Ò»¸ö¾ßÓĞÖ¸¶¨´óĞ¡ºÍÎ»ÖÃµÄ´°¿Ú
+     * @param target         ç›®æ ‡çª—å£çš„ç±»
+     * @param targetLocation çª—å£çš„ç›®æ ‡å¤§å°å’Œä½ç½®
+     * @param <A>            è¦è·å–çš„çª—å£çš„ç±»å‹å®šä¹‰
+     * @return ä¸€ä¸ªå…·æœ‰æŒ‡å®šå¤§å°å’Œä½ç½®çš„çª—å£
      */
     public static <A extends Activity> A getOrCreateActivityWithSizeAndLocation(Class<A> target, Size targetSize, Location targetLocation) {
-        // ÏÈ´¦Àí´°¿ÚµÄ´óĞ¡
+        // å…ˆå¤„ç†çª—å£çš„å¤§å°
         A targetActivity = getOrCreateActivityWithSize(target, targetSize);
         if (targetActivity != null) {
             targetActivity.setLocation(targetLocation);

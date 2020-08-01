@@ -10,14 +10,14 @@ import java.awt.*;
 import static java.lang.Thread.sleep;
 
 /**
- * Ò»Ğ©¶¯»­¹¤¾ß
+ * ä¸€äº›åŠ¨ç”»å·¥å…·
  */
 public class AnimateUtil {
     public enum Direction {
-        LTR,    // ´Ó×óµ½ÓÒ
-        RTL,    // ´ÓÓÒµ½×ó
-        TTB,    // ´ÓÉÏµ½ÏÂ
-        BTT     // ´ÓÏÂµ½ÉÏ
+        LTR,    // ä»å·¦åˆ°å³
+        RTL,    // ä»å³åˆ°å·¦
+        TTB,    // ä»ä¸Šåˆ°ä¸‹
+        BTT     // ä»ä¸‹åˆ°ä¸Š
     }
 
     public static void fadeOut(View<?, ?> target, Direction direction, float seconds, Runnable... then) {
@@ -33,9 +33,9 @@ public class AnimateUtil {
                 break;
             case RTL:
                 new Thread(() -> {
-                    // µ­³ö¹ı³ÌµÄÖ¡Êı
+                    // æ·¡å‡ºè¿‡ç¨‹çš„å¸§æ•°
                     int fadeFps = (int) (seconds * 15);
-                    // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+                    // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
                     int widthOutFps = size.width / fadeFps + 1;
                     for (int i = 0; i < fadeFps; i++) {
                         size.width -= widthOutFps;
@@ -65,9 +65,9 @@ public class AnimateUtil {
                 break;
             case RTL:
                 new Thread(() -> {
-                    // µ­³ö¹ı³ÌµÄÖ¡Êı
+                    // æ·¡å‡ºè¿‡ç¨‹çš„å¸§æ•°
                     int fadeFps = (int) (seconds * 15);
-                    // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+                    // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
                     int widthOutFps = size.width / fadeFps + 1;
                     for (int i = 0; i < fadeFps; i++) {
                         size.width -= widthOutFps;
@@ -94,9 +94,9 @@ public class AnimateUtil {
         switch (direction) {
             case LTR:
                 new Thread(() -> {
-                    // µ­Èë¹ı³ÌµÄÖ¡Êı
+                    // æ·¡å…¥è¿‡ç¨‹çš„å¸§æ•°
                     int fadeFps = (int) (seconds * 15);
-                    // Ã¿Ò»Ö¡¿í¶ÈµÄÔö¼Ó
+                    // æ¯ä¸€å¸§å®½åº¦çš„å¢åŠ 
                     int widthInFps = (targetSize.width - size.width) / fadeFps + 1;
                     for (int i = 0; i < fadeFps; i++) {
                         size.width += widthInFps;
@@ -123,11 +123,11 @@ public class AnimateUtil {
             return;
         }
         new Thread(() -> {
-            // µ­³ö¹ı³ÌµÄÖ¡Êı
+            // æ·¡å‡ºè¿‡ç¨‹çš„å¸§æ•°
             int fadeFps = (int) (seconds * 15);
-            // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+            // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
             int widthOutFps = size.width / fadeFps + 1;
-            // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+            // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
             int heightOutFps = size.width / fadeFps + 1;
             for (int i = 0; i < fadeFps; i++) {
                 size.width -= widthOutFps;
@@ -150,11 +150,11 @@ public class AnimateUtil {
             return;
         }
         new Thread(() -> {
-            // µ­³ö¹ı³ÌµÄÖ¡Êı
+            // æ·¡å‡ºè¿‡ç¨‹çš„å¸§æ•°
             int fadeFps = (int) (seconds * 15);
-            // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+            // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
             int widthOutFps = size.width / fadeFps + 1;
-            // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+            // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
             int heightOutFps = size.width / fadeFps + 1;
             for (int i = 0; i < fadeFps; i++) {
                 size.width -= widthOutFps;
@@ -176,11 +176,11 @@ public class AnimateUtil {
             return;
         }
         new Thread(() -> {
-            // µ­³ö¹ı³ÌµÄÖ¡Êı
+            // æ·¡å‡ºè¿‡ç¨‹çš„å¸§æ•°
             int fadeFps = (int) (seconds * 15);
-            // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+            // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
             int widthOutFps = (targetSize.width - size.width) / fadeFps + 1;
-            // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+            // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
             int heightOutFps = (targetSize.height - size.height) / fadeFps + 1;
             for (int i = 0; i < fadeFps; i++) {
                 size.width += widthOutFps;
@@ -203,11 +203,11 @@ public class AnimateUtil {
             return;
         }
         new Thread(() -> {
-            // µ­³ö¹ı³ÌµÄÖ¡Êı
+            // æ·¡å‡ºè¿‡ç¨‹çš„å¸§æ•°
             int fadeFps = (int) (seconds * 15);
-            // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+            // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
             int widthOutFps = (targetSize.width - size.width) / fadeFps + 1;
-            // Ã¿Ò»Ö¡¿í¶ÈµÄËõ¼õ
+            // æ¯ä¸€å¸§å®½åº¦çš„ç¼©å‡
             int heightOutFps = (targetSize.height - size.height) / fadeFps + 1;
             for (int i = 0; i < fadeFps; i++) {
                 size.width += widthOutFps;
@@ -221,19 +221,19 @@ public class AnimateUtil {
     }
 
     /**
-     * ½¥µ­¶¯»­£¬Í¸Ã÷¶ÈÔÚÒ»¶ÎÊ±¼äÄÚ±äÎª0
+     * æ¸æ·¡åŠ¨ç”»ï¼Œé€æ˜åº¦åœ¨ä¸€æ®µæ—¶é—´å†…å˜ä¸º0
      *
-     * @param target  Ä¿±ê´°¿Ú
-     * @param seconds ¶¯»­Ê±³¤£¨s£©
-     * @param then    ¶¯»­½áÊøÖ®ºóµÄ²Ù×÷£¬Ò²ÊÇÔÚÏß³ÌÖĞÖ´ĞĞ
+     * @param target  ç›®æ ‡çª—å£
+     * @param seconds åŠ¨ç”»æ—¶é•¿ï¼ˆsï¼‰
+     * @param then    åŠ¨ç”»ç»“æŸä¹‹åçš„æ“ä½œï¼Œä¹Ÿæ˜¯åœ¨çº¿ç¨‹ä¸­æ‰§è¡Œ
      */
     public static void fadeAway(Activity target, float seconds, Runnable... then) {
         new Thread(() -> {
-            // µ­³ö¹ı³ÌµÄÖ¡Êı
+            // æ·¡å‡ºè¿‡ç¨‹çš„å¸§æ•°
             int fadeFps = (int) (seconds * 15);
-            // Ã¿Ò»Ö¡²»Í¸Ã÷¶ÈµÄÔö·ù
+            // æ¯ä¸€å¸§ä¸é€æ˜åº¦çš„å¢å¹…
             float opacityOutFps = 1f / (float) fadeFps;
-            float opacity = 1; // µ±Ç°µÄ²»Í¸Ã÷¶È
+            float opacity = 1; // å½“å‰çš„ä¸é€æ˜åº¦
             for (int i = 0; i < fadeFps && opacity > 0; i++) {
                 opacity -= opacityOutFps;
                 target.getFrame().setOpacity(opacity < 0 ? 0 : opacity);
@@ -245,19 +245,19 @@ public class AnimateUtil {
     }
 
     /**
-     * ½¥Èë¶¯»­£¬Í¸Ã÷¶ÈÔÚÒ»¶ÎÊ±¼äÄÚ±äÎª1
+     * æ¸å…¥åŠ¨ç”»ï¼Œé€æ˜åº¦åœ¨ä¸€æ®µæ—¶é—´å†…å˜ä¸º1
      *
-     * @param target  Ä¿±ê´°¿Ú
-     * @param seconds ¶¯»­Ê±³¤£¨s£©
-     * @param then    ¶¯»­½áÊøÖ®ºóµÄ²Ù×÷£¬Ò²ÊÇÔÚÏß³ÌÖĞÖ´ĞĞ
+     * @param target  ç›®æ ‡çª—å£
+     * @param seconds åŠ¨ç”»æ—¶é•¿ï¼ˆsï¼‰
+     * @param then    åŠ¨ç”»ç»“æŸä¹‹åçš„æ“ä½œï¼Œä¹Ÿæ˜¯åœ¨çº¿ç¨‹ä¸­æ‰§è¡Œ
      */
     public static void fadeCome(Activity target, float seconds, Runnable... then) {
         new Thread(() -> {
-            // µ­³ö¹ı³ÌµÄÖ¡Êı
+            // æ·¡å‡ºè¿‡ç¨‹çš„å¸§æ•°
             int fadeFps = (int) (seconds * 15);
-            // Ã¿Ò»Ö¡²»Í¸Ã÷¶ÈµÄ¼õ·ù
+            // æ¯ä¸€å¸§ä¸é€æ˜åº¦çš„å‡å¹…
             float opacityInFps = 1f / (float) fadeFps;
-            float opacity = 0; // µ±Ç°µÄ²»Í¸Ã÷¶È
+            float opacity = 0; // å½“å‰çš„ä¸é€æ˜åº¦
             for (int i = 0; i < fadeFps && opacity < 1; i++) {
                 opacity += opacityInFps;
                 target.getFrame().setOpacity(opacity > 1 ? 1 : opacity);
