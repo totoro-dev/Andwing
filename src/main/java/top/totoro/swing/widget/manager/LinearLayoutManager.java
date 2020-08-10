@@ -11,11 +11,9 @@ import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.exception.AttributeException;
 import top.totoro.swing.widget.layout.CenterLayout;
+import top.totoro.swing.widget.layout.FrameLayout;
 import top.totoro.swing.widget.layout.LinearLayout;
-import top.totoro.swing.widget.util.AttributeUtil;
-import top.totoro.swing.widget.util.LayoutUtil;
-import top.totoro.swing.widget.util.Log;
-import top.totoro.swing.widget.util.ViewUtil;
+import top.totoro.swing.widget.util.*;
 import top.totoro.swing.widget.view.Span;
 import top.totoro.swing.widget.view.View;
 
@@ -124,7 +122,7 @@ public class LinearLayoutManager extends LayoutManager {
      * @param layoutAttribute 父布局的布局属性
      */
     private void addChildView(BaseLayout layout, View son, LayoutAttribute layoutAttribute) {
-        if (layout instanceof CenterLayout) {
+        if (layout instanceof CenterLayout || layoutAttribute.getGravity() == AttributeDefaultValue.center) {
             Span left = new Span(layout);
             ViewAttribute leftAttr = new ViewAttribute();
             // 根据layout的Orientation属性确定是上下居中还是左右居中
@@ -160,7 +158,9 @@ public class LinearLayoutManager extends LayoutManager {
         if (root.getComponent() != null) {
             root.getComponent().removeAll();
         }
-        if (root instanceof CenterLayout) {           // 解析居中布局
+        // 增加gravity属性，需要对center属性做居中处理
+        // 因为CenterLayout继承自LinearLayout，需要先判断CenterLayout，否则会被匹配为LinearLayout
+        if (root instanceof CenterLayout || root.getAttribute().getGravity().equals(AttributeDefaultValue.center)) { // 解析居中布局
             attachAsCenterLayout(root, rootElement, res, atachRoot);
         } else if (root instanceof LinearLayout) {    // 解析线性布局
             attachAsLinearLayout(root, rootElement, res, atachRoot);
@@ -172,7 +172,8 @@ public class LinearLayoutManager extends LayoutManager {
         List<Element> childElements = rootElement.elements();
         for (Element childElement : childElements) {
             BaseAttribute childAttribute;
-            if (childElement.elements().size() > 0) {
+            Log.d(this, "element name = " + childElement.getName());
+            if (childElement.elements().size() > 0 || childElement.getName().equals(FrameLayout.class.getSimpleName())) {
                 // 这个子节点是一个Layout
                 childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
                 BaseLayout layout = LayoutUtil.createLayout(linearLayout, childElement.getName(), (LayoutAttribute) childAttribute);
@@ -196,7 +197,7 @@ public class LinearLayoutManager extends LayoutManager {
                 } else {
                     linearLayout.addChildView(view);
                 }
-                if (childAttribute.getId()!=null) {
+                if (childAttribute.getId() != null) {
                     view.setId(childAttribute.getId());
                 }
             }

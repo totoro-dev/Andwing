@@ -34,5 +34,6 @@ public final class AttributeKey {
     public static final String switchOffKey = "switchOffIcon";
     public static final String isSwitchOnKey = "isSwitchOn";
 
+    public static final String GRAVITY = "gravity";
 
 }

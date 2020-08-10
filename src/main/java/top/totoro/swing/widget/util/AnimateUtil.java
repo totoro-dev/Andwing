@@ -5,8 +5,6 @@ import top.totoro.swing.widget.base.Size;
 import top.totoro.swing.widget.context.Activity;
 import top.totoro.swing.widget.view.View;
 
-import java.awt.*;
-
 import static java.lang.Thread.sleep;
 
 /**

@@ -12,11 +12,8 @@ import top.totoro.swing.widget.manager.LinearLayoutManager;
 import top.totoro.swing.widget.util.AnimateUtil;
 import top.totoro.swing.widget.view.View;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.Thread.sleep;
 
 public class Context implements ContextWrapper {
 
@@ -25,6 +22,10 @@ public class Context implements ContextWrapper {
     private BaseLayout mainView = new LinearLayout(null);
     protected LinearLayoutManager layoutManager = new LinearLayoutManager();
     protected List<InvalidateListener> invalidateListenerList = new ArrayList<>();
+
+    public LinearLayoutManager getLayoutManager() {
+        return layoutManager;
+    }
 
     public void requestInvalidateListener(InvalidateListener listener) {
         invalidateListenerList.remove(listener);

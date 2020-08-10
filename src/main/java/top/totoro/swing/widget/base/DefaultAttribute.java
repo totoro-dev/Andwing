@@ -8,7 +8,6 @@ import org.dom4j.io.SAXReader;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
 import top.totoro.swing.widget.util.Log;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.List;
 

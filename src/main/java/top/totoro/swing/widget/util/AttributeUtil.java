@@ -32,6 +32,7 @@ public class AttributeUtil {
                     case WIDTH:
                         continue;
                     case ID:
+                    case GRAVITY:
                         invokeSet(name, attr.getValue(), String.class, layoutAttribute);
                         continue;
                     case ORIENTATION:
