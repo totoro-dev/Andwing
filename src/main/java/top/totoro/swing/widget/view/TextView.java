@@ -31,19 +31,23 @@ public class TextView extends View<ViewAttribute, JLabel> {
         // minHeight = size + size / 5 中：size / 5用于防止像g等会出现下脚的内容被遮挡
         int size = attribute.getTextSize(), minWidth = 0, minHeight = size + size / 5;
         String text = attribute.getText();
-        char[] chars = text.toCharArray();
-        for (char c :
-                chars) {
-            // 根据英文、英文符号、中文中文符号来确定TextView至少要多大才能容的下
-            if (Integer.valueOf(Integer.toString(c)) < 128) {
-                minWidth += size / 2;
-            } else {
-                if (String.valueOf(c).matches("。？、“”——")) {
-                    minWidth += 5 * size / 8;
+        if (text != null) {
+            char[] chars = text.toCharArray();
+            for (char c :
+                    chars) {
+                // 根据英文、英文符号、中文中文符号来确定TextView至少要多大才能容的下
+                if (Integer.parseInt(Integer.toString(c)) < 128) {
+                    minWidth += size / 2;
                 } else {
-                    minWidth += size + 1; // 中文字符需要加1
+                    if (String.valueOf(c).matches("。？、“”——")) {
+                        minWidth += 5 * size / 8;
+                    } else {
+                        minWidth += size + 1; // 中文字符需要加1
+                    }
                 }
             }
+        }else {
+            minHeight = 0;
         }
         setMinWidth(minWidth);
         setMinHeight(minHeight);
