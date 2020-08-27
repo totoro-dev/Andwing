@@ -11,7 +11,7 @@ SwingPro abandons the native swing development mode of Java, and provides the ab
  All application interfaces can be written with XML code, and there are corresponding management methods for windows, dialog boxes and other large components. 
  In addition to the rich controls provided by the framework, developers can further expand the original view.
  
-##Quick start
+## Quick start
 - SwingPro plug-in is installed in IDEA<br>
 Download the plug-in's jar package. In the idea, plug-in's `install from disk` is used to install the jar package as the plug-in.<br>
 Download [SwingPro_Plugin](/plugin/SwingPro_Plugin_1.0.2.jar)<br>
