@@ -219,13 +219,13 @@ public class AnimateUtil {
     }
 
     /**
-     * 渐淡动画，透明度在一段时间内变为0
+     * 透明度动画，透明度在一段时间内变为0
      *
      * @param target  目标窗口
      * @param seconds 动画时长（s）
      * @param then    动画结束之后的操作，也是在线程中执行
      */
-    public static void fadeAway(Activity target, float seconds, Runnable... then) {
+    public static void transparentOut(Activity target, float seconds, Runnable... then) {
         new Thread(() -> {
             // 淡出过程的帧数
             int fadeFps = (int) (seconds * 15);
@@ -243,13 +243,13 @@ public class AnimateUtil {
     }
 
     /**
-     * 渐入动画，透明度在一段时间内变为1
+     * 透明度动画，透明度在一段时间内变为1
      *
      * @param target  目标窗口
      * @param seconds 动画时长（s）
      * @param then    动画结束之后的操作，也是在线程中执行
      */
-    public static void fadeCome(Activity target, float seconds, Runnable... then) {
+    public static void transparentIn(Activity target, float seconds, Runnable... then) {
         new Thread(() -> {
             // 淡出过程的帧数
             int fadeFps = (int) (seconds * 15);

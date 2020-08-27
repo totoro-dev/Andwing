@@ -10,6 +10,7 @@ import top.totoro.swing.widget.listener.InvalidateListener;
 import top.totoro.swing.widget.manager.ActivityManager;
 import top.totoro.swing.widget.manager.LinearLayoutManager;
 import top.totoro.swing.widget.util.AnimateUtil;
+import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.view.View;
 
 import java.util.ArrayList;
@@ -41,15 +42,16 @@ public class Context implements ContextWrapper {
         if (context instanceof Activity) {
             activity.setParentActivity((Activity) context);
             activity.resetLocation(((Activity) context).getFrame().getLocation().x, ((Activity) context).getFrame().getLocation().y);
-            if (activity.isOnRestart()) {
-                activity.onStart();
-            } else {
-                activity.setSize(context.size);
-                activity.onCreate();
-            }
-            AnimateUtil.fadeAway((Activity) context, 0.5f, () -> {
+            AnimateUtil.transparentOut((Activity) context, 0.5f, () -> {
                 context.onStop();
-                AnimateUtil.fadeCome(activity, 0.75f, () -> activity.setCanBack(true));
+                if (activity.isOnRestart()) {
+                    activity.onStart();
+                } else {
+                    activity.setLocation(context.location);
+                    activity.setSize(context.size);
+                    activity.onCreate();
+                }
+                AnimateUtil.transparentIn(activity, 0.75f, () -> activity.setCanBack(true));
             });
         } else {
             activity.setParentActivity(null);
@@ -68,9 +70,7 @@ public class Context implements ContextWrapper {
             activity.setSize(size);
             activity.onCreate();
         }
-        AnimateUtil.fadeCome(activity, 0.75f, () -> {
-            activity.setSize(size);
-        });
+        AnimateUtil.transparentIn(activity, 0.75f);
     }
 
     public View findViewById(String id) {

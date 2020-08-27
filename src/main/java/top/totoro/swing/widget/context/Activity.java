@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 
 public class Activity extends Context implements OnActionBarClickListener, OnActivityDragListener, OnActionBarResizeListener {
 
@@ -157,6 +158,9 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         super.onResume();
         // 设置窗体可见
         if (frame != null && !frame.isVisible()) {
+            // 解决初始化窗口时的闪屏问题
+            // 由于初始化窗口时是透明度渐变过程，如果一开始就是非透明的（opacity = 1），会出现闪屏
+            frame.setOpacity(0);
             frame.setVisible(true);
             setLocation(Location.getLocation(frame));
             Log.d(this, "x = " + getLocation().xOnParent + ", y = " + getLocation().yOnParent);
@@ -190,17 +194,24 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     }
 
     public void finish() {
-        AnimateUtil.fadeAway(this, 0.5f, () -> {
+        AnimateUtil.transparentOut(this, 0.5f, () -> {
             frame.setVisible(false);
             frame.dispose();
             if (parentActivity != null) {
                 parentActivity.onStart();
-                AnimateUtil.fadeCome(parentActivity, 0.75f, () -> {
+                AnimateUtil.transparentIn(parentActivity, 0.75f, () -> {
                     ActivityManager.removeActivity(this);
                     ActivityManager.setTopActivity(parentActivity);
                 });
             } else {
                 ActivityManager.setTopActivity(null);
+                // 当打开多个activity后关闭所有窗口无法完全退出应用
+                ActivityManager.getCreatedActivities().forEach((aClass, obj) -> {
+                    if (obj instanceof Activity) {
+                        ((Activity) obj).finish();
+                    }
+                });
+                ActivityManager.getCreatedActivities().clear();
             }
         });
     }
@@ -361,12 +372,12 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     public void onBackClick() {
         if (parentActivity == null) return;
         // 只有存在父窗口时才能够被设置为可返回的
-        AnimateUtil.fadeAway(this, 0.5f, () -> {
+        AnimateUtil.transparentOut(this, 0.5f, () -> {
             onStop();
             // 需要重新显示父窗口
             parentActivity.onStart();
             ActivityManager.setTopActivity(parentActivity);
-            AnimateUtil.fadeCome(parentActivity, 0.75f);
+            AnimateUtil.transparentIn(parentActivity, 0.75f);
         });
     }
 

@@ -21,8 +21,21 @@ public class ActivityManager {
      * @param activity 新的窗口
      */
     public static void setTopActivity(Activity activity) {
-        if (activity == null) return;
+//        if (activity == null) return;
         mTopActivity = activity;
+    }
+
+    /**
+     * 获取顶层窗口
+     *
+     * @return 当前应用最顶层的窗口
+     */
+    public static Activity getTopActivity() {
+        return mTopActivity;
+    }
+
+    public static Map<Class<? extends Activity>, Object> getCreatedActivities() {
+        return CREATED_ACTIVITY;
     }
 
     /**
@@ -42,23 +55,11 @@ public class ActivityManager {
             isNewActivity.set(true);
             // CREATED_ACTIVITY中不存在target类型的窗口 需要重新创建一个窗口并添加到CREATED_ACTIVITY中。
             A activity = null;
-            if (mTopActivity == null) {
-                // 当前不存在任何窗口，创建一个没有指定大小和位置的窗口
-                try {
-                    activity = target.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    // 根据顶层窗口的位置和大小创建一个新的窗口
-                    activity = target.newInstance();
-                    target.getMethod("setLocation", Location.class).invoke(activity, mTopActivity.getLocation());
-                    target.getMethod("setSize", Size.class).invoke(activity, mTopActivity.getSize());
-//                    target.getMethod("onCreate").invoke(object);
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+            // 只负责窗体的创建，其余配置不在此处进行
+            try {
+                activity = target.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
             }
             return activity;
         });
