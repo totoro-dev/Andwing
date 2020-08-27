@@ -12,6 +12,8 @@ SwingPro abandons the native swing development mode of Java, and provides the ab
  In addition to the rich controls provided by the framework, developers can further expand the original view.
  
 ## Quick start
+- API documentation<br>
+[SwingPro v1.0.3 online documentation](http://114.67.168.56/doc/SwingPro)
 - SwingPro plug-in is installed in IDEA<br>
 Download the plug-in's jar package. In the idea, plug-in's `install from disk` is used to install the jar package as the plug-in.<br>
 Download [SwingPro_Plugin](/plugin/SwingPro_Plugin_1.0.2.jar)<br>

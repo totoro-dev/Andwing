@@ -12,6 +12,8 @@ SwingPro摒弃了Java原生的swing开发模式，提供更加容易实现应用
 除了框架提供的丰富的控件外，支持开发者在原有的视图的基础上进行进一步扩展。
 
 ## 快速入门
+- API文档<br>
+[SwingPro v1.0.3 在线文档](http://114.67.168.56/doc/SwingPro)
 - IDEA安装插件SwingProPlugin<br>
 下载插件的jar包，IDEA中使用Plugin的`install from disk`安装jar包为插件<br>
 下载[SwingPro_Plugin](/plugin/SwingPro_Plugin_1.0.2.jar)<br>
