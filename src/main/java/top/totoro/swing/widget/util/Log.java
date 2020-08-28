@@ -10,4 +10,14 @@ public class Log {
             System.out.println(target.getClass().getSimpleName() + " : " + msg);
         }
     }
+
+    public static void e(Object target, Object error) {
+        if (target instanceof String) {
+            System.err.println(target + " : " + error);
+        } else if (target instanceof Class) {
+            System.err.println(((Class) target).getSimpleName() + " : " + error);
+        } else {
+            System.err.println(target.getClass().getSimpleName() + " : " + error);
+        }
+    }
 }

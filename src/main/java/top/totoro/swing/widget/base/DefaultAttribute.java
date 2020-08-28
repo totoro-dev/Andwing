@@ -8,20 +8,27 @@ import org.dom4j.io.SAXReader;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
 import top.totoro.swing.widget.util.Log;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.List;
 
 public final class DefaultAttribute {
-    private static final String DEFAULT_ATTRIBUTE_CONFIG_FILE = "values/styles.xml";
+    private static final String DEFAULT_ATTRIBUTE_CONFIG_FILE = "values/styles.swing";
     public static String defaultBackgroundColor = AttributeDefaultValue.WHITE_COLOR;
     public static String defaultBorderColor = "#dbdbdb";
     public static String defaultThemeColor = AttributeDefaultValue.WHITE_COLOR;
+    public static String appIcon = "img/swing_logo.png";
+
+    private static boolean hadLoad = false; // 避免多次加载资源
 
     /**
      * 加载应用的默认属性，给布局控件使用
+     *
      * @param app 要加载的默认属性的应用
      */
     public static void loadDefaultAttribute(Class<?> app) {
+        if (hadLoad) return;
+        hadLoad = true;
         URL url = app.getClassLoader().getResource(DEFAULT_ATTRIBUTE_CONFIG_FILE);
         if (url == null) {
             Log.d("DefaultAttribute", "no exist default resource file");
@@ -52,6 +59,9 @@ public final class DefaultAttribute {
                                 case "themeColor":
                                     defaultThemeColor = getColor(defaultThemeColor, value);
                                     break;
+                                case "appIcon":
+                                    appIcon = value;
+                                    break;
                             }
                         }
                     }
@@ -59,6 +69,8 @@ public final class DefaultAttribute {
             }
         } catch (DocumentException e) {
             e.printStackTrace();
+            // 加载出错代表还没完全加载
+            hadLoad = false;
         }
     }
 

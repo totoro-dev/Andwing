@@ -18,6 +18,7 @@ import top.totoro.swing.widget.view.View;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -134,6 +135,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         frame.add(actionBarPanel);
         mainBar = new ActionBar(actionBarPanel);
         resetActionBar();
+        // 默认以窗口的类名作为标题
+        setTitle(getClass().getSimpleName());
+        // 设置应用图标
+        setIcon(DefaultAttribute.appIcon);
     }
 
     @Override
@@ -224,8 +229,24 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         mainBar.setBorder(1, color);
     }
 
+    protected void setIcon(String iconPath) {
+        if (frame != null) {
+            URL url = getClass().getClassLoader().getResource(iconPath);
+            if (url != null) {
+                frame.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
+            } else {
+                Log.e(this, "Can't load icon with path ：" + iconPath);
+            }
+        }
+    }
+
     protected void setTitle(String title) {
-        mainBar.setTitleText(title);
+        if (mainBar != null) {
+            mainBar.setTitleText(title);
+        }
+        if (frame != null) {
+            frame.setTitle(title);
+        }
     }
 
     protected void setTitleColor(Color color) {
