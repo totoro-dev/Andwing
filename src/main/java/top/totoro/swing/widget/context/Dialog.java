@@ -2,9 +2,11 @@ package top.totoro.swing.widget.context;
 
 import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.manager.DialogManager;
+import top.totoro.swing.widget.util.SwingConstants;
 import top.totoro.swing.widget.view.View;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -15,21 +17,28 @@ public class Dialog extends Context {
     private final long mDialogId = System.currentTimeMillis();
     private final JWindow mDialogMarkWindow; // 蒙版
     private final JWindow mDialogWindow;
-    private final Activity mActivity;
-    private int mActivityWidth = 0, mActivityHeight = 0;
+    private final Context mContext;
+    private int mContextWidth = 0, mContextHeight = 0;
     private int width = 0, height = 0;
     private boolean mShowing = false; // 是否处于显示状态（不受窗口最小化的影响）
 
-    public Dialog(Activity activity) {
-        assert activity != null;
-        mActivity = activity;
-        mActivityWidth = activity.getSize().width;
-        mActivityHeight = activity.getSize().height;
-        width = mActivityWidth - 50;
-        height = mActivityHeight - 50;
+    public Dialog(Context context) {
+        assert context != null;
+        mContext = context;
+        if (mContext instanceof Activity) {
+            mContextWidth = context.getSize().width;
+            mContextHeight = context.getSize().height;
+        } else {
+            Dimension screenSize = SwingConstants.getScreenSize();
+            mContextWidth = screenSize.width;
+            mContextHeight = screenSize.height;
+        }
+
+        width = mContextWidth - 50;
+        height = mContextHeight - 50;
 
         mDialogMarkWindow = new JWindow();
-        mDialogMarkWindow.setSize(mActivityWidth, mActivityHeight);
+        mDialogMarkWindow.setSize(mContextWidth, mContextHeight);
         mDialogMarkWindow.setOpacity(0.5F);
         MouseListener mDialogMarkWindowMouseListener = new MouseListener() {
             @Override
@@ -58,7 +67,7 @@ public class Dialog extends Context {
         mDialogWindow.getContentPane().add(getMainView().getComponent());
         // 设置背景全透明
         mDialogWindow.getRootPane().setOpaque(false);
-        mDialogWindow.setSize(mActivityWidth, mActivityHeight);
+        mDialogWindow.setSize(mContextWidth, mContextHeight);
     }
 
     public void show() {
@@ -81,7 +90,6 @@ public class Dialog extends Context {
             mDialogWindow.setVisible(false);
             mShowing = needToShowingAuto.length > 0 && needToShowingAuto[0];
         }
-        mActivity.getFrame().setOpacity(1);
     }
 
     public void dismiss() {
@@ -123,9 +131,15 @@ public class Dialog extends Context {
     }
 
     public void resetDialogWindowLocation() {
-        int x = mActivity.getFrame().getX() + (mActivityWidth - width) / 2;
-        int y = mActivity.getFrame().getY() + (mActivityHeight - height) / 2;
-        mDialogMarkWindow.setLocation(mActivity.getFrame().getX(), mActivity.getFrame().getY());
+        int parentX = 0, parentY = 0;
+        if (mContext instanceof Activity) {
+            // 只有是activity窗口时才需要定位窗口的位置
+            parentX = ((Activity) mContext).getFrame().getX();
+            parentY = ((Activity) mContext).getFrame().getY();
+        }
+        int x = parentX + (mContextWidth - width) / 2;
+        int y = parentY + (mContextHeight - height) / 2;
+        mDialogMarkWindow.setLocation(parentX, parentY);
         mDialogWindow.setLocation(x, y);
     }
 
