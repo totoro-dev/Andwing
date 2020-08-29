@@ -11,6 +11,7 @@ import top.totoro.swing.widget.listener.OnActivityDragListener;
 import top.totoro.swing.widget.listener.OnActivityResizeListener;
 import top.totoro.swing.widget.listener.deafultImpl.DefaultActivityResizeMouseListener;
 import top.totoro.swing.widget.manager.ActivityManager;
+import top.totoro.swing.widget.manager.DialogManager;
 import top.totoro.swing.widget.util.AnimateUtil;
 import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.util.SwingConstants;
@@ -23,7 +24,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 
 public class Activity extends Context implements OnActionBarClickListener, OnActivityDragListener, OnActionBarResizeListener {
 
@@ -102,6 +102,20 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
                 onDestroy();
             }
         };
+
+        frame.addWindowStateListener(state -> {
+            if (state.getNewState() == 1 || state.getNewState() == 7) {
+                // 窗口最小化，对话框需要同时隐藏
+                if (DialogManager.getTopDialog() != null && DialogManager.getTopDialog().isShowing()) {
+                    DialogManager.getTopDialog().hide(true);
+                }
+            } else if (state.getNewState() == 0) {
+                // 窗口恢复，同时恢复对话框的显示状态
+                if (DialogManager.getTopDialog() != null && DialogManager.getTopDialog().isShowing()) {
+                    DialogManager.getTopDialog().show();
+                }
+            }
+        });
 
         frame.getContentPane().setLayout(null);
         frame.getContentPane().removeAll();
@@ -342,6 +356,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         /* add by HLM on 2020/7/26 解决显示中的下拉框跟随窗口移动的功能 */
         if (View.mShowingSpinner != null) {
             View.mShowingSpinner.moveTo();
+        }
+        /* add by HLM on 2020/8/29 解决显示中的dialog跟随窗口移动的功能 */
+        if (DialogManager.getTopDialog() != null) {
+            DialogManager.getTopDialog().resetDialogWindowLocation();
         }
     }
 

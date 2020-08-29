@@ -58,6 +58,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 
     public void removeAllSon() {
         sonViews.clear();
+        component.removeAll();
     }
 
     public LinkedList<View> getSonViews() {

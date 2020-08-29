@@ -40,6 +40,10 @@ public class LinearLayoutManager extends LayoutManager {
     public LinearLayoutManager() {
     }
 
+    public void setMainLayout(BaseLayout mainLayout) {
+        this.mainLayout = mainLayout;
+    }
+
     /**
      * 通过xml资源文件名，初始化View的关系列表，为渲染做准备
      * 默认绑定到mainLayout上
@@ -553,7 +557,7 @@ public class LinearLayoutManager extends LayoutManager {
             return;
         }
         if (isHorizontal(parent)) {
-            if (isWidthAsMatch(parent)) {
+            if (isWidthAsMatch(parent) || isWidthAsValue(parent)) {
                 if (isWidthAsMatch(son)) {
                     parent.matchParentWidthViews.add(son);
                 } else {
@@ -581,7 +585,7 @@ public class LinearLayoutManager extends LayoutManager {
             return;
         }
         if (isVertical(parent)) {
-            if (isHeightAsMatch(parent)) {
+            if (isHeightAsMatch(parent) || isHeightAsValue(parent)) {
                 if (isHeightAsMatch(son)) {
                     parent.matchParentHeightViews.add(son);
                 } else {
