@@ -62,6 +62,7 @@ public class Dialog extends Context {
     }
 
     public void show() {
+        // 保证永远只有一个dialog显示中
         if (DialogManager.getTopDialog() != null && DialogManager.getTopDialog().mDialogId != mDialogId) {
             DialogManager.dismiss();
         }

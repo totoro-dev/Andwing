@@ -231,6 +231,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
                     }
                 });
                 ActivityManager.getCreatedActivities().clear();
+                // 避免存在隐藏但没有销毁的dialog导致无法退出应用
+                if (DialogManager.getTopDialog() != null && DialogManager.getTopDialog().isShowing()) {
+                    DialogManager.getTopDialog().dismiss();
+                }
             }
         });
     }
