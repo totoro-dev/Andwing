@@ -39,6 +39,8 @@ public class ImageView extends View<ViewAttribute, JLabel> implements Invalidate
         url = getClass().getClassLoader().getResource(src);
         if (url != null) {
             imageIcon = new ImageIcon(url);
+            // 解决布局加载后无法显示图片的问题
+            component.setIcon(imageIcon);
             reSizeAsImageSize();
         }
     }
@@ -55,6 +57,7 @@ public class ImageView extends View<ViewAttribute, JLabel> implements Invalidate
         if (url != null) {
             attribute.setSrc(src);
             imageIcon = new ImageIcon(url);
+            component.setIcon(imageIcon);
             invalidateSuper();
             reSizeAsComponentSize();
         } else System.err.println("为id为" + attribute.getId() + "的View设置背景图片时，图片路径不正确");
@@ -73,7 +76,6 @@ public class ImageView extends View<ViewAttribute, JLabel> implements Invalidate
             } else if (getAttribute().getWidth() == BaseAttribute.MATCH_PARENT && getAttribute().getHeight() == BaseAttribute.MATCH_PARENT) {
                 imageIcon.setImage(imageIcon.getImage().getScaledInstance(component.getWidth(), component.getHeight(), Image.SCALE_FAST));
             }
-            component.setIcon(imageIcon);
         }
     }
 
@@ -99,7 +101,7 @@ public class ImageView extends View<ViewAttribute, JLabel> implements Invalidate
             imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, imageIcon.getIconHeight(), Image.SCALE_FAST));
         } else if (width == -3 && height != -3) {
             imageIcon.setImage(imageIcon.getImage().getScaledInstance(imageIcon.getIconWidth(), height, Image.SCALE_FAST));
-        } else if (width != -3 && height != -3) {
+        } else if (width != -3) {
             imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_FAST));
         }
     }
