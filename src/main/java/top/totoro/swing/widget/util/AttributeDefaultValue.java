@@ -41,4 +41,11 @@ public class AttributeDefaultValue {
     public static final String bottom = "bottom";
     public static final String center = "center";
 
+    // 图片缩放，裁剪
+    public static final String scaleFitCenter = "fitCenter";
+    public static final String scaleCenter = "center";
+    public static final String scaleFitXY = "fitXY";
+    public static final String scaleFitStart = "fitStart";
+    public static final String scaleFitEnd = "fitEnd";
+
 }

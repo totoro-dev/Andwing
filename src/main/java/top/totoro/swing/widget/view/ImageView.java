@@ -1,113 +1,56 @@
 package top.totoro.swing.widget.view;
 
+import org.dom4j.Attribute;
+import org.dom4j.Element;
 import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
-import top.totoro.swing.widget.context.Context;
-import top.totoro.swing.widget.listener.InvalidateListener;
+import top.totoro.swing.widget.util.AttributeKey;
 
-import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
+import java.util.Objects;
 
-public class ImageView extends View<ViewAttribute, JLabel> implements InvalidateListener {
+import static top.totoro.swing.widget.util.AttributeDefaultValue.*;
 
-    private URL url;
-    private ImageIcon imageIcon;
-    private int width = -3, height = -3;
+public class ImageView extends ImageButton {
+
+    public static final String FIT_CENTER = scaleFitCenter;
+    public static final String CENTER = scaleCenter;
+    public static final String FIT_XY = scaleFitXY;
+    public static final String FIT_START = scaleFitStart;
+    public static final String FIT_END = scaleFitEnd;
 
     public ImageView(View parent) {
         super(parent);
-        component = new JLabel("", JLabel.CENTER);
-        if (context != null) {
-            context.requestInvalidateListener(this);
-        }
-    }
-
-    @Override
-    public void setContext(Context context) {
-        super.setContext(context);
-        if (context != null) {
-            context.requestInvalidateListener(this);
-        }
     }
 
     @Override
     public void setAttribute(ViewAttribute attribute) {
         super.setAttribute(attribute);
-        String src = attribute.getSrc();
-        if (src == null || "".equals(src)) System.err.println("为id为" + attribute.getId() + "的View设置背景图片时，图片路径不能为空");
-        url = getClass().getClassLoader().getResource(src);
-        if (url != null) {
-            imageIcon = new ImageIcon(url);
-            // 解决布局加载后无法显示图片的问题
-            component.setIcon(imageIcon);
-            reSizeAsImageSize();
+        // 获取设置的缩放类型
+        Element element = attribute.getElement();
+        Attribute scaleType = element.attribute(AttributeKey.scaleType);
+        if (scaleType != null) {
+            this.scaleType = scaleType.getValue();
         }
+    }
+
+    public void setScaleType(String scaleType) {
+        if (Objects.equals(this.scaleType, scaleType)) return;
+        this.scaleType = scaleType;
+        // 触发图片的刷新
+        setImage(getAttribute().getSrc());
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
-        reSizeAsImageSize();
+    protected void fitXY() {
+        if (getAttribute().getWidth() != BaseAttribute.WRAP_CONTENT) {
+            width = component.getWidth();
+        }
+        if (getAttribute().getHeight() != BaseAttribute.WRAP_CONTENT) {
+            height = component.getHeight();
+        }
+        imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_FAST));
+        mImageContainer.setSize(width, height);
     }
 
-    public void setBackgroundImage(String src) {
-        if (src == null || "".equals(src)) System.err.println("为id为" + attribute.getId() + "的View设置背景图片时，图片路径不能为空");
-        url = getClass().getClassLoader().getResource(src);
-        if (url != null) {
-            attribute.setSrc(src);
-            imageIcon = new ImageIcon(url);
-            component.setIcon(imageIcon);
-            invalidateSuper();
-            reSizeAsComponentSize();
-        } else System.err.println("为id为" + attribute.getId() + "的View设置背景图片时，图片路径不正确");
-    }
-
-    /**
-     * 根据属性的match重置置图片的大小适应View的大小
-     * 该方法需要在布局大小确定后才调用，确保大小是正确的
-     */
-    public void reSizeAsComponentSize() {
-        if (imageIcon != null) {
-            if (getAttribute().getWidth() == BaseAttribute.MATCH_PARENT && getAttribute().getHeight() != BaseAttribute.MATCH_PARENT) {
-                imageIcon.setImage(imageIcon.getImage().getScaledInstance(component.getWidth(), imageIcon.getIconHeight(), Image.SCALE_FAST));
-            } else if (getAttribute().getWidth() != BaseAttribute.MATCH_PARENT && getAttribute().getHeight() == BaseAttribute.MATCH_PARENT) {
-                imageIcon.setImage(imageIcon.getImage().getScaledInstance(imageIcon.getIconWidth(), component.getHeight(), Image.SCALE_FAST));
-            } else if (getAttribute().getWidth() == BaseAttribute.MATCH_PARENT && getAttribute().getHeight() == BaseAttribute.MATCH_PARENT) {
-                imageIcon.setImage(imageIcon.getImage().getScaledInstance(component.getWidth(), component.getHeight(), Image.SCALE_FAST));
-            }
-        }
-    }
-
-    /**
-     * 根据宽高属性的wrap或确定的值，重置图片大小
-     * 该方法一般在开始整体布局大小确定前调用
-     */
-    private void reSizeAsImageSize() {
-        width = height = -3;
-        if (attribute.getWidth() == BaseAttribute.WRAP_CONTENT) {
-            setMinWidth(imageIcon.getIconWidth());
-            width = getMinWidth();
-        } else if (attribute.getWidth() != BaseAttribute.MATCH_PARENT) {
-            width = attribute.getWidth();
-        }
-        if (attribute.getHeight() == BaseAttribute.WRAP_CONTENT) {
-            setMinHeight(imageIcon.getIconHeight());
-            height = getMinHeight();
-        } else if (attribute.getHeight() != BaseAttribute.MATCH_PARENT) {
-            height = attribute.getHeight();
-        }
-        if (width != -3 && height == -3) {
-            imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, imageIcon.getIconHeight(), Image.SCALE_FAST));
-        } else if (width == -3 && height != -3) {
-            imageIcon.setImage(imageIcon.getImage().getScaledInstance(imageIcon.getIconWidth(), height, Image.SCALE_FAST));
-        } else if (width != -3) {
-            imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_FAST));
-        }
-    }
-
-    @Override
-    public void onInvalidateFinished() {
-        reSizeAsComponentSize();
-    }
 }

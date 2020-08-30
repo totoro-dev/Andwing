@@ -8,13 +8,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
+import static top.totoro.swing.widget.util.AttributeDefaultValue.*;
+
 public class ImageButton extends View<ViewAttribute, JPanel> {
 
     private final String TAG = getClass().getSimpleName();
 
-    private final JLabel mImageContainer;
-    private ImageIcon imageIcon;
-    private int width = -3, height = -3;
+    protected final JLabel mImageContainer;
+    protected ImageIcon imageIcon;
+    protected int width = -3, height = -3;
+    protected String scaleType = scaleFitCenter;
 
     public ImageButton(View parent) {
         super(parent);
@@ -22,12 +25,53 @@ public class ImageButton extends View<ViewAttribute, JPanel> {
         mImageContainer = new JLabel("", JLabel.CENTER) {
             @Override
             public void paint(Graphics g) {
-                // 确保当width和height属性为match时能够正常的居中显示
-                mImageContainer.setLocation((component.getWidth() - width) / 2, (component.getHeight() - height) / 2);
+                switch (scaleType) {
+                    default:
+                    case scaleFitCenter:
+                        fitCenter();
+                    case scaleCenter:
+                        // 居中显示
+                        mImageContainer.setLocation((component.getWidth() - width) / 2, (component.getHeight() - height) / 2);
+                        break;
+                    case scaleFitXY:
+                        fitXY();
+                        mImageContainer.setLocation(0, 0);
+                        break;
+                    case scaleFitStart:
+                        fitCenter();
+                        mImageContainer.setLocation(0, 0);
+                        break;
+                    case scaleFitEnd:
+                        fitCenter();
+                        mImageContainer.setLocation(component.getWidth() - width, component.getHeight() - height);
+                        break;
+                }
                 super.paint(g);
             }
         };
         component.add(mImageContainer);
+    }
+
+    private void fitCenter() {
+        if (attribute.getWidth() != BaseAttribute.WRAP_CONTENT
+                || attribute.getHeight() != BaseAttribute.WRAP_CONTENT) {
+            float widthScale = component.getWidth() / (float) width;
+            float heightScale = component.getHeight() / (float) height;
+            float scale = Math.min(widthScale, heightScale);
+            if ((widthScale < 1 || heightScale < 1) && scale != 1) {
+                Log.d(TAG, "scale = " + scale);
+                width *= scale;
+                height *= scale;
+                imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_FAST));
+                mImageContainer.setSize(width, height);
+            }
+        }
+    }
+
+    protected void fitXY() {
+    }
+
+    protected void fitStart() {
     }
 
     public void setImage(String src, boolean invalidate) {
@@ -87,7 +131,8 @@ public class ImageButton extends View<ViewAttribute, JPanel> {
             setMinHeight(height);
         }
         mImageContainer.setSize(width, height);
-        mImageContainer.setLocation((component.getWidth() - width) / 2, (component.getHeight() - height) / 2);
+        // 具体的位置只有在绘制的时候才能确定
+//        mImageContainer.setLocation((component.getWidth() - width) / 2, (component.getHeight() - height) / 2);
     }
 
 }

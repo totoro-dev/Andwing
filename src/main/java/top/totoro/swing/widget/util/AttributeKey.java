@@ -9,6 +9,7 @@ public final class AttributeKey {
     public static final String ORIENTATION = "orientation";
 
     public static final String SRC = "src";
+    public static final String scaleType = "scaleType";
 
     public static final String START_X = "startX";
     public static final String START_Y = "startY";

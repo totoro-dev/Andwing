@@ -126,6 +126,7 @@ public class AttributeUtil {
                 case switchOnKey:
                 case switchOffKey:
                 case isSwitchOnKey:
+                case scaleType:
                     /* 这些属性属于不同控件自有的，不需要在这里做初始化 */
                     return;
             }
