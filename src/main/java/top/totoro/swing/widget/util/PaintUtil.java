@@ -120,6 +120,47 @@ public class PaintUtil {
         g.setColor(origin);
     }
 
+    public static void drawToastRadius(Graphics g, Color bg, int width, int height) {
+        Color origin = g.getColor();
+        Color c32 = getColor(bg, 32);
+        Color c16 = getColor(bg, 16);
+        final int t2 = height - 2, t1 = height - 1;
+        g.setColor(bg);
+        for (int i = 0; i < height; i++) {
+            switch (i) {
+                case 0:
+                    drawPoint(g, c32, 1, 0);
+                    drawPoint(g, c32, width - 2, 0);
+                    g.setColor(c16);
+                    g.drawLine(2, 0, width - 3, 0);
+                    continue;
+                case 1:
+                    drawPoint(g, c32, 0, 1);
+                    drawPoint(g, c32, width - 1, 1);
+                    g.setColor(bg);
+                    g.drawLine(1, 1, width - 2, 1);
+                    continue;
+            }
+            if (i == t2) {
+                drawPoint(g, c32, 0, t2);
+                drawPoint(g, c32, width - 1, t2);
+                g.setColor(bg);
+                g.drawLine(1, t2, width - 2, t2);
+            } else if (i == t1) {
+                drawPoint(g, c32, 1, t1);
+                drawPoint(g, c32, width - 2, t1);
+                g.setColor(c16);
+                g.drawLine(2, t1, width - 3, t1);
+            } else {
+                drawPoint(g, c16, 0, i);
+                drawPoint(g, c16, width - 1, i);
+                g.setColor(bg);
+                g.drawLine(1, i, width - 2, i);
+            }
+        }
+        g.setColor(origin);
+    }
+
     private static Color getColor(Color origin, int gap) {
         int red = origin.getRed() + gap, green = origin.getGreen() + gap, blue = origin.getBlue() + gap;
         if (red > 255) red = 255;

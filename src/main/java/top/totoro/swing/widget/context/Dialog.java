@@ -16,15 +16,15 @@ import java.awt.event.MouseListener;
 public class Dialog extends Context {
     private final long mDialogId = System.currentTimeMillis();
     private final JWindow mDialogMarkWindow; // 蒙版
-    private final JWindow mDialogWindow;
+    protected final JWindow mDialogWindow;
     private final Context mContext;
     private int mContextWidth = 0, mContextHeight = 0;
-    private int width = 0, height = 0;
+    protected int width = 0, height = 0;
     private boolean mShowing = false; // 是否处于显示状态（不受窗口最小化的影响）
 
-    public Dialog(Context context) {
+    public Dialog(Context context, boolean showMarkWindow) {
         assert context != null;
-        mContext = context;
+        this.mContext = context;
         if (mContext instanceof Activity) {
             mContextWidth = context.getSize().width;
             mContextHeight = context.getSize().height;
@@ -34,35 +34,42 @@ public class Dialog extends Context {
             mContextHeight = screenSize.height;
         }
 
-        width = mContextWidth - 50;
-        height = mContextHeight - 50;
+        if (showMarkWindow) {
+            width = mContextWidth - 50;
+            height = mContextHeight - 50;
+        } else {
+            width = mContextWidth;
+            height = mContextHeight;
+        }
 
         mDialogMarkWindow = new JWindow();
-        mDialogMarkWindow.setSize(mContextWidth, mContextHeight);
-        mDialogMarkWindow.setOpacity(0.5F);
-        MouseListener mDialogMarkWindowMouseListener = new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                dismiss();
-            }
+        if (showMarkWindow) {
+            mDialogMarkWindow.setSize(mContextWidth, mContextHeight);
+            mDialogMarkWindow.setOpacity(0.5F);
+            MouseListener mDialogMarkWindowMouseListener = new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    dismiss();
+                }
 
-            public void mousePressed(MouseEvent e) {
+                public void mousePressed(MouseEvent e) {
 
-            }
+                }
 
-            public void mouseReleased(MouseEvent e) {
+                public void mouseReleased(MouseEvent e) {
 
-            }
+                }
 
-            public void mouseEntered(MouseEvent e) {
+                public void mouseEntered(MouseEvent e) {
 
-            }
+                }
 
-            public void mouseExited(MouseEvent e) {
+                public void mouseExited(MouseEvent e) {
 
-            }
-        };
-        mDialogMarkWindow.addMouseListener(mDialogMarkWindowMouseListener);
+                }
+            };
+            mDialogMarkWindow.addMouseListener(mDialogMarkWindowMouseListener);
+        }
         mDialogWindow = new JWindow();
         mDialogWindow.getContentPane().add(getMainView().getComponent());
         // 设置背景全透明
@@ -70,9 +77,15 @@ public class Dialog extends Context {
         mDialogWindow.setSize(mContextWidth, mContextHeight);
     }
 
+    public Dialog(Context context) {
+        this(context, true);
+    }
+
     public void show() {
         // 保证永远只有一个dialog显示中
-        if (DialogManager.getTopDialog() != null && DialogManager.getTopDialog().mDialogId != mDialogId) {
+        if (!(this instanceof Toast) /* 显示Toast时不需要将其它类型的dialog隐藏 */
+                && DialogManager.getTopDialog() != null
+                && DialogManager.getTopDialog().mDialogId != mDialogId) {
             DialogManager.dismiss();
         }
         if (mDialogMarkWindow != null && mDialogWindow != null) {
@@ -82,7 +95,6 @@ public class Dialog extends Context {
             mShowing = true;
         }
     }
-
 
     public void hide(boolean... needToShowingAuto) {
         if (mDialogMarkWindow != null && mDialogWindow != null) {
@@ -133,9 +145,16 @@ public class Dialog extends Context {
     public void resetDialogWindowLocation() {
         int parentX = 0, parentY = 0;
         if (mContext instanceof Activity) {
-            // 只有是activity窗口时才需要定位窗口的位置
-            parentX = ((Activity) mContext).getFrame().getX();
-            parentY = ((Activity) mContext).getFrame().getY();
+            if (((Activity) mContext).isVisible()) {
+                // 只有是activity窗口并且可见时才需要定位窗口的位置
+                parentX = ((Activity) mContext).getFrame().getX();
+                parentY = ((Activity) mContext).getFrame().getY();
+            } else {
+                Dimension screenSize = SwingConstants.getScreenSize();
+                // 窗口不可见，使dialog相对屏幕居中显示
+                parentX = (screenSize.width - mContextWidth) / 2;
+                parentY = (screenSize.height - mContextHeight) / 2;
+            }
         }
         int x = parentX + (mContextWidth - width) / 2;
         int y = parentY + (mContextHeight - height) / 2;

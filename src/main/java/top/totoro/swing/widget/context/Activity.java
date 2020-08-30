@@ -25,21 +25,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("unused")
 public class Activity extends Context implements OnActionBarClickListener, OnActivityDragListener, OnActionBarResizeListener {
 
-    private ScheduledExecutorService resizeExecutor = Executors.newScheduledThreadPool(1);
-    private ScheduledFuture resizeFuture;
+    private final ScheduledExecutorService resizeExecutor = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> resizeFuture;
 
     private JFrame frame;
     private OnActivityResizeListener resizeListener;
     private DefaultActivityResizeMouseListener defaultActivityResizeMouseListener;
     private boolean resizeable = true; // 是否允许窗口缩放
     public ActionBar mainBar;
-    private JPanel actionBarPanel = new JPanel(null);
+    private final JPanel actionBarPanel = new JPanel(null);
     private Location normalLocation;
     private Size normalSize;
     private boolean isOnRestart;
     private Activity parentActivity;
+    private boolean isShowing = false;
 
     public Activity() {
         super();
@@ -96,6 +98,13 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         super.onCreate();
 
         frame = new JFrame() {
+
+            @Override
+            public void setVisible(boolean b) {
+                super.setVisible(b);
+                isShowing = b;
+            }
+
             @Override
             public void dispose() {
                 super.dispose();
@@ -105,15 +114,21 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
         frame.addWindowStateListener(state -> {
             if (state.getNewState() == 1 || state.getNewState() == 7) {
-                // 窗口最小化，对话框需要同时隐藏
-                if (DialogManager.getTopDialog() != null && DialogManager.getTopDialog().isShowing()) {
+                // 窗口最小化，对话框需要同时隐藏（除了Toast）
+                if (DialogManager.getTopDialog() != null
+                        && !(DialogManager.getTopDialog() instanceof Toast)
+                        && DialogManager.getTopDialog().isShowing()) {
                     DialogManager.getTopDialog().hide(true);
                 }
+                isShowing = false;
             } else if (state.getNewState() == 0) {
-                // 窗口恢复，同时恢复对话框的显示状态
-                if (DialogManager.getTopDialog() != null && DialogManager.getTopDialog().isShowing()) {
+                // 窗口恢复，同时恢复对话框的显示状态（除了Toast）
+                if (DialogManager.getTopDialog() != null
+                        && !(DialogManager.getTopDialog() instanceof Toast)
+                        && DialogManager.getTopDialog().isShowing()) {
                     DialogManager.getTopDialog().show();
                 }
+                isShowing = true;
             }
         });
 
@@ -210,6 +225,10 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         super.onDestroy();
         onPause();
         onStop();
+    }
+
+    public boolean isVisible() {
+        return frame != null && frame.isVisible() && isShowing;
     }
 
     public void finish() {
@@ -337,7 +356,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         }
     }
 
-    private Runnable resizeTask = () -> {
+    private final Runnable resizeTask = () -> {
         getMainView().getComponent().setLocation(0, actionBarPanel.getHeight());
         getMainView().getComponent().setSize(frame.getWidth(), frame.getHeight() - actionBarPanel.getHeight());
         invalidate();
@@ -472,7 +491,6 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
             View.mShowingSpinner.dismiss();
         }
         finish();
-//        frame.dispose();
     }
 
     /**
