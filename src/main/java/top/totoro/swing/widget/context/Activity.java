@@ -226,7 +226,8 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
                 ActivityManager.setTopActivity(null);
                 // 当打开多个activity后关闭所有窗口无法完全退出应用
                 ActivityManager.getCreatedActivities().forEach((aClass, obj) -> {
-                    if (obj instanceof Activity) {
+                    // 如果是当前的这个activity就不再次调用finish了
+                    if (obj instanceof Activity && obj != this) {
                         ((Activity) obj).finish();
                     }
                 });
