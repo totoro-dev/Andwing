@@ -16,7 +16,7 @@ SwingPro abandons the native swing development mode of Java, and provides the ab
 [SwingPro v1.0.3 online documentation](http://114.67.168.56/doc/SwingPro)
 - SwingPro plug-in is installed in IDEA<br>
 Download the plug-in's jar package. In the idea, plug-in's `install from disk` is used to install the jar package as the plug-in.<br>
-Download [SwingPro_Plugin](/plugin/SwingPro_Plugin_1.0.2.jar)<br>
+Download [SwingPro_Plugin](http://114.67.168.56/plugin/SwingPro_Plugin_1.0.3.jar)<br>
 ![plug in installation](/img/plugin_install.png)
 - Create new SwingPro project<br>
 ![new project](/img/new_swing_project.png)
