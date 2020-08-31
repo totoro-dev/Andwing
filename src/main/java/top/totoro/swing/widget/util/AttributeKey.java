@@ -18,6 +18,7 @@ public final class AttributeKey {
     public static final String HEIGHT = "height";
 
     public static final String VISIBLE = "visible";
+    public static final String OPAQUE = "opaque";
 
     public static final String TEXT = "text";
     public static final String TEXT_SIZE = "textSize";
