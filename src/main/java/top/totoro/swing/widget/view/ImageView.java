@@ -14,6 +14,9 @@ import java.util.Objects;
 
 import static top.totoro.swing.widget.util.AttributeDefaultValue.*;
 
+/**
+ * 图片显示
+ */
 public class ImageView extends View<ViewAttribute, JPanel> {
 
     private final String TAG = getClass().getSimpleName();
@@ -81,6 +84,12 @@ public class ImageView extends View<ViewAttribute, JPanel> {
         }
     }
 
+    /**
+     * 设置新的图片资源
+     *
+     * @param src              图片资源路径
+     * @param invalidateParent 是否全局刷新
+     */
     public void setImage(String src, boolean invalidateParent) {
         if (src == null || "".equals(src)) {
             Log.e(TAG, "为id为" + attribute.getId() + "的" + TAG + "设置背景图片时，图片路径不能为空");
@@ -102,6 +111,11 @@ public class ImageView extends View<ViewAttribute, JPanel> {
         }
     }
 
+    /**
+     * 设置新的图片资源，并且全局刷新
+     *
+     * @param src 图片资源路径
+     */
     public void setImage(String src) {
         setImage(src, true);
     }
@@ -121,11 +135,32 @@ public class ImageView extends View<ViewAttribute, JPanel> {
         }
     }
 
+    /**
+     * 设置图片显示时的缩放模式，并且全局刷新
+     *
+     * @param scaleType 缩放模式
+     * @see ImageView#FIT_CENTER 居中等比例缩放，整个图片可见（默认模式）
+     * @see ImageView#FIT_XY 拉伸宽高，填满整个视图
+     * @see ImageView#FIT_START 从左上角开始显示图片，等比例缩放，整个图片可见（右下角可能有空隙）
+     * @see ImageView#FIT_END 从右下角开始显示图片，等比例缩放，整个图片可见（左上角可能有空隙）
+     * @see ImageView#CENTER 不拉伸图片，保持图片大小居中显示
+     */
     public void setScaleType(String scaleType) {
         // 全局刷新
         setScaleType(scaleType, true);
     }
 
+    /**
+     * 设置图片显示时的缩放模式
+     *
+     * @param scaleType        缩放模式
+     * @param invalidateParent 是否需要全局刷新
+     * @see ImageView#FIT_CENTER 居中等比例缩放，整个图片可见（默认模式）
+     * @see ImageView#FIT_XY 拉伸宽高，填满整个视图
+     * @see ImageView#FIT_START 从左上角开始显示图片，等比例缩放，整个图片可见（右下角可能有空隙）
+     * @see ImageView#FIT_END 从右下角开始显示图片，等比例缩放，整个图片可见（左上角可能有空隙）
+     * @see ImageView#CENTER 不拉伸图片，保持图片大小居中显示
+     */
     public void setScaleType(String scaleType, boolean invalidateParent) {
         if (!Objects.equals(this.scaleType, scaleType)) {
             this.scaleType = scaleType;

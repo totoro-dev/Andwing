@@ -2,6 +2,9 @@ package top.totoro.swing.widget.context;
 
 import top.totoro.swing.widget.util.Log;
 
+/**
+ * 动作意图的封装
+ */
 public class Intent {
 
     private Context currentContext;
@@ -35,10 +38,20 @@ public class Intent {
         this.targetContextClass = targetContextClass;
     }
 
+    /**
+     * 设置意图的当前上下文
+     *
+     * @param currentContext 当前上下文
+     */
     public void setCurrentContext(Context currentContext) {
         this.currentContext = currentContext;
     }
 
+    /**
+     * 设置意图目标上下文
+     *
+     * @param targetContextClass 目标上下文的包路径（包括类名）
+     */
     public void setTargetContextClass(Class<? extends Context> targetContextClass) {
         this.targetContextClass = targetContextClass;
     }

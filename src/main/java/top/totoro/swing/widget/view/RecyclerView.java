@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
 
+/**
+ * 列表
+ */
 @SuppressWarnings("Duplicates")
 public class RecyclerView extends LinearLayout implements InvalidateListener {
 

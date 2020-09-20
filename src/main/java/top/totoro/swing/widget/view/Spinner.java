@@ -2,7 +2,6 @@ package top.totoro.swing.widget.view;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import top.totoro.swing.widget.base.DefaultAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.listener.OnItemSelectedListener;
@@ -15,6 +14,9 @@ import java.util.Objects;
 
 import static top.totoro.swing.widget.util.AttributeKey.*;
 
+/**
+ * 下拉框
+ */
 public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListener {
     private JLabel mSelectedLabel;
     private JLabel mDropDownButton;
@@ -38,6 +40,11 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
         addOnClickListener(this);
     }
 
+    /**
+     * 设置匹配字符串内容的下拉框选项为选中状态
+     *
+     * @param item 匹配字符串
+     */
     public void setSelectedItem(String item) {
         if (mStringArray == null || mStringArray.length == 0) return;
         for (int i = 0; i < mStringArray.length; i++) {
@@ -51,6 +58,11 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
         }
     }
 
+    /**
+     * 设置指定下拉框条目位置的选项为选中状态
+     *
+     * @param position 条目位置
+     */
     public void setSelectedItem(int position) {
         if (mStringArray == null || mStringArray.length == 0 || position < 0 || position >= mStringArray.length) return;
         mSelectedPosition = position;
@@ -105,7 +117,7 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
         }
         View.mShowingSpinner = this;
         /* 确定下拉框的下拉位置 */
-        moveTo();
+        refreshLocation();
         setDropDownItems();
 
         mDropDownWindow.setSize(component.getWidth(), component.getHeight() * mStringArray.length);
@@ -179,12 +191,18 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
         onItemSelectedListener = listener;
     }
 
-    public void moveTo() {
+    /**
+     * 刷新下拉框的显示位置
+     */
+    public void refreshLocation() {
         Point spinnerLocation = component.getLocationOnScreen();
         mDropDownWindow.setLocation(spinnerLocation.x,
                 spinnerLocation.y + component.getHeight());
     }
 
+    /**
+     * 取消下拉框的显示
+     */
     public void dismiss() {
         View.mShowingSpinner.mDropDownWindow.dispose();
         View.mShowingSpinner = null;

@@ -7,6 +7,9 @@ import java.net.URL;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * 短暂性提示框
+ */
 public class Toast extends Dialog {
 
     private Context context;
@@ -21,6 +24,15 @@ public class Toast extends Dialog {
         super(context, showMarkWindow);
     }
 
+    /**
+     * 构建一个提示框
+     *
+     * @param context        提示框的上下文
+     * @param textOrLayoutId 文本内容或布局id（文件名）
+     *                       如果传入的内容能够指向一个布局文件则显示布局
+     *                       否则显示为文本内容
+     * @return 可以显示的对话框
+     */
     public static Toast makeText(Context context, String textOrLayoutId) {
         Toast toast = new Toast(context, false);
         toast.context = context;
@@ -48,8 +60,14 @@ public class Toast extends Dialog {
         }
     }
 
+    /**
+     * 初始化提示框的内容为简单文本
+     *
+     * @param toast 对话框
+     * @param text  文本内容
+     */
     private static void initToastAsText(Toast toast, String text) {
-        toast.content = new ToastContent(toast.getMainView(),text);
+        toast.content = new ToastContent(toast.getMainView(), text);
         toast.mDialogWindow.add(toast.content.getComponent());
         toast.width = 30;
         toast.height = 30;
@@ -86,6 +104,11 @@ public class Toast extends Dialog {
         }).start();
     }
 
+    /**
+     * 在显示指定时间之后隐藏
+     *
+     * @param delayToDismiss 显示时间
+     */
     public void show(long delayToDismiss) {
         this.showTime = delayToDismiss;
         show();

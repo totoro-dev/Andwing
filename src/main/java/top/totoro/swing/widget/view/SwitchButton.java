@@ -13,6 +13,9 @@ import java.util.Objects;
 
 import static top.totoro.swing.widget.util.AttributeKey.*;
 
+/**
+ * 开关按钮
+ */
 public class SwitchButton extends View<ViewAttribute, JLabel> {
     private boolean mIsSwitchOn = false;
 
@@ -27,6 +30,11 @@ public class SwitchButton extends View<ViewAttribute, JLabel> {
         component.addMouseListener(this);
     }
 
+    /**
+     * 设置开关按钮是否处于开启状态
+     *
+     * @param isSwitchOn 是否开启
+     */
     public void setIsSwitchOn(boolean isSwitchOn) {
         if (mIsSwitchOn == isSwitchOn) return;
         mIsSwitchOn = isSwitchOn;

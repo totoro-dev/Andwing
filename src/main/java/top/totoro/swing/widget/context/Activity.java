@@ -246,11 +246,14 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         return frame != null && frame.isVisible() && isShowing;
     }
 
+    /**
+     * 退出当前界面并销毁
+     */
     public void finish() {
         AnimateUtil.transparentOut(this, 0.5f, () -> {
             frame.setVisible(false);
             frame.dispose();
-            Log.d(this,"finish() dispose "+(ActivityManager.getTopActivity() != null));
+            Log.d(this, "finish() dispose " + (ActivityManager.getTopActivity() != null));
             if (parentActivity != null && ActivityManager.getTopActivity() != null) {
                 parentActivity.onStart();
                 AnimateUtil.transparentIn(parentActivity, 0.75f, () -> {
@@ -269,15 +272,33 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         });
     }
 
+    /**
+     * 设置顶部标题栏的高度
+     *
+     * @param height 指定高度
+     * @see ActionBar.Height#MIN
+     * @see ActionBar.Height#MID
+     * @see ActionBar.Height#MAX
+     */
     protected void setActionBarHeight(ActionBar.Height height) {
         mainBar.setHeight(height);
     }
 
+    /**
+     * 设置顶部标题栏边框的颜色
+     *
+     * @param color 边框颜色
+     */
     protected void setActionBarBorderColor(Color color) {
         mainBar.setBorder(1, color);
     }
 
-    protected void setIcon(String iconPath) {
+    /**
+     * 设置界面显示的图标
+     *
+     * @param iconPath 图标的资源路径
+     */
+    public void setIcon(String iconPath) {
         if (frame != null) {
             URL url = getClass().getClassLoader().getResource(iconPath);
             if (url != null) {
@@ -288,7 +309,12 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         }
     }
 
-    protected void setTitle(String title) {
+    /**
+     * 设置界面显示的标题
+     *
+     * @param title 标题
+     */
+    public void setTitle(String title) {
         if (mainBar != null) {
             mainBar.setTitleText(title);
         }
@@ -297,10 +323,20 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         }
     }
 
-    protected void setTitleColor(Color color) {
+    /**
+     * 设置界面显示的标题颜色
+     *
+     * @param color 颜色
+     */
+    public void setTitleColor(Color color) {
         mainBar.setTitleColor(color);
     }
 
+    /**
+     * 设置当前页面顶部标题栏是否显示返回按键
+     *
+     * @param canBack 是否显示
+     */
     public void setCanBack(boolean canBack) {
         if (mainBar != null && parentActivity != null) {
             Log.d(this, "canBack : " + canBack);
@@ -373,7 +409,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         defaultActivityResizeMouseListener.resetFrameBoundRect();
         /* add by HLM on 2020/7/26 解决显示中的下拉框由于窗口大小拉伸而跟随移动的功能 */
         if (View.mShowingSpinner != null) {
-            View.mShowingSpinner.moveTo();
+            View.mShowingSpinner.refreshLocation();
         }
     };
 
@@ -389,7 +425,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         setLocation(new Location(frame.getLocation().x, frame.getLocation().y));
         /* add by HLM on 2020/7/26 解决显示中的下拉框跟随窗口移动的功能 */
         if (View.mShowingSpinner != null) {
-            View.mShowingSpinner.moveTo();
+            View.mShowingSpinner.refreshLocation();
         }
         /* add by HLM on 2020/8/29 解决显示中的dialog跟随窗口移动的功能 */
         if (DialogManager.getTopDialog() != null) {
@@ -525,58 +561,107 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
 
     /************************* 启动后台服务 add on 2020/09/19 *************************/
 
+    /**
+     * 独立模式启动后台服务
+     *
+     * @param intent 具体的服务意图，指向调用服务的上下文和一个具体服务
+     */
     public void startService(Intent intent) {
         Service service = ((Service) intent.getTargetContext());
         service.startService(intent);
         ServiceManager.putStartedService(intent.getCurrentContext(), service);
     }
 
+    /**
+     * 由当前activity作为上下文，以独立模式启动后台服务
+     *
+     * @param service 要启动的后台服务
+     */
     public void startService(Service service) {
         Intent intent = new Intent(this, service.getClass());
         startService(intent);
     }
 
+    /**
+     * 由当前activity作为上下文，以独立模式启动后台服务
+     *
+     * @param targetServicePackage 服务对象具体的类路径
+     */
     public void startService(String targetServicePackage) {
         Intent intent = new Intent(targetServicePackage);
         intent.setCurrentContext(this);
         startService(intent);
     }
 
+    /**
+     * 停止通过start启动的服务
+     *
+     * @param intent 要停止具体服务意图，指向调用服务的上下文和一个具体服务
+     */
     public void stopService(Intent intent) {
         stopService((Service) intent.getTargetContext());
     }
 
+    /**
+     * 停止通过start启动的服务
+     *
+     * @param service 要停止的后台服务
+     */
     public void stopService(Service service) {
         service.stopService();
     }
 
+    /**
+     * 绑定模式启动后台服务
+     *
+     * @param intent 具体的服务意图，指向调用服务的上下文和一个具体服务
+     */
     public void bindService(Intent intent) {
         Service service = ((Service) intent.getTargetContext());
         if (service.isBinding()) {
-            Log.e(this,"bindService had bound, please unbind first");
+            Log.e(this, "bindService had bound, please unbind first");
         } else {
             service.bindService(intent);
             ServiceManager.putBoundService(intent.getCurrentContext(), service);
         }
     }
 
+    /**
+     * 由当前activity作为上下文，以绑定模式启动后台服务
+     *
+     * @param service 要绑定的后台服务
+     */
     public Intent bindService(Service service) {
         Intent intent = new Intent(this, service.getClass());
         bindService(intent);
         return intent;
     }
 
+    /**
+     * 由当前activity作为上下文，以绑定模式启动后台服务
+     *
+     * @param targetServicePackage 服务对象具体的类路径
+     */
     public Intent bindService(String targetServicePackage) {
-        Intent intent = new Intent(targetServicePackage);
-        intent.setCurrentContext(this);
+        Intent intent = new Intent(this, targetServicePackage);
         bindService(intent);
         return intent;
     }
 
+    /**
+     * 解除由bind启动的绑定服务
+     *
+     * @param intent 绑定的服务意图，指向调用服务的上下文和一个具体服务
+     */
     public void unbindService(Intent intent) {
         unbindService(((Service) intent.getTargetContext()));
     }
 
+    /**
+     * 解除由bind启动的绑定服务
+     *
+     * @param service 被绑定的后台服务
+     */
     public void unbindService(Service service) {
         if (service.isBinding()) {
             service.stopService();

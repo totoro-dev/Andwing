@@ -81,6 +81,9 @@ public class Dialog extends Context {
         this(context, true);
     }
 
+    /**
+     * 显示这个对话框
+     */
     public void show() {
         // 保证永远只有一个dialog显示中
         if (!(this instanceof Toast) /* 显示Toast时不需要将其它类型的dialog隐藏 */
@@ -96,6 +99,12 @@ public class Dialog extends Context {
         }
     }
 
+    /**
+     * 隐藏这个对话框。
+     * 有可能是由于界面最小化导致的隐藏，所以需要指定是否需要重新显示对话框，默认不显示
+     *
+     * @param needToShowingAuto 是否需要在界面重新可见的时候自动显示对话框
+     */
     public void hide(boolean... needToShowingAuto) {
         if (mDialogMarkWindow != null && mDialogWindow != null) {
             mDialogMarkWindow.setVisible(false);
@@ -104,6 +113,9 @@ public class Dialog extends Context {
         }
     }
 
+    /**
+     * 销毁这个对话框
+     */
     public void dismiss() {
         if (mDialogMarkWindow != null && mDialogWindow != null) {
             hide();
@@ -113,10 +125,21 @@ public class Dialog extends Context {
         }
     }
 
+    /**
+     * 是否处于可见状态，
+     * 可能由于界面最小化而导致的暂时隐藏，但也属于可见状态
+     *
+     * @return 是否可见
+     */
     public boolean isShowing() {
         return mDialogMarkWindow != null && mDialogWindow != null && mShowing;
     }
 
+    /**
+     * 给对话框指定一个具体的布局
+     *
+     * @param layoutId 布局的id（文件名）
+     */
     public void setContentView(String layoutId) {
         getMainView().removeAllSon();
         // 将activity的窗口大小赋予dialog的大小
@@ -142,6 +165,9 @@ public class Dialog extends Context {
         layoutManager.invalidate();
     }
 
+    /**
+     * 刷新对话框的位置，确保和父窗口一致
+     */
     public void resetDialogWindowLocation() {
         int parentX = 0, parentY = 0;
         if (mContext instanceof Activity) {

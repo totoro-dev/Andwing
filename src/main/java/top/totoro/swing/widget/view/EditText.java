@@ -9,6 +9,9 @@ import java.awt.event.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 编辑框
+ */
 public class EditText extends View<ViewAttribute, JTextArea> {
 
     private OnTextChangeListener onTextChangeListener;

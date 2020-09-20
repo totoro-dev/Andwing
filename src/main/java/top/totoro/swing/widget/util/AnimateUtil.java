@@ -18,6 +18,14 @@ public class AnimateUtil {
         BTT     // 从下到上
     }
 
+    /**
+     * 视图往某个方向收回的动画，即在某个方向上的可见长度减到0
+     *
+     * @param target    目标视图
+     * @param direction 收回方向
+     * @param seconds   动画时长
+     * @param then      动画结束后的任务
+     */
     public static void fadeOut(View<?, ?> target, Direction direction, float seconds, Runnable... then) {
         Location location = Location.getLocation(target.getComponent());
         Size size = Size.getSize(target.getComponent());
@@ -50,6 +58,14 @@ public class AnimateUtil {
         }
     }
 
+    /**
+     * 窗口往某个方向收回的动画，即在某个方向上的可见长度减到0
+     *
+     * @param target    目标窗口
+     * @param direction 塌缩方向
+     * @param seconds   动画时长
+     * @param then      动画结束后的任务
+     */
     public static void fadeOut(Activity target, Direction direction, float seconds, Runnable... then) {
         Location location = Location.getLocation(target.getFrame());
         Size size = Size.getSize(target.getFrame());
@@ -81,6 +97,15 @@ public class AnimateUtil {
         }
     }
 
+    /**
+     * 窗体往某个方向拉伸的动画，即在某个方向上的可见长度增加加到指定大小
+     *
+     * @param target     目标窗口
+     * @param direction  拉伸方向
+     * @param seconds    动画时长
+     * @param targetSize 目标大小
+     * @param then       动画结束后的任务
+     */
     public static void fadeIn(Activity target, Direction direction, float seconds, Size targetSize, Runnable... then) {
         Location location = Location.getLocation(target.getFrame());
         Size size = Size.getSize(target.getFrame());
@@ -112,6 +137,13 @@ public class AnimateUtil {
         }
     }
 
+    /**
+     * 视图等比例缩小到不可见的缩小动画
+     *
+     * @param target  目标视图
+     * @param seconds 动画时长
+     * @param then    动画结束后的任务
+     */
     public static void zoomOut(View<?, ?> target, float seconds, Runnable... then) {
         Location location = Location.getLocation(target.getComponent());
         Size size = Size.getSize(target.getComponent());
@@ -125,8 +157,8 @@ public class AnimateUtil {
             int fadeFps = (int) (seconds * 15);
             // 每一帧宽度的缩减
             int widthOutFps = size.width / fadeFps + 1;
-            // 每一帧宽度的缩减
-            int heightOutFps = size.width / fadeFps + 1;
+            // 每一帧高度的缩减
+            int heightOutFps = size.height / fadeFps + 1;
             for (int i = 0; i < fadeFps; i++) {
                 size.width -= widthOutFps;
                 size.height -= heightOutFps;
@@ -139,6 +171,13 @@ public class AnimateUtil {
         }).start();
     }
 
+    /**
+     * 窗口等比例缩小到不可见的缩小动画
+     *
+     * @param target  目标窗口
+     * @param seconds 动画时长
+     * @param then    动画结束后的任务
+     */
     public static void zoomOut(Activity target, float seconds, Runnable... then) {
         Location location = Location.getLocation(target.getFrame());
         Size size = Size.getSize(target.getFrame());
@@ -153,7 +192,7 @@ public class AnimateUtil {
             // 每一帧宽度的缩减
             int widthOutFps = size.width / fadeFps + 1;
             // 每一帧宽度的缩减
-            int heightOutFps = size.width / fadeFps + 1;
+            int heightOutFps = size.height / fadeFps + 1;
             for (int i = 0; i < fadeFps; i++) {
                 size.width -= widthOutFps;
                 size.height -= heightOutFps;
@@ -165,6 +204,14 @@ public class AnimateUtil {
         }).start();
     }
 
+    /**
+     * 视图从不可见开始的放大动画，从小到大缩放
+     *
+     * @param target     目标视图
+     * @param targetSize 目标大小
+     * @param seconds    动画时长
+     * @param then       动画结束后的任务
+     */
     public static void zoomIn(View<?, ?> target, Size targetSize, float seconds, Runnable... then) {
         Location location = Location.getLocation(target.getComponent());
         Size size = Size.getSize(target.getComponent());
@@ -192,6 +239,14 @@ public class AnimateUtil {
         }).start();
     }
 
+    /**
+     * 窗口从不可见开始的放大动画
+     *
+     * @param target     目标窗口
+     * @param targetSize 目标大小
+     * @param seconds    动画时长
+     * @param then       动画结束后的任务
+     */
     public static void zoomIn(Activity target, Size targetSize, float seconds, Runnable... then) {
         Location location = Location.getLocation(target.getFrame());
         Size size = Size.getSize(target.getFrame());

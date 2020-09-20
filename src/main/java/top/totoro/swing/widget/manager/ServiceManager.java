@@ -1,8 +1,8 @@
 package top.totoro.swing.widget.manager;
 
 import top.totoro.swing.widget.context.Context;
+import top.totoro.swing.widget.context.Intent;
 import top.totoro.swing.widget.context.Service;
-import top.totoro.swing.widget.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 使用同步锁来处理服务的同步和记录、删除
+ * 使用同步锁来处理服务的同步和记录、移除
  */
 public class ServiceManager {
 
@@ -25,6 +25,12 @@ public class ServiceManager {
 
     private static final Lock mLock = new ReentrantLock();
 
+    /**
+     * 记录一个通过 {@link Service#startService(Intent)} 启动的后台服务
+     *
+     * @param context 服务的启动者
+     * @param service 需要记录的服务
+     */
     public static void putStartedService(Context context, Service service) {
         try {
             mLock.lock();
@@ -35,6 +41,12 @@ public class ServiceManager {
         }
     }
 
+    /**
+     * 记录一个通过 {@link Service#bindService(Intent)} 启动的后台服务
+     *
+     * @param context 服务的启动者
+     * @param service 需要记录的服务
+     */
     public static void putBoundService(Context context, Service service) {
         try {
             mLock.lock();
@@ -45,6 +57,13 @@ public class ServiceManager {
         }
     }
 
+    /**
+     * 移除一个通过 {@link Service#startService(Intent)} 启动的后台服务
+     *
+     * @param context 服务的启动者
+     * @param service 需要记录的服务
+     * @return 是否存在该服务
+     */
     public static boolean removeStartedService(Context context, Service service) {
         try {
             mLock.lock();
@@ -58,20 +77,40 @@ public class ServiceManager {
             }
             return false;
         } finally {
-            Log.d(TAG, "removeStartedService() service = " + service);
             mLock.unlock();
         }
     }
 
+    /**
+     * 移除一个通过 {@link Service#bindService(Intent)} 启动的后台服务
+     *
+     * @param context 服务的启动者
+     * @param service 需要记录的服务
+     * @return 是否存在该服务
+     */
     public static boolean removeBoundService(Context context, Service service) {
         try {
             mLock.lock();
-            return mBoundServices.computeIfAbsent(context, key -> new ArrayList<>()).remove(service);
+            List<Service> list = mBoundServices.get(context);
+            if (list != null) {
+                list.remove(service);
+                if (list.size() == 0) {
+                    mBoundServices.remove(context);
+                }
+                return true;
+            }
+            return false;
         } finally {
             mLock.unlock();
         }
     }
 
+    /**
+     * 获取所有通过 {@link Service#startService(Intent)} 启动的后台服务
+     *
+     * @param context 服务的启动者
+     * @return 记录的后台服务
+     */
     public static List<Service> getStartedServices(Context context) {
         try {
             mLock.lock();
@@ -81,6 +120,12 @@ public class ServiceManager {
         }
     }
 
+    /**
+     * 获取所有通过 {@link Service#bindService(Intent)} 启动的后台服务
+     *
+     * @param context 服务的启动者
+     * @return 记录的后台服务
+     */
     public static List<Service> getBoundServices(Context context) {
         try {
             mLock.lock();
@@ -90,6 +135,11 @@ public class ServiceManager {
         }
     }
 
+    /**
+     * 是否还存在通过 {@link Service#startService(Intent)} 启动的后台服务
+     *
+     * @return 存在为true，不存在为false
+     */
     public static boolean isEmpty() {
         try {
             mLock.lock();

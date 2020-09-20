@@ -5,12 +5,10 @@ import top.totoro.swing.widget.base.Size;
 import top.totoro.swing.widget.context.Activity;
 import top.totoro.swing.widget.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
 
 public class ActivityManager {
     private static final String TAG = ActivityManager.class.getSimpleName();
@@ -40,6 +38,11 @@ public class ActivityManager {
         return CREATED_ACTIVITY;
     }
 
+    /**
+     * 应用退出时关闭所有缓存记录了的Activity
+     *
+     * @param now 当前触发退出应用的activity
+     */
     public static void finishAll(Activity now) {
         Map<Class<? extends Activity>, Object> copy = new HashMap<>(CREATED_ACTIVITY);
         int CREATED_ACTIVITY_SIZE = CREATED_ACTIVITY.size(); // 只有第一次调用的时候是完整的记录

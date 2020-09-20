@@ -120,6 +120,14 @@ public class PaintUtil {
         g.setColor(origin);
     }
 
+    /**
+     * 绘制提示框的圆角
+     *
+     * @param g      画笔
+     * @param bg     提示框的整体背景颜色
+     * @param width  对话框宽度
+     * @param height 对话框高度
+     */
     public static void drawToastRadius(Graphics g, Color bg, int width, int height) {
         Color origin = g.getColor();
         Color c32 = getColor(bg, 32);

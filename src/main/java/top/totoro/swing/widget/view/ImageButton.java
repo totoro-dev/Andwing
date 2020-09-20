@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import static top.totoro.swing.widget.util.AttributeDefaultValue.scaleFitCenter;
 
+/**
+ * 图片按钮，图片只能居中缩放显示
+ */
 public class ImageButton extends ImageView {
 
     private final String TAG = getClass().getSimpleName();

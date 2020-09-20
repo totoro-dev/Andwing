@@ -5,6 +5,9 @@ import top.totoro.swing.widget.bean.ViewAttribute;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * 文本框
+ */
 public class TextView extends View<ViewAttribute, JLabel> {
 
     public TextView(View parent) {

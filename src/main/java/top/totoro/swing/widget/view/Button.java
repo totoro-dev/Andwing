@@ -6,6 +6,9 @@ import top.totoro.swing.widget.util.PaintUtil;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * 普通按钮
+ */
 public class Button extends TextView {
 
     private Color bg = Color.gray;

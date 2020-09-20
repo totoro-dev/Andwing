@@ -166,6 +166,12 @@ public class BaseAttribute {
         this.rightBorder = rightBorder;
     }
 
+    /**
+     * 检测界面元素是否指定了有效的高度属性，每个元素都必须指定高度
+     *
+     * @param attr 高度属性
+     * @return 存在为true，否则为false
+     */
     public boolean checkHeightValue(Attribute attr) {
         try {
             if (attr == null) {
@@ -190,6 +196,12 @@ public class BaseAttribute {
         return true;
     }
 
+    /**
+     * 检测界面元素是否指定了有效的宽度属性，每个元素都必须指定宽度
+     *
+     * @param attr 宽度属性
+     * @return 存在为true，否则为false
+     */
     public boolean checkWidthValue(Attribute attr) {
         try {
             if (attr == null) {
@@ -214,6 +226,12 @@ public class BaseAttribute {
         return true;
     }
 
+    /**
+     * 判断字符串是否是一个无符号的整数
+     *
+     * @param value 字符串
+     * @return 是整数为true，否则为false
+     */
     public boolean isUnsignedInt(String value) {
         if (value == null || value.length() == 0) return false;
         char[] cs = value.toCharArray();
@@ -227,6 +245,12 @@ public class BaseAttribute {
         return true;
     }
 
+    /**
+     * 判断字符串是否是颜色值
+     *
+     * @param value 字符串
+     * @return 是颜色为true，否则为false
+     */
     public static boolean isColor(String value) {
         if (value != null && value.startsWith("#") && (value.length() == 4 || value.length() == 7 || value.length() == 9)) {
             char[] cs = value.substring(1).toCharArray();
@@ -241,6 +265,12 @@ public class BaseAttribute {
         return true;
     }
 
+    /**
+     * 判断字符串是否是一个正确的资源路径
+     *
+     * @param value 字符串
+     * @return 资源存在为true，否则为false
+     */
     public boolean isSrcPath(String value) {
         if (value == null || value.length() == 0) return false;
         URL url = getClass().getClassLoader().getResource(value);

@@ -37,6 +37,12 @@ public class Context implements ContextWrapper {
         mainView.setContext(this);
     }
 
+    /**
+     * 通过指定上下文来启动一个activity界面
+     *
+     * @param context 指定上下文
+     * @param target  activity界面
+     */
     public void startActivity(@NotNull Context context, Class<? extends Activity> target) {
         Activity activity = ActivityManager.getOrCreateActivity(target);
         ActivityManager.setTopActivity(activity);
@@ -62,6 +68,11 @@ public class Context implements ContextWrapper {
         }
     }
 
+    /**
+     * 以当前作为上下文，启动一个activity界面
+     *
+     * @param target activity界面
+     */
     public void startActivity(Class<? extends Activity> target) {
         Activity activity = ActivityManager.getOrCreateActivity(target);
         ActivityManager.setTopActivity(activity);
@@ -75,14 +86,28 @@ public class Context implements ContextWrapper {
         AnimateUtil.transparentIn(activity, 0.75f);
     }
 
+    /**
+     * 在当前上下文中获取指定id的视图元素
+     *
+     * @param id 视图id
+     * @return 视图元素（对象）
+     */
     public View findViewById(String id) {
         return mainView.findViewById(id);
     }
 
+    /**
+     * 获取上下文的根视图
+     *
+     * @return 根视图
+     */
     public BaseLayout getMainView() {
         return mainView;
     }
 
+    /**
+     * 刷新整个上下文界面
+     */
     public void invalidate() {
         if (mainView != null && layoutManager != null) {
             mainView.invalidate();
