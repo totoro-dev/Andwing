@@ -6,9 +6,11 @@ import top.totoro.swing.widget.context.Activity;
 import top.totoro.swing.widget.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 public class ActivityManager {
     private static final String TAG = ActivityManager.class.getSimpleName();
@@ -36,6 +38,25 @@ public class ActivityManager {
 
     public static Map<Class<? extends Activity>, Object> getCreatedActivities() {
         return CREATED_ACTIVITY;
+    }
+
+    public static void finishAll(Activity now) {
+        Map<Class<? extends Activity>, Object> copy = new HashMap<>(CREATED_ACTIVITY);
+        int CREATED_ACTIVITY_SIZE = CREATED_ACTIVITY.size(); // 只有第一次调用的时候是完整的记录
+        CREATED_ACTIVITY.clear(); // 防止后面其它Activity的finish方法多次触发
+        copy.forEach((aClass, obj) -> {
+            // 如果是当前的这个activity就不调用其finish了
+            if (obj instanceof Activity && obj != now) {
+                ((Activity) obj).finish();
+            }
+        });
+
+        if ((CREATED_ACTIVITY_SIZE == 1 /* 只有一个现存的Activity，直接退出 */
+                || copy.size() == 0 /* 已经全部finish，可以退出 */)
+                && ServiceManager.isEmpty() /* 没有驻留的后台服务了 */) {
+            Log.e(TAG, "system exit for activity");
+            System.exit(0);
+        }
     }
 
     /**

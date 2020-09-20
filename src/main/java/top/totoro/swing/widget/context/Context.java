@@ -39,6 +39,7 @@ public class Context implements ContextWrapper {
 
     public void startActivity(@NotNull Context context, Class<? extends Activity> target) {
         Activity activity = ActivityManager.getOrCreateActivity(target);
+        ActivityManager.setTopActivity(activity);
         if (context instanceof Activity) {
             activity.setParentActivity((Activity) context);
             activity.resetLocation(((Activity) context).getFrame().getLocation().x, ((Activity) context).getFrame().getLocation().y);
@@ -63,6 +64,7 @@ public class Context implements ContextWrapper {
 
     public void startActivity(Class<? extends Activity> target) {
         Activity activity = ActivityManager.getOrCreateActivity(target);
+        ActivityManager.setTopActivity(activity);
         if (activity.isOnRestart()) {
             activity.onStart();
         } else {

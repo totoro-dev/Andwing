@@ -12,6 +12,7 @@ import top.totoro.swing.widget.listener.OnActivityResizeListener;
 import top.totoro.swing.widget.listener.deafultImpl.DefaultActivityResizeMouseListener;
 import top.totoro.swing.widget.manager.ActivityManager;
 import top.totoro.swing.widget.manager.DialogManager;
+import top.totoro.swing.widget.manager.ServiceManager;
 import top.totoro.swing.widget.util.AnimateUtil;
 import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.util.SwingConstants;
@@ -205,6 +206,14 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         mainBar.addOnActionBarResizeListener(this);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        for (Service boundService : ServiceManager.getBoundServices(this)) {
+            boundService.onPause();
+        }
+    }
+
     /**
      * 该方法会在窗体最小化时调用
      */
@@ -215,6 +224,9 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         if (frame != null && frame.isVisible()) {
             frame.setVisible(false);
         }
+        for (Service boundService : ServiceManager.getBoundServices(this)) {
+            boundService.onStop();
+        }
     }
 
     /**
@@ -222,9 +234,12 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
      */
     @Override
     public void onDestroy() {
-        super.onDestroy();
         onPause();
         onStop();
+        for (Service boundService : ServiceManager.getBoundServices(this)) {
+            boundService.stopService();
+        }
+        super.onDestroy();
     }
 
     public boolean isVisible() {
@@ -235,7 +250,8 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         AnimateUtil.transparentOut(this, 0.5f, () -> {
             frame.setVisible(false);
             frame.dispose();
-            if (parentActivity != null) {
+            Log.d(this,"finish() dispose "+(ActivityManager.getTopActivity() != null));
+            if (parentActivity != null && ActivityManager.getTopActivity() != null) {
                 parentActivity.onStart();
                 AnimateUtil.transparentIn(parentActivity, 0.75f, () -> {
                     ActivityManager.removeActivity(this);
@@ -244,13 +260,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
             } else {
                 ActivityManager.setTopActivity(null);
                 // 当打开多个activity后关闭所有窗口无法完全退出应用
-                ActivityManager.getCreatedActivities().forEach((aClass, obj) -> {
-                    // 如果是当前的这个activity就不再次调用finish了
-                    if (obj instanceof Activity && obj != this) {
-                        ((Activity) obj).finish();
-                    }
-                });
-                ActivityManager.getCreatedActivities().clear();
+                ActivityManager.finishAll(this);
                 // 避免存在隐藏但没有销毁的dialog导致无法退出应用
                 if (DialogManager.getTopDialog() != null && DialogManager.getTopDialog().isShowing()) {
                     DialogManager.getTopDialog().dismiss();
@@ -512,4 +522,67 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     public void onActionBarResize() {
         resetSize();
     }
+
+    /************************* 启动后台服务 add on 2020/09/19 *************************/
+
+    public void startService(Intent intent) {
+        Service service = ((Service) intent.getTargetContext());
+        service.startService(intent);
+        ServiceManager.putStartedService(intent.getCurrentContext(), service);
+    }
+
+    public void startService(Service service) {
+        Intent intent = new Intent(this, service.getClass());
+        startService(intent);
+    }
+
+    public void startService(String targetServicePackage) {
+        Intent intent = new Intent(targetServicePackage);
+        intent.setCurrentContext(this);
+        startService(intent);
+    }
+
+    public void stopService(Intent intent) {
+        stopService((Service) intent.getTargetContext());
+    }
+
+    public void stopService(Service service) {
+        service.stopService();
+    }
+
+    public void bindService(Intent intent) {
+        Service service = ((Service) intent.getTargetContext());
+        if (service.isBinding()) {
+            Log.e(this,"bindService had bound, please unbind first");
+        } else {
+            service.bindService(intent);
+            ServiceManager.putBoundService(intent.getCurrentContext(), service);
+        }
+    }
+
+    public Intent bindService(Service service) {
+        Intent intent = new Intent(this, service.getClass());
+        bindService(intent);
+        return intent;
+    }
+
+    public Intent bindService(String targetServicePackage) {
+        Intent intent = new Intent(targetServicePackage);
+        intent.setCurrentContext(this);
+        bindService(intent);
+        return intent;
+    }
+
+    public void unbindService(Intent intent) {
+        unbindService(((Service) intent.getTargetContext()));
+    }
+
+    public void unbindService(Service service) {
+        if (service.isBinding()) {
+            service.stopService();
+        } else {
+            Log.e(this, "unbindService never bound");
+        }
+    }
+
 }
