@@ -51,8 +51,11 @@ public class FragmentManager {
             // 2) 清除frame layout原本fragment的布局，添加新的fragment的布局
             // 清空Layout的子View，防止View的积累
             mFrameLayout.removeAllSon();
+            /*
+            remove by HLM on 2020/9/25 功能已经在View.removeAllSon()中实现
             // 清空对应component组件中的组件，确保切换成功
             mFrameLayout.getComponent().removeAll();
+            */
             // 添加fragment的布局到该frame layout节点中
             // 实现局部布局切换的基础
             mFrameLayout.addChildView(mFragment.getMainView());

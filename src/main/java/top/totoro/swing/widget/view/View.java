@@ -4,7 +4,7 @@ import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.context.Context;
 import top.totoro.swing.widget.listener.OnClickListener;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.manager.LayoutManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -27,7 +27,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     private String parentId = "";
     private LinkedList<View> sonViews = new LinkedList<>();
     private Map<String, View> containViewsById = new ConcurrentHashMap<>();
-    private top.totoro.swing.widget.base.LayoutManager layoutManager;
+    private LayoutManager layoutManager;
     private OnClickListener clickListener;
     /* 对应上一级视图的事件监听，由于每个View都直接实现了Listener，所以只需要传入对应的上一级视图即可。 */
     /* 可以将当前视图的事件通过该监听传递给上一级视图，避免被拦截，与parent不同的是不会发生视图的绑定 */
@@ -65,11 +65,11 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         return sonViews;
     }
 
-    public top.totoro.swing.widget.base.LayoutManager getLayoutManager() {
+    public LayoutManager getLayoutManager() {
         return layoutManager;
     }
 
-    public void setLayoutManager(top.totoro.swing.widget.base.LayoutManager layoutManager) {
+    public void setLayoutManager(LayoutManager layoutManager) {
         this.layoutManager = layoutManager;
     }
 

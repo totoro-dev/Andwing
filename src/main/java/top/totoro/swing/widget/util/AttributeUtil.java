@@ -15,13 +15,13 @@ import static top.totoro.swing.widget.util.AttributeKey.*;
 
 public class AttributeUtil {
 
-    public static LayoutAttribute getLayoutAttribute(String resName, Element layout) {
+    public static LayoutAttribute getLayoutAttribute(String resName, Element layout, boolean initNecessaryAttr) {
         String nodeName = layout.getName();
         LayoutAttribute layoutAttribute = new LayoutAttribute();
         layoutAttribute.setElement(layout);
         // 验证属性中必须包含正确的height和width属性
-        if (initialNecessaryAttribute(layoutAttribute, resName, nodeName, layout)) {
-            List attrs = layout.attributes();
+        if (initialNecessaryAttribute(layoutAttribute, resName, nodeName, layout, initNecessaryAttr)) {
+            List<?> attrs = layout.attributes();
             for (Object object : attrs) {
                 Attribute attr;
                 if (object instanceof Attribute) attr = (Attribute) object;
@@ -51,14 +51,15 @@ public class AttributeUtil {
         return layoutAttribute;
     }
 
-    public static ViewAttribute getViewAttribute(String resName, Element view) {
+    public static ViewAttribute getViewAttribute(String resName, Element view, boolean initNecessaryAttr) {
         String nodeName = view.getName();
         ViewAttribute viewAttribute = new ViewAttribute();
         // add by HLM on 2020/7/26 解决不同视图可以自定义属性功能，避免ViewAttribute太过冗余 */
         viewAttribute.setElement(view);
+        // add end
         // 验证属性中必须包含正确的height和width属性
-        if (initialNecessaryAttribute(viewAttribute, resName, nodeName, view)) {
-            List attrs = view.attributes();
+        if (initialNecessaryAttribute(viewAttribute, resName, nodeName, view, initNecessaryAttr)) {
+            List<?> attrs = view.attributes();
             for (Object object : attrs) {
                 Attribute attr;
                 if (object instanceof Attribute) attr = (Attribute) object;
@@ -94,13 +95,45 @@ public class AttributeUtil {
      * @param resName       所在的xml文件
      * @param nodeName      View节点的名字
      * @param ele           节点的Element对象
+     * @param initNecessaryAttr
      * @return 是否初始化成功
      */
-    private static boolean initialNecessaryAttribute(BaseAttribute baseAttribute, String resName, String nodeName, Element ele) {
+    private static boolean initialNecessaryAttribute(BaseAttribute baseAttribute, String resName, String nodeName, Element ele, boolean initNecessaryAttr) {
         baseAttribute.setResName(resName);
         baseAttribute.setNodeName(nodeName);
         Attribute height = ele.attribute(HEIGHT);
         Attribute width = ele.attribute(WIDTH);
+        // add by HLM on 2020/9/25 对于布局中在GridLayout内的元素不需要指定width、height等属性
+        if (!initNecessaryAttr) {
+            if (width != null) {
+                String value = width.getValue();
+                if (value.equals(AttributeDefaultValue.MATCH_PARENT)) {
+                    baseAttribute.setWidth(BaseAttribute.MATCH_PARENT);
+                } else if (value.equals(AttributeDefaultValue.WRAP_CONTENT)) {
+                    baseAttribute.setWidth(BaseAttribute.WRAP_CONTENT);
+                } else if (baseAttribute.isUnsignedInt(value)) {
+                    baseAttribute.setWidth(Integer.parseInt(value));
+                }
+            } else {
+                // 布局中没有指定必要的width属性，那么这里需要为其指定默认的值
+                baseAttribute.setWidth(BaseAttribute.MATCH_PARENT);
+            }
+            if (height != null) {
+                String value = height.getValue();
+                if (value.equals(AttributeDefaultValue.MATCH_PARENT)) {
+                    baseAttribute.setHeight(BaseAttribute.MATCH_PARENT);
+                } else if (value.equals(AttributeDefaultValue.WRAP_CONTENT)) {
+                    baseAttribute.setHeight(BaseAttribute.WRAP_CONTENT);
+                } else if (baseAttribute.isUnsignedInt(value)) {
+                    baseAttribute.setHeight(Integer.parseInt(value));
+                }
+            } else {
+                // 布局中没有指定必要的height属性，那么这里需要为其指定默认的值
+                baseAttribute.setHeight(BaseAttribute.MATCH_PARENT);
+            }
+            return true;
+        }
+        // add end
         return baseAttribute.checkHeightValue(height) && baseAttribute.checkWidthValue(width);
 
     }
@@ -150,7 +183,7 @@ public class AttributeUtil {
                 default:
                     if (baseAttribute.isUnsignedInt(attr.getValue())) {
                         value = Integer.parseInt(attr.getValue());
-                    } else if (baseAttribute.isColor(attr.getValue()) || baseAttribute.isSrcPath(attr.getValue())) {
+                    } else if (BaseAttribute.isColor(attr.getValue()) || baseAttribute.isSrcPath(attr.getValue())) {
                         isInt = false;
                         value = attr.getValue();
                     } else {
@@ -184,7 +217,7 @@ public class AttributeUtil {
      * @param valueType 属性值类型
      * @param target    bean对象
      */
-    private static void invokeSet(String name, Object value, Class valueType, BaseAttribute target) {
+    private static void invokeSet(String name, Object value, Class<?> valueType, BaseAttribute target) {
         try {
             String firstLetter = String.valueOf(Character.toUpperCase(name.charAt(0)));
             Method set = target.getClass().getMethod("set" + firstLetter + name.substring(1), valueType);

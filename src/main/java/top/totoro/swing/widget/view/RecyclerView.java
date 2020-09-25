@@ -7,7 +7,7 @@ import top.totoro.swing.widget.base.BaseScrollBar;
 import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.layout.LinearLayout;
 import top.totoro.swing.widget.listener.InvalidateListener;
-import top.totoro.swing.widget.manager.LinearLayoutManager;
+import top.totoro.swing.widget.manager.LayoutManager;
 import top.totoro.swing.widget.util.Log;
 
 import java.awt.event.*;
@@ -21,7 +21,7 @@ import java.util.WeakHashMap;
 @SuppressWarnings("Duplicates")
 public class RecyclerView extends LinearLayout implements InvalidateListener {
 
-    private LinearLayoutManager layoutManager = new LinearLayoutManager();
+    private LayoutManager layoutManager = new LayoutManager();
 
     public static final int HORIZONTAL = 1, VERTICAL = 2;
     //    private JPanel parent; // 放置这个RecyclerView的容器

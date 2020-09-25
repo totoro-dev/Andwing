@@ -10,7 +10,6 @@ import top.totoro.swing.widget.view.View;
 public class GridLayout extends BaseLayout {
 
     private int column = 1; // 默认只有一列
-    private int visibleSize = 0;
 
     public GridLayout(View parent) {
         super(parent);
@@ -24,6 +23,7 @@ public class GridLayout extends BaseLayout {
         if (columnAttr != null) {
             column = Integer.parseInt(columnAttr.getValue());
         }
+        setColumn(column);
     }
 
     public int getColumn() {
@@ -32,6 +32,17 @@ public class GridLayout extends BaseLayout {
 
     public void setColumn(int column) {
         this.column = column;
+        resetGrid();
+    }
+
+    /**
+     * 刷新网格的排布，比如里面某一项设置不可见或者可见时，触发网格变化
+     */
+    public void resetGrid() {
+        if (component == null) return;
+        int row = getVisibleSize() / column;
+        if (column * row < getVisibleSize()) row++;
+        component.setLayout(new java.awt.GridLayout(row, column));
     }
 
     /**
@@ -41,11 +52,20 @@ public class GridLayout extends BaseLayout {
      * @return 可见控件数量
      */
     public int getVisibleSize() {
-        visibleSize = 0;
+        int visibleSize = 0;
+        component.removeAll();
         for (View<?, ?> sonView : getSonViews()) {
-            if (sonView.getVisible()) visibleSize++;
+            if (sonView.getVisible()) {
+                component.add(sonView.getComponent());
+                visibleSize++;
+            }
         }
         return visibleSize;
     }
 
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        resetGrid();
+    }
 }

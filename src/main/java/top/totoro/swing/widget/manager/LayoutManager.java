@@ -6,12 +6,12 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.base.BaseLayout;
-import top.totoro.swing.widget.base.LayoutManager;
 import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.exception.AttributeException;
 import top.totoro.swing.widget.layout.CenterLayout;
 import top.totoro.swing.widget.layout.FrameLayout;
+import top.totoro.swing.widget.layout.GridLayout;
 import top.totoro.swing.widget.layout.LinearLayout;
 import top.totoro.swing.widget.util.*;
 import top.totoro.swing.widget.view.Span;
@@ -29,7 +29,7 @@ import java.util.List;
  * 3、刷新视图
  */
 @SuppressWarnings("ALL")
-public class LinearLayoutManager extends LayoutManager {
+public class LayoutManager {
 
     private static final String LAYOUT_RESOURCE_PATH = "layout/";
     private BaseLayout mainLayout;
@@ -37,7 +37,7 @@ public class LinearLayoutManager extends LayoutManager {
     private LinkedList<View> sonViews;
     private int itemWidth = 0, itemHeight = 0;
 
-    public LinearLayoutManager() {
+    public LayoutManager() {
     }
 
     public void setMainLayout(BaseLayout mainLayout) {
@@ -61,7 +61,7 @@ public class LinearLayoutManager extends LayoutManager {
             SAXReader reader = new SAXReader();
             Document document = reader.read(url);
             Element root = document.getRootElement();
-            LayoutAttribute layoutAttribute = AttributeUtil.getLayoutAttribute(res, root);
+            LayoutAttribute layoutAttribute = AttributeUtil.getLayoutAttribute(res, root, true);
             mainView = LayoutUtil.createLayout(mainLayout, root.getName(), layoutAttribute);
             if (mainView == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
             if (layoutAttribute.getId() != null) {
@@ -97,7 +97,7 @@ public class LinearLayoutManager extends LayoutManager {
             SAXReader reader = new SAXReader();
             Document document = reader.read(url);
             Element root = document.getRootElement();
-            LayoutAttribute layoutAttribute = AttributeUtil.getLayoutAttribute(res, root);
+            LayoutAttribute layoutAttribute = AttributeUtil.getLayoutAttribute(res, root, true);
             mainView = LayoutUtil.createLayout(mainLayout, root.getName(), layoutAttribute);
             if (mainView == null) throw new AttributeException(res + "资源文件的根节点必须继承BaseLayout");
             /* add by HLM on 2020/7/26 解决子布局加载时发生id冲突 */
@@ -168,38 +168,76 @@ public class LinearLayoutManager extends LayoutManager {
             attachAsCenterLayout(root, rootElement, res, atachRoot);
         } else if (root instanceof LinearLayout) {    // 解析线性布局
             attachAsLinearLayout(root, rootElement, res, atachRoot);
+        } else if (root instanceof GridLayout) {
+            attachAsGridLayout(root, rootElement, res, atachRoot);
         }
     }
 
-    private void attachAsLinearLayout(BaseLayout root, Element rootElement, String res, boolean atachRoot) {
-        LinearLayout linearLayout = (LinearLayout) root;
+    private void attachAsGridLayout(BaseLayout root, Element rootElement, String res, boolean atachRoot) {
         List<Element> childElements = rootElement.elements();
         for (Element childElement : childElements) {
             BaseAttribute childAttribute;
             Log.d(this, "element name = " + childElement.getName());
             if (childElement.elements().size() > 0 || childElement.getName().equals(FrameLayout.class.getSimpleName())) {
                 // 这个子节点是一个Layout
-                childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
-                BaseLayout layout = LayoutUtil.createLayout(linearLayout, childElement.getName(), (LayoutAttribute) childAttribute);
+                childAttribute = AttributeUtil.getLayoutAttribute(res, childElement, false);
+                BaseLayout layout = LayoutUtil.createLayout(root, childElement.getName(), (LayoutAttribute) childAttribute);
                 if (layout != null) {
                     if (childAttribute.getId() != null) {
                         layout.setId(childAttribute.getId());
                     }
                     // 以当前子节点开始绑定View
                     attachLayout(layout, childElement, res, atachRoot);
-                    linearLayout.addChildView(layout);
+                    root.addChildView(layout);
                 }
             } else {
                 // 这个节点是一个子View
-                childAttribute = AttributeUtil.getViewAttribute(res, childElement);
-                View view = ViewUtil.createView(linearLayout, childElement.getName(), (ViewAttribute) childAttribute);
+                // 也可能是RecyclerView
+                childAttribute = AttributeUtil.getViewAttribute(res, childElement, false);
+                View view = ViewUtil.createView(root, childElement.getName(), (ViewAttribute) childAttribute);
                 if (view instanceof BaseLayout) {
                     // 这个子节点是一个Layout
-                    childAttribute = AttributeUtil.getLayoutAttribute(res, childElement);
+                    childAttribute = AttributeUtil.getLayoutAttribute(res, childElement, false);
                     view.setAttribute(childAttribute);
-                    linearLayout.addChildView(view);
+                    root.addChildView(view);
                 } else {
-                    linearLayout.addChildView(view);
+                    root.addChildView(view);
+                }
+                if (childAttribute.getId() != null) {
+                    view.setId(childAttribute.getId());
+                }
+            }
+        }
+    }
+
+    private void attachAsLinearLayout(BaseLayout root, Element rootElement, String res, boolean atachRoot) {
+        List<Element> childElements = rootElement.elements();
+        for (Element childElement : childElements) {
+            BaseAttribute childAttribute;
+            Log.d(this, "element name = " + childElement.getName());
+            if (childElement.elements().size() > 0 || childElement.getName().equals(FrameLayout.class.getSimpleName())) {
+                // 这个子节点是一个Layout
+                childAttribute = AttributeUtil.getLayoutAttribute(res, childElement, true);
+                BaseLayout layout = LayoutUtil.createLayout(root, childElement.getName(), (LayoutAttribute) childAttribute);
+                if (layout != null) {
+                    if (childAttribute.getId() != null) {
+                        layout.setId(childAttribute.getId());
+                    }
+                    // 以当前子节点开始绑定View
+                    attachLayout(layout, childElement, res, atachRoot);
+                    root.addChildView(layout);
+                }
+            } else {
+                // 这个节点是一个子View
+                childAttribute = AttributeUtil.getViewAttribute(res, childElement, true);
+                View view = ViewUtil.createView(root, childElement.getName(), (ViewAttribute) childAttribute);
+                if (view instanceof BaseLayout) {
+                    // 这个子节点是一个Layout
+                    childAttribute = AttributeUtil.getLayoutAttribute(res, childElement, true);
+                    view.setAttribute(childAttribute);
+                    root.addChildView(view);
+                } else {
+                    root.addChildView(view);
                 }
                 if (childAttribute.getId() != null) {
                     view.setId(childAttribute.getId());

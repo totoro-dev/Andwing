@@ -8,9 +8,8 @@ import top.totoro.swing.widget.interfaces.ContextWrapper;
 import top.totoro.swing.widget.layout.LinearLayout;
 import top.totoro.swing.widget.listener.InvalidateListener;
 import top.totoro.swing.widget.manager.ActivityManager;
-import top.totoro.swing.widget.manager.LinearLayoutManager;
+import top.totoro.swing.widget.manager.LayoutManager;
 import top.totoro.swing.widget.util.AnimateUtil;
-import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.view.View;
 
 import java.util.ArrayList;
@@ -21,10 +20,10 @@ public class Context implements ContextWrapper {
     private Location location;
     private Size size;
     private BaseLayout mainView = new LinearLayout(null);
-    protected LinearLayoutManager layoutManager = new LinearLayoutManager();
+    protected LayoutManager layoutManager = new LayoutManager();
     protected List<InvalidateListener> invalidateListenerList = new ArrayList<>();
 
-    public LinearLayoutManager getLayoutManager() {
+    public LayoutManager getLayoutManager() {
         return layoutManager;
     }
 
