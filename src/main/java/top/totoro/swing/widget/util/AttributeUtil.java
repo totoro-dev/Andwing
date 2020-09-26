@@ -161,6 +161,7 @@ public class AttributeUtil {
                 case isSwitchOnKey:
                 case scaleType:
                 case column:
+                case TEXT_ALIGNMENT:
                     /* 这些属性属于不同控件自有的，不需要在这里做初始化 */
                     return;
             }

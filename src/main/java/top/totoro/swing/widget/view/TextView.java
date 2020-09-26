@@ -48,11 +48,15 @@ public class TextView extends View<ViewAttribute, JLabel> {
      * 设置文本对齐方式
      *
      * @param alignment 对齐方式
-     * @see AttributeDefaultValue#left
-     * @see AttributeDefaultValue#right
-     * @see AttributeDefaultValue#top
-     * @see AttributeDefaultValue#bottom
-     * @see AttributeDefaultValue#center
+     * @see AttributeDefaultValue#left 左（上下居中）
+     * @see AttributeDefaultValue#right 右（上下居中）
+     * @see AttributeDefaultValue#top 上（左右居中）
+     * @see AttributeDefaultValue#bottom 下（左右居中）
+     * @see AttributeDefaultValue#center 上下左右居中
+     * @see AttributeDefaultValue#leftAndTop 左上
+     * @see AttributeDefaultValue#leftAndBottom 坐下
+     * @see AttributeDefaultValue#rightAndTop 右上
+     * @see AttributeDefaultValue#rightAndBottom 右下
      */
     public void setAlignment(String alignment) {
         this.alignment = alignment;
@@ -60,23 +64,29 @@ public class TextView extends View<ViewAttribute, JLabel> {
     }
 
     private void setAlignment() {
-        int ali = JLabel.CENTER;
-        switch (alignment) {
-            case AttributeDefaultValue.left:
-                ali = JLabel.LEFT;
-                break;
-            case AttributeDefaultValue.right:
-                ali = JLabel.RIGHT;
-                break;
-            case AttributeDefaultValue.top:
-                ali = JLabel.TOP;
-                break;
-            case AttributeDefaultValue.bottom:
-                ali = JLabel.BOTTOM;
-                break;
+        int verticalAli = JLabel.CENTER;
+        int horizontalAli = JLabel.CENTER;
+        String[] alignments = alignment.split("\\|");
+        for (String alignment : alignments) {
+            switch (alignment) {
+                case AttributeDefaultValue.left:
+                    horizontalAli = JLabel.LEFT;
+                    break;
+                case AttributeDefaultValue.right:
+                    horizontalAli = JLabel.RIGHT;
+                    break;
+            }
+            switch (alignment) {
+                case AttributeDefaultValue.top:
+                    verticalAli = JLabel.TOP;
+                    break;
+                case AttributeDefaultValue.bottom:
+                    verticalAli = JLabel.BOTTOM;
+                    break;
+            }
         }
-        //noinspection MagicConstant
-        component.setHorizontalAlignment(ali);
+        component.setVerticalAlignment(verticalAli);
+        component.setHorizontalAlignment(horizontalAli);
     }
 
     /**
