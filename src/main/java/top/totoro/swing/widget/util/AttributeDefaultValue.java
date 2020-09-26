@@ -34,7 +34,7 @@ public class AttributeDefaultValue {
     public static final String BOLD = "bold";
     public static final String ITALIC = "italic";
 
-    // gravity属性
+    // gravity|文本对齐
     public static final String left = "left";
     public static final String right = "right";
     public static final String top = "top";

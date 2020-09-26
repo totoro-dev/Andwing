@@ -1,6 +1,10 @@
 package top.totoro.swing.widget.view;
 
+import org.dom4j.Attribute;
+import org.dom4j.Element;
 import top.totoro.swing.widget.bean.ViewAttribute;
+import top.totoro.swing.widget.util.AttributeDefaultValue;
+import top.totoro.swing.widget.util.AttributeKey;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,20 +14,69 @@ import java.awt.*;
  */
 public class TextView extends View<ViewAttribute, JLabel> {
 
+    private String alignment = AttributeDefaultValue.center;
+
     public TextView(View parent) {
         super(parent);
-        component = new JLabel("", JLabel.CENTER);
     }
 
     @SuppressWarnings("Duplicates")
     @Override
     public void setAttribute(ViewAttribute attribute) {
+        // add by HLM(dragon) on 2020/9/26
+        // 由于Button继承子TextView，在这里初始化避免对component多次new
+        if (component == null) {
+            component = new JLabel("");
+        }
+        // 添加对文本对齐方式的设置
+        Element element = attribute.getElement();
+        Attribute alignmentAttr = element.attribute(AttributeKey.TEXT_ALIGNMENT);
+        if (alignmentAttr != null) {
+            alignment = alignmentAttr.getValue();
+        }
+        setAlignment();
+        // add end
         super.setAttribute(attribute);
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
         component.setText(attribute.getText());
         component.setForeground(Color.decode(attribute.getTextColor()));
         remeasureSize();
         component.setSize(attribute.getWidth(), attribute.getHeight());
+    }
+
+    /**
+     * 设置文本对齐方式
+     *
+     * @param alignment 对齐方式
+     * @see AttributeDefaultValue#left
+     * @see AttributeDefaultValue#right
+     * @see AttributeDefaultValue#top
+     * @see AttributeDefaultValue#bottom
+     * @see AttributeDefaultValue#center
+     */
+    public void setAlignment(String alignment) {
+        this.alignment = alignment;
+        setAlignment();
+    }
+
+    private void setAlignment() {
+        int ali = JLabel.CENTER;
+        switch (alignment) {
+            case AttributeDefaultValue.left:
+                ali = JLabel.LEFT;
+                break;
+            case AttributeDefaultValue.right:
+                ali = JLabel.RIGHT;
+                break;
+            case AttributeDefaultValue.top:
+                ali = JLabel.TOP;
+                break;
+            case AttributeDefaultValue.bottom:
+                ali = JLabel.BOTTOM;
+                break;
+        }
+        //noinspection MagicConstant
+        component.setHorizontalAlignment(ali);
     }
 
     /**
@@ -49,7 +102,7 @@ public class TextView extends View<ViewAttribute, JLabel> {
                     }
                 }
             }
-        }else {
+        } else {
             minHeight = 0;
         }
         setMinWidth(minWidth);
