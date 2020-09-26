@@ -54,8 +54,19 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
                 if (onItemSelectedListener != null) {
                     onItemSelectedListener.onSelected(attribute.getId(), i, item);
                 }
+                break;
             }
         }
+    }
+
+    /**
+     * 获取选中的项的文本
+     *
+     * @return 选中文本
+     */
+    public String getText() {
+        if (mSelectedLabel == null) return "";
+        return mSelectedLabel.getText();
     }
 
     /**

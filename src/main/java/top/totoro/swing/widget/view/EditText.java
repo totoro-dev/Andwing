@@ -94,19 +94,36 @@ public class EditText extends View<ViewAttribute, JTextArea> {
     }
 
     public void setHint(String hint) {
-        component.setFont(new Font(attribute.getTextStyle(), Font.ITALIC, attribute.getTextSize()));
-        component.setForeground(Color.decode("#ababab"));
-        component.setText(hint);
+        // change by HLM on 2020/9/26 只有当前编辑框没有内容时才显示hint
+        if (getText().equals("")) {
+            component.setFont(new Font(attribute.getTextStyle(), Font.ITALIC, attribute.getTextSize()));
+            component.setForeground(Color.decode("#ababab"));
+            component.setText(hint);
+        }
+        // change end
         attribute.setHintText(hint);
     }
 
     public void setText(String text) {
         if (text == null || "".equals(text)) {
             setHint(attribute.getHintText());
+            return;
         }
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
         component.setForeground(Color.decode(attribute.getTextColor()));
         component.setText(text);
+    }
+
+    /**
+     * 获取编辑框的真实内容，而不返回hint内容
+     *
+     * @return 编辑框内容
+     */
+    public String getText() {
+        if (component == null) return "";
+        String text = component.getText();
+        if (text == null || text.equals(attribute.getHintText())) return "";
+        return text;
     }
 
     /**
@@ -121,7 +138,7 @@ public class EditText extends View<ViewAttribute, JTextArea> {
         for (char c :
                 chars) {
             // 根据英文、英文符号、中文中文符号来确定TextView至少要多大才能容的下
-            if (Integer.valueOf(Integer.toString(c)) < 128) {
+            if (Integer.parseInt(Integer.toString(c)) < 128) {
                 minWidth += size / 2;
             } else {
                 if (String.valueOf(c).matches("。？、“”——")) {
@@ -137,12 +154,11 @@ public class EditText extends View<ViewAttribute, JTextArea> {
 
     public void addOnTextChangeListener(OnTextChangeListener listener) {
         onTextChangeListener = listener;
-        origin = component.getText();
+        origin = getText();
         Executors.newScheduledThreadPool(1).scheduleWithFixedDelay(() -> {
-            if (!origin.equals(component.getText())) {
-                origin = component.getText();
-                onTextChangeListener.onChange(origin);
-            }
+            if (onTextChangeListener == null || origin.equals(getText())) return;
+            origin = getText();
+            onTextChangeListener.onChange(origin);
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 

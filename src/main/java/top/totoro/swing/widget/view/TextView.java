@@ -73,6 +73,11 @@ public class TextView extends View<ViewAttribute, JLabel> {
         invalidateSuper();
     }
 
+    public String getText() {
+        if (component == null) return "";
+        return component.getText();
+    }
+
     /**
      * 设置字体大小
      *
