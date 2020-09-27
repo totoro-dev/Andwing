@@ -46,6 +46,14 @@ public class BaseAttribute {
     private int rightBorder = 0;
     /* add end */
 
+    /* add by HLM on 2020/9/27 增加偏移设置*/
+    private int margin = 0;
+    private int marginLeft = 0;
+    private int marginRight = 0;
+    private int marginTop = 0;
+    private int marginBottom = 0;
+    /* add end */
+
     public Element getElement() {
         return element;
     }
@@ -164,6 +172,50 @@ public class BaseAttribute {
 
     public void setRightBorder(int rightBorder) {
         this.rightBorder = rightBorder;
+    }
+
+    public int getMargin() {
+        return margin;
+    }
+
+    public void setMargin(int margin) {
+        this.margin = margin;
+        setMarginLeft(margin);
+        setMarginRight(margin);
+        setMarginTop(margin);
+        setMarginBottom(margin);
+    }
+
+    public int getMarginLeft() {
+        return marginLeft;
+    }
+
+    public void setMarginLeft(int marginLeft) {
+        this.marginLeft = marginLeft;
+    }
+
+    public int getMarginRight() {
+        return marginRight;
+    }
+
+    public void setMarginRight(int marginRight) {
+        this.marginRight = marginRight;
+    }
+
+    public int getMarginTop() {
+        return marginTop;
+    }
+
+    public void setMarginTop(int marginTop) {
+        this.marginTop = marginTop;
+    }
+
+    public int getMarginBottom() {
+        return marginBottom;
+    }
+
+    public void setMarginBottom(int marginBottom) {
+        this.marginBottom = marginBottom;
     }
 
     /**

@@ -599,7 +599,9 @@ public class LayoutManager {
                 if (isWidthAsMatch(son)) {
                     parent.matchParentWidthViews.add(son);
                 } else {
-                    parent.currNoMatchWidth += son.getWidth();
+                    parent.currNoMatchWidth += son.getWidth()
+                            + son.getAttribute().getMarginLeft()
+                            + son.getAttribute().getMarginRight();
                 }
             } else {
                 // 父布局的宽度是wrap，说明：这个son的宽度也已被按照wrap处理了，所以match在这里是无效的
@@ -627,7 +629,9 @@ public class LayoutManager {
                 if (isHeightAsMatch(son)) {
                     parent.matchParentHeightViews.add(son);
                 } else {
-                    parent.currNoMatchHeight += son.getHeight();
+                    parent.currNoMatchHeight += son.getHeight()
+                            + son.getAttribute().getMarginTop()
+                            + son.getAttribute().getMarginBottom();
                 }
             } else {
                 // 父布局的高度是wrap，说明：这个son的高度也已被按照wrap处理了，所以match在这里是无效的
@@ -653,13 +657,38 @@ public class LayoutManager {
             if (son.getAttribute().getVisible() == BaseAttribute.GONE) continue;
             if (son.getParent() != null) {
                 if (isVertical((BaseLayout) son.getParent())) {
-                    startY += son.getAttribute().getStartY();
-                    son.getComponent().setLocation(son.getComponent().getX(), startY);
+                    int width = son.getWidth(), height = son.getHeight();
+                    if (son.getAttribute().getWidth() == ViewAttribute.MATCH_PARENT) {
+                        width = son.getWidth() - son.getAttribute().getMarginLeft() - son.getAttribute().getMarginRight();
+                        setWidth(son, width);
+                    }
+                    if (son.getAttribute().getHeight() == ViewAttribute.MATCH_PARENT) {
+                        height = son.getHeight() - son.getAttribute().getMarginTop() - son.getAttribute().getMarginBottom();
+                        setHeight(son, height);
+                    }
+                    startY += son.getAttribute().getMarginTop();
+                    if (son.getPreView() != null && son.getPreView().getVisible()) {
+                        startY += son.getPreView().getAttribute().getMarginBottom();
+                    }
+                    int marginLeft = son.getAttribute().getMarginLeft();
+                    son.getComponent().setLocation(startX + marginLeft, startY);
                     startY += son.getHeight();
                 }
                 if (isHorizontal((BaseLayout) son.getParent())) {
-                    startX += son.getAttribute().getStartX();
-                    son.getComponent().setLocation(startX, son.getComponent().getY());
+                    int marginTop = son.getAttribute().getMarginTop();
+                    if (son.getAttribute().getHeight() == ViewAttribute.MATCH_PARENT) {
+                        int height = son.getHeight() - son.getAttribute().getMarginTop() - son.getAttribute().getMarginBottom();
+                        setHeight(son, height);
+                    }
+                    if (son.getAttribute().getWidth() == ViewAttribute.MATCH_PARENT) {
+                        int width = son.getWidth() - son.getAttribute().getMarginLeft() - son.getAttribute().getMarginRight();
+                        setWidth(son, width);
+                    }
+                    startX += son.getAttribute().getMarginLeft();
+                    if (son.getPreView() != null && son.getPreView().getVisible()) {
+                        startX += son.getPreView().getAttribute().getMarginRight();
+                    }
+                    son.getComponent().setLocation(startX, startY + marginTop);
                     startX += son.getWidth();
                 }
             } else {

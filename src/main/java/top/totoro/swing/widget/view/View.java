@@ -24,6 +24,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     private int minHeight = 0;
 
     private View parent;
+    private View<?, ?> preView; // 这个View的前一个View，用来处理margin属性
     private String parentId = "";
     private LinkedList<View> sonViews = new LinkedList<>();
     private Map<String, View> containViewsById = new ConcurrentHashMap<>();
@@ -45,6 +46,14 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
             parentId = parent.attribute.getId();
             setContext(parent.context);
         }
+    }
+
+    public View<?, ?> getPreView() {
+        return preView;
+    }
+
+    public void setPreView(View<?, ?> preView) {
+        this.preView = preView;
     }
 
     public void addOnClickListener(OnClickListener clickListener) {

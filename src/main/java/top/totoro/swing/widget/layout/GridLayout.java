@@ -40,8 +40,9 @@ public class GridLayout extends BaseLayout {
      */
     public void resetGrid() {
         if (component == null) return;
-        int row = getVisibleSize() / column;
-        if (column * row < getVisibleSize()) row++;
+        int visibleSize = getVisibleSize();
+        int row = visibleSize / column;
+        if (column * row < visibleSize) row++;
         component.setLayout(new java.awt.GridLayout(row, column));
     }
 

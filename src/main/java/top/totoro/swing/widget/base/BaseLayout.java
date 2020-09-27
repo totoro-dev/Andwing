@@ -2,6 +2,7 @@ package top.totoro.swing.widget.base;
 
 import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.context.Context;
+import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.view.View;
 
 import javax.swing.*;
@@ -36,10 +37,15 @@ public class BaseLayout extends View<LayoutAttribute, JPanel> {
      *
      * @param childView 子控件或子布局
      */
-    public void addChildView(View childView) {
+    public void addChildView(View<?,?> childView) {
         if (childView == null) return;
         childView.setParent(this);
         component.add(childView.getComponent());
+        if (getSonViews().size() > 0) {
+            View<?,?> pre = getSonByIndex(getSonViews().size() - 1);
+            childView.setPreView(pre);
+            Log.d(this,String.format("pre view %s",pre.getAttribute()));
+        }
         addSon(childView);
     }
 
