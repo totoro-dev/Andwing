@@ -10,6 +10,8 @@ import top.totoro.swing.widget.view.View;
 public class GridLayout extends BaseLayout {
 
     private int column = 1; // 默认只有一列
+    private int gapVertical = 0;
+    private int gapHorizontal = 0;
 
     public GridLayout(View parent) {
         super(parent);
@@ -24,6 +26,20 @@ public class GridLayout extends BaseLayout {
             column = Integer.parseInt(columnAttr.getValue());
         }
         setColumn(column);
+
+        Attribute gap = element.attribute(AttributeKey.GAP);
+        if (gap != null && gap.getValue().length() > 0) {
+            this.gapVertical = this.gapHorizontal = Integer.parseInt(gap.getValue());
+        } else {
+            Attribute gapVerticalAttr = element.attribute(AttributeKey.GAP_VERTICAL);
+            Attribute gapHorizontalAttr = element.attribute(AttributeKey.GAP_HORIZONTAL);
+            if (gapVerticalAttr != null && gapVerticalAttr.getValue().length() > 0) {
+                this.gapVertical = Integer.parseInt(gapVerticalAttr.getValue());
+            }
+            if (gapHorizontalAttr != null && gapHorizontalAttr.getValue().length() > 0) {
+                this.gapHorizontal = Integer.parseInt(gapHorizontalAttr.getValue());
+            }
+        }
     }
 
     public int getColumn() {
@@ -35,6 +51,35 @@ public class GridLayout extends BaseLayout {
         resetGrid();
     }
 
+    public void setGap(int gap) {
+        if (gap != gapVertical || gap != gapHorizontal) {
+            gapVertical = gapHorizontal = gap;
+            invalidateSuper();
+        }
+    }
+
+    public int getGapVertical() {
+        return gapVertical;
+    }
+
+    public void setGapVertical(int gapVertical) {
+        if (gapVertical != this.gapVertical) {
+            this.gapVertical = gapVertical;
+            invalidateSuper();
+        }
+    }
+
+    public int getGapHorizontal() {
+        return gapHorizontal;
+    }
+
+    public void setGapHorizontal(int gapHorizontal) {
+        if (gapHorizontal != this.gapHorizontal) {
+            this.gapHorizontal = gapHorizontal;
+            invalidateSuper();
+        }
+    }
+
     /**
      * 刷新网格的排布，比如里面某一项设置不可见或者可见时，触发网格变化
      */
@@ -43,7 +88,7 @@ public class GridLayout extends BaseLayout {
         int visibleSize = getVisibleSize();
         int row = visibleSize / column;
         if (column * row < visibleSize) row++;
-        component.setLayout(new java.awt.GridLayout(row, column));
+        component.setLayout(new java.awt.GridLayout(row, column, gapHorizontal, gapVertical));
     }
 
     /**

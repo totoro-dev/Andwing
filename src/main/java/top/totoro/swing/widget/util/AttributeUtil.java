@@ -91,10 +91,10 @@ public class AttributeUtil {
      * 初始化一个View必要的属性，如果未配置这些属性将无法继续，并报错
      * 这里指宽和高两个必要属性
      *
-     * @param baseAttribute 这个View持有的基本属性Bean
-     * @param resName       所在的xml文件
-     * @param nodeName      View节点的名字
-     * @param ele           节点的Element对象
+     * @param baseAttribute     这个View持有的基本属性Bean
+     * @param resName           所在的xml文件
+     * @param nodeName          View节点的名字
+     * @param ele               节点的Element对象
      * @param initNecessaryAttr
      * @return 是否初始化成功
      */
@@ -162,6 +162,9 @@ public class AttributeUtil {
                 case scaleType:
                 case column:
                 case TEXT_ALIGNMENT:
+                case GAP:
+                case GAP_VERTICAL:
+                case GAP_HORIZONTAL:
                     /* 这些属性属于不同控件自有的，不需要在这里做初始化 */
                     return;
             }

@@ -164,7 +164,7 @@ public class ImageView extends View<ViewAttribute, JPanel> {
     public void setScaleType(String scaleType, boolean invalidateParent) {
         if (!Objects.equals(this.scaleType, scaleType)) {
             this.scaleType = scaleType;
-        } else return;
+        }
         // 触发图片的刷新，并决定是否刷新父布局
         setImage(getAttribute().getSrc(), invalidateParent);
     }
