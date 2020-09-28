@@ -20,6 +20,8 @@ public class EditText extends View<ViewAttribute, JTextArea> {
     public EditText(View parent) {
         super(parent);
         component = new JTextArea();
+        // 设置制表符占位数
+        component.setTabSize(4);
         component.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -107,7 +109,6 @@ public class EditText extends View<ViewAttribute, JTextArea> {
     public void setText(String text) {
         if (text == null || "".equals(text)) {
             setHint(attribute.getHintText());
-            return;
         }
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
         component.setForeground(Color.decode(attribute.getTextColor()));
