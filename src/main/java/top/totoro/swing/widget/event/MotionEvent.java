@@ -30,7 +30,7 @@ public class MotionEvent extends InputEvent {
     }
 
     public MotionEvent(MouseEvent mouseEvent, int action) {
-        if (mouseEvent.getComponent().isVisible()) {
+        if (mouseEvent.getComponent().isShowing()) {
             x = mouseEvent.getComponent().getLocationOnScreen().x + mouseEvent.getX();
             y = mouseEvent.getComponent().getLocationOnScreen().y + mouseEvent.getY();
         }
