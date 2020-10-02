@@ -4,14 +4,11 @@ import top.totoro.swing.widget.context.Activity;
 import top.totoro.swing.widget.listener.OnActivityResizeListener;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 /**
  * 窗口拉伸、收缩的接口默认实现
  */
-public class DefaultActivityResizeMouseListener implements MouseListener, MouseMotionListener {
+public class DefaultActivityResizeMouseListener {
 
     private Activity activity;
     private OnActivityResizeListener resizeListener;
@@ -22,8 +19,8 @@ public class DefaultActivityResizeMouseListener implements MouseListener, MouseM
     public void init(Activity activity) {
         this.activity = activity;
         resetFrameBoundRect();
-        activity.getFrame().addMouseListener(this);
-        activity.getFrame().addMouseMotionListener(this);
+//        activity.getFrame().addMouseListener(this);
+//        activity.getFrame().addMouseMotionListener(this);
     }
 
     public void resetFrameBoundRect() {
@@ -42,19 +39,13 @@ public class DefaultActivityResizeMouseListener implements MouseListener, MouseM
         this.resizeListener = resizeListener;
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed() {
         if (prepareResize) {
             resizing = true;
         }
     }
 
-    @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased() {
         if (prepareResize && resizing) {
             prepareResize = false;
             resizing = false;
@@ -62,26 +53,15 @@ public class DefaultActivityResizeMouseListener implements MouseListener, MouseM
         }
     }
 
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(int x, int y) {
         if (prepareResize && resizing && resizeListener != null) {
-            resizeListener.onResizeDoing(resizeType, e.getX(), e.getY());
+            resizeListener.onResizeDoing(resizeType, x, y);
         }
     }
 
-    @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(int x, int y) {
         if (activity.isResizeable()) {
-            Point point = e.getPoint();
+            Point point = new Point(x, y);
             prepareResize = true;
             if (leftTop.contains(point)) {
                 resizeType = OnActivityResizeListener.LEFT_TOP;

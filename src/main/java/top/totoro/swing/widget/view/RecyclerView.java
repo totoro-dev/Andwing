@@ -138,7 +138,8 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
 //            item.getView().setContext(context);
             /* remove end */
             /* add by HLM on 2020/7/26 解决鼠标等事件被ViewHolder中的view拦截问题 */
-            item.getView().setParentListener(this);
+            // change by HLM on 2020/10/2 简化事件冒泡
+            item.getView().setParent(this);
             /* add end */
             adapter.onBindViewHolder(item, i, adapter.getViewType(i));
             container.addChildView(item.getView());
@@ -173,7 +174,8 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             ViewHolder item = adapter.onCreateViewHolder(null);
 //            item.getView().setLayoutManager(layoutManager);
             /* add by HLM on 2020/7/26 解决鼠标等事件被ViewHolder中的view拦截问题 */
-            item.getView().setParentListener(this);
+            // change by HLM on 2020/10/2 简化事件冒泡
+            item.getView().setParent(this);
             /* add end */
             adapter.onBindViewHolder(item, i, adapter.getViewType(i));
             container.addChildView(item.getView());

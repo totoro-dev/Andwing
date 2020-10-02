@@ -3,6 +3,7 @@ package top.totoro.swing.widget.view;
 import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.context.Context;
+import top.totoro.swing.widget.event.MotionEvent;
 import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.manager.LayoutManager;
 
@@ -11,6 +12,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 //import javax.swing.JComponent;
 //import java.awt.Color;
 
-public class View<Attribute extends BaseAttribute, Component extends JComponent> implements MouseListener {
+public class View<Attribute extends BaseAttribute, Component extends JComponent> implements MouseListener, MouseMotionListener {
 
     private int minWidth = 0;
     private int minHeight = 0;
@@ -30,9 +32,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     private Map<String, View> containViewsById = new ConcurrentHashMap<>();
     private LayoutManager layoutManager;
     private OnClickListener clickListener;
-    /* 对应上一级视图的事件监听，由于每个View都直接实现了Listener，所以只需要传入对应的上一级视图即可。 */
-    /* 可以将当前视图的事件通过该监听传递给上一级视图，避免被拦截，与parent不同的是不会发生视图的绑定 */
-    private View<BaseAttribute, JComponent> parentListener;
+    private boolean listenClickEvent = false;
     private Cursor enterCursor = new Cursor(Cursor.DEFAULT_CURSOR);
     protected Attribute attribute;
     protected Component component;
@@ -58,11 +58,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 
     public void addOnClickListener(OnClickListener clickListener) {
         this.clickListener = clickListener;
-        component.addMouseListener(this);
-    }
-
-    public void setParentListener(View<BaseAttribute, JComponent> parentListener) {
-        this.parentListener = parentListener;
+        listenClickEvent = clickListener != null;
     }
 
     public void removeAllSon() {
@@ -178,17 +174,19 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         component.setVisible(attribute.getVisible() == ViewAttribute.VISIBLE);
         component.setOpaque(attribute.getOpaque() == ViewAttribute.OPAQUE);
         component.setBackground(attribute.getBackground());
-        if (attribute.getTopBorder() == 0
+        if (!(attribute.getTopBorder() == 0
                 && attribute.getBottomBorder() == 0
                 && attribute.getLeftBorder() == 0
-                && attribute.getRightBorder() == 0)
-            return;
-        setBorder(BorderFactory.createMatteBorder(
-                attribute.getTopBorder(),
-                attribute.getLeftBorder(),
-                attribute.getBottomBorder(),
-                attribute.getRightBorder(),
-                attribute.getBorderColor()));
+                && attribute.getRightBorder() == 0)) {
+            setBorder(BorderFactory.createMatteBorder(
+                    attribute.getTopBorder(),
+                    attribute.getLeftBorder(),
+                    attribute.getBottomBorder(),
+                    attribute.getRightBorder(),
+                    attribute.getBorderColor()));
+        }
+        component.addMouseListener(this);
+        component.addMouseMotionListener(this);
     }
 
     public void setBorder(Border border) {
@@ -288,22 +286,30 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         if (mShowingSpinner != null && !(this instanceof Spinner)) {
             mShowingSpinner.dismiss();
         }
-        if (clickListener != null) {
+        if (listenClickEvent) {
             clickListener.onClick(this);
         }
-        if (parentListener != null) {
-            parentListener.mouseClicked(e);
+        if (parent != null) {
+            // 向上冒泡
+            parent.mouseClicked(e);
+        }
+        if (context != null) {
+            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_CLICKED));
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        if (context != null) {
+            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_DOWN));
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        if (context != null) {
+            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_UP));
+        }
     }
 
     @Override
@@ -311,8 +317,11 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         if (enterCursor != null && clickListener != null) {
             component.setCursor(enterCursor);
         }
-        if (parentListener != null) {
-            parentListener.mouseEntered(e);
+        if (parent != null) {
+            parent.mouseEntered(e);
+        }
+        if (context != null) {
+            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_INSIDE));
         }
     }
 
@@ -321,8 +330,25 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         if (clickListener != null) {
             component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
-        if (parentListener != null) {
-            parentListener.mouseExited(e);
+        if (parent != null) {
+            parent.mouseExited(e);
+        }
+        if (context != null) {
+            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_OUTSIDE));
+        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (context != null) {
+            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_DRAG));
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        if (context != null) {
+            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_MOVE));
         }
     }
 

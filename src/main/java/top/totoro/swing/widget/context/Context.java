@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import top.totoro.swing.widget.base.BaseLayout;
 import top.totoro.swing.widget.base.Location;
 import top.totoro.swing.widget.base.Size;
+import top.totoro.swing.widget.event.MotionEvent;
 import top.totoro.swing.widget.interfaces.ContextWrapper;
 import top.totoro.swing.widget.layout.LinearLayout;
 import top.totoro.swing.widget.listener.InvalidateListener;
@@ -116,6 +117,10 @@ public class Context implements ContextWrapper {
                 listener.onInvalidateFinished();
             }
         }
+    }
+
+    public void dispatchMotionEvent(MotionEvent event) {
+        // just for handle view event
     }
 
     public void onCreate() {

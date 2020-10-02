@@ -5,6 +5,7 @@ import top.totoro.swing.widget.base.DefaultAttribute;
 import top.totoro.swing.widget.base.Location;
 import top.totoro.swing.widget.base.Size;
 import top.totoro.swing.widget.bean.LayoutAttribute;
+import top.totoro.swing.widget.event.MotionEvent;
 import top.totoro.swing.widget.listener.OnActionBarClickListener;
 import top.totoro.swing.widget.listener.OnActionBarResizeListener;
 import top.totoro.swing.widget.listener.OnActivityDragListener;
@@ -25,6 +26,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import static top.totoro.swing.widget.event.MotionEvent.*;
 
 @SuppressWarnings("unused")
 public class Activity extends Context implements OnActionBarClickListener, OnActivityDragListener, OnActionBarResizeListener {
@@ -79,6 +82,36 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
             e.printStackTrace();
         }
         return activity;
+    }
+
+    @Override
+    public void dispatchMotionEvent(MotionEvent event) {
+        super.dispatchMotionEvent(event);
+        int x, y;
+        switch (event.getAction()) {
+            case ACTION_DOWN:
+                defaultActivityResizeMouseListener.mousePressed();
+                break;
+            case ACTION_UP:
+                defaultActivityResizeMouseListener.mouseReleased();
+                break;
+            case ACTION_CLICKED:
+                break;
+            case ACTION_INSIDE:
+                break;
+            case ACTION_OUTSIDE:
+                break;
+            case ACTION_MOVE:
+                x = event.getX() - frame.getLocationOnScreen().x;
+                y = event.getY() - frame.getLocationOnScreen().y;
+                defaultActivityResizeMouseListener.mouseMoved(x, y);
+                break;
+            case ACTION_DRAG:
+                x = event.getX() - frame.getLocationOnScreen().x;
+                y = event.getY() - frame.getLocationOnScreen().y;
+                defaultActivityResizeMouseListener.mouseDragged(x, y);
+                break;
+        }
     }
 
     public void setOnRestart(boolean onRestart) {
