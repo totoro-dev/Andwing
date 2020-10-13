@@ -3,6 +3,7 @@ package top.totoro.swing.widget.view;
 import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.context.Context;
+import top.totoro.swing.widget.context.PopupWindow;
 import top.totoro.swing.widget.event.MotionEvent;
 import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.manager.LayoutManager;
@@ -285,6 +286,9 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     public void mouseClicked(MouseEvent e) {
         if (mShowingSpinner != null && !(this instanceof Spinner)) {
             mShowingSpinner.dismiss();
+        }
+        if (PopupWindow.mShowingPopupWindow != null) {
+            PopupWindow.mShowingPopupWindow.dismiss();
         }
         if (listenClickEvent) {
             clickListener.onClick(this);

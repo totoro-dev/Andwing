@@ -26,7 +26,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
     public static final int HORIZONTAL = 1, VERTICAL = 2;
     //    private JPanel parent; // 放置这个RecyclerView的容器
     //    private JPanel component; // 在这个RecyclerView中放置子控件的容器
-    private BaseLayout container = new BaseLayout(null);
+    private BaseLayout container = new BaseLayout(this);
     private LayoutAttribute containerAttribute = new LayoutAttribute();
     private BaseScrollBar.Vertical verticalScrollBar; // 垂直滚动条
     private BaseScrollBar.Horizontal horizontalScrollBar; // 水平滚动条
@@ -100,7 +100,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         }
     }
 
-    public void setAdapter(Adapter adapter) {
+    public void setAdapter(Adapter<? extends ViewHolder> adapter) {
         this.adapter = adapter;
         List<RecyclerView> list = instances.get(adapter);
         if (list == null) {
@@ -139,7 +139,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             /* remove end */
             /* add by HLM on 2020/7/26 解决鼠标等事件被ViewHolder中的view拦截问题 */
             // change by HLM on 2020/10/2 简化事件冒泡
-            item.getView().setParent(this);
+            item.getView().setParent(container);
             /* add end */
             adapter.onBindViewHolder(item, i, adapter.getViewType(i));
             container.addChildView(item.getView());
@@ -175,7 +175,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
 //            item.getView().setLayoutManager(layoutManager);
             /* add by HLM on 2020/7/26 解决鼠标等事件被ViewHolder中的view拦截问题 */
             // change by HLM on 2020/10/2 简化事件冒泡
-            item.getView().setParent(this);
+            item.getView().setParent(container);
             /* add end */
             adapter.onBindViewHolder(item, i, adapter.getViewType(i));
             container.addChildView(item.getView());

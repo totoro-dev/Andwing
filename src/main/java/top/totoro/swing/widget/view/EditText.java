@@ -12,16 +12,16 @@ import java.util.concurrent.TimeUnit;
 /**
  * 编辑框
  */
-public class EditText extends View<ViewAttribute, JTextArea> {
+public class EditText extends View<ViewAttribute, JTextField> {
 
     private OnTextChangeListener onTextChangeListener;
     private String origin = "";
 
     public EditText(View parent) {
         super(parent);
-        component = new JTextArea();
+        component = new JTextField();
         // 设置制表符占位数
-        component.setTabSize(4);
+//        component.setTabSize(4);
         component.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {

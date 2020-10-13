@@ -28,11 +28,11 @@ public class CheckBox extends View<ViewAttribute, JPanel> {
 
     public CheckBox(View<?, ?> parent) {
         super(parent);
-        component = new JPanel(new BorderLayout(0, 0));
+        component = new JPanel(null);
         boxImgLabel = new JLabel("", JLabel.LEFT);
         boxTextLabel = new JLabel("", JLabel.LEFT);
-        component.add(boxImgLabel, BorderLayout.WEST);
-        component.add(boxTextLabel, BorderLayout.CENTER);
+        component.add(boxImgLabel);
+        component.add(boxTextLabel);
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -94,6 +94,22 @@ public class CheckBox extends View<ViewAttribute, JPanel> {
         if (onSelectChangeListener != null) {
             onSelectChangeListener.onSelectChanged(attribute.getId(), isSelected);
         }
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        int imgX = 0, imgY, txtX, txtY = 0;
+        if (isSelected) {
+            imgY = (getHeight() - selectedImg.getIconHeight()) / 2;
+            txtX = selectedImg.getIconWidth();
+            boxImgLabel.setBounds(imgX, imgY, selectedImg.getIconWidth(), selectedImg.getIconHeight());
+        } else {
+            imgY = (getHeight() - unselectedImg.getIconHeight()) / 2;
+            txtX = unselectedImg.getIconWidth();
+            boxImgLabel.setBounds(imgX, imgY, unselectedImg.getIconWidth(), unselectedImg.getIconHeight());
+        }
+        boxTextLabel.setBounds(txtX, txtY, getWidth() - boxImgLabel.getWidth(), getHeight());
     }
 
     /**
