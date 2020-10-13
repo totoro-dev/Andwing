@@ -7,12 +7,16 @@ import top.totoro.swing.widget.view.View;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * 悬浮框
+ */
 public class PopupWindow extends Context {
-    protected JWindow mDropDownWindow;
-    private LayoutAttribute containerAttr;
-    private View<?, ?> dropTarget;
 
     public static PopupWindow mShowingPopupWindow;
+
+    protected JWindow mDropDownWindow;
+    private final LayoutAttribute containerAttr;
+    private View<?, ?> dropTarget;
 
     public PopupWindow() {
         mDropDownWindow = new JWindow();
@@ -27,12 +31,21 @@ public class PopupWindow extends Context {
 
     public PopupWindow(String layoutId, int width, int height) {
         this(width, height);
+        setContentView(layoutId);
+    }
+
+    /**
+     * 通过布局id加载内容到悬浮框中
+     *
+     * @param layoutId 布局id
+     */
+    public void setContentView(String layoutId) {
         layoutManager.inflate(getMainView(), layoutId);
         layoutManager.setMainLayout(getMainView());
     }
 
     /**
-     * 刷新下拉框的显示位置
+     * 刷新悬浮框的显示位置
      */
     public void refreshLocation() {
         if (dropTarget == null) return;
@@ -48,13 +61,26 @@ public class PopupWindow extends Context {
 
     }
 
+    /**
+     * 设置悬浮框的大小
+     *
+     * @param width  宽度
+     * @param height 高度
+     */
     public void setSize(int width, int height) {
+        super.setSize(width, height);
         mDropDownWindow.setSize(width, height);
         containerAttr.setWidth(width);
         containerAttr.setHeight(height);
         getMainView().setAttribute(containerAttr);
+        layoutManager.invalidate();
     }
 
+    /**
+     * 在指定的控件下方显示悬浮框
+     *
+     * @param dropTarget 目标控件
+     */
     public void showAsDrop(View<?, ?> dropTarget) {
         prepareShow();
         this.dropTarget = dropTarget;
@@ -67,13 +93,16 @@ public class PopupWindow extends Context {
         mShowingPopupWindow = this;
     }
 
-    public void prepareShow() {
+    private void prepareShow() {
         if (mShowingPopupWindow != null) {
             mShowingPopupWindow.dismiss();
             mShowingPopupWindow = null;
         }
     }
 
+    /**
+     * 销毁悬浮框
+     */
     public void dismiss() {
         if (mShowingPopupWindow != null && mShowingPopupWindow != this) {
             mShowingPopupWindow.dismiss();

@@ -71,6 +71,11 @@ public class CheckBox extends View<ViewAttribute, JPanel> {
         setText(attribute.getText());
     }
 
+    /**
+     * 设置复选框的文本内容
+     *
+     * @param text 文本内容
+     */
     public void setText(String text) {
         if (text == null) text = "";
         boxTextLabel.setText(text);
@@ -162,6 +167,11 @@ public class CheckBox extends View<ViewAttribute, JPanel> {
 
     private OnSelectChangeListener onSelectChangeListener;
 
+    /**
+     * 设置选中状态变化的监听
+     *
+     * @param listener 监听器
+     */
     public void addOnSelectChangeListener(OnSelectChangeListener listener) {
         onSelectChangeListener = listener;
     }
