@@ -42,7 +42,8 @@ public class Dialog extends Context {
             height = mContextHeight;
         }
 
-        mDialogMarkWindow = new JWindow();
+        // Todo:解决焦点问题
+        mDialogMarkWindow = new JWindow(((Activity) context).getFrame());
         if (showMarkWindow) {
             mDialogMarkWindow.setSize(mContextWidth, mContextHeight);
             mDialogMarkWindow.setOpacity(0.5F);
@@ -70,7 +71,7 @@ public class Dialog extends Context {
             };
             mDialogMarkWindow.addMouseListener(mDialogMarkWindowMouseListener);
         }
-        mDialogWindow = new JWindow();
+        mDialogWindow = new JWindow(((Activity) context).getFrame());
         mDialogWindow.getContentPane().add(getMainView().getComponent());
         // 设置背景全透明
         mDialogWindow.getRootPane().setOpaque(false);
