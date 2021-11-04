@@ -1,6 +1,7 @@
 package top.totoro.swing.widget.context;
 
 import top.totoro.swing.widget.layout.ToastContent;
+import top.totoro.swing.widget.util.Log;
 
 import java.awt.*;
 import java.net.URL;
@@ -11,6 +12,7 @@ import static java.lang.Thread.sleep;
  * 短暂性提示框
  */
 public class Toast extends Dialog {
+    private static final String TAG = "Toast";
 
     private Context context;
     private long showTime = SHORT;
@@ -34,6 +36,7 @@ public class Toast extends Dialog {
      * @return 可以显示的对话框
      */
     public static Toast makeText(Context context, String textOrLayoutId) {
+        Log.d(TAG, "makeText : " + textOrLayoutId);
         Toast toast = new Toast(context, false);
         toast.context = context;
         URL url = context.getClass().getClassLoader().getResource("layout/" + textOrLayoutId);

@@ -369,7 +369,7 @@ public class LayoutManager {
         if (isHeightAsWrap(item)) {
             item.getComponent().setSize(item.getWidth(), item.getMinHeight());
         }
-        Log.d("measureNormalViewSizeAsWrap", item.getAttribute().getId() + ", " + item.getComponent().getSize());
+//        Log.d("measureNormalViewSizeAsWrap", item.getAttribute().getId() + ", " + item.getComponent().getSize());
     }
 
     /**
@@ -465,7 +465,7 @@ public class LayoutManager {
             // 如果是wrap，需要修改子节点为match的view高。
             remeasureSonHeightAsMatch(layout);
         }
-        Log.d("measureLayoutSizeAsWrap", layout.getAttribute().getId() + ", " + layout.getComponent().getSize());
+//        Log.d("measureLayoutSizeAsWrap", layout.getAttribute().getId() + ", " + layout.getComponent().getSize());
     }
 
     /**
@@ -580,7 +580,7 @@ public class LayoutManager {
             ((BaseLayout) item).remeasureMatchParentChildViewWidth();
             ((BaseLayout) item).remeasureMatchParentChildViewHeight();
         }
-        Log.d("measureSizeAsMatch", item.getAttribute().getId() + ", " + item.getComponent().getSize());
+//        Log.d("measureSizeAsMatch", item.getAttribute().getId() + ", " + item.getComponent().getSize());
     }
 
     /**
@@ -697,7 +697,7 @@ public class LayoutManager {
             if (son instanceof BaseLayout) {
                 measureLocation(son);
             }
-            Log.d("measureLocation", son.getAttribute().getId() + ", " + son.getComponent().getLocation());
+//            Log.d("measureLocation", son.getAttribute().getId() + ", " + son.getComponent().getLocation());
         }
     }
 
