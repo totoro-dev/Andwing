@@ -7,6 +7,7 @@ import top.totoro.swing.widget.context.PopupWindow;
 import top.totoro.swing.widget.event.MotionEvent;
 import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.manager.LayoutManager;
+import top.totoro.swing.widget.util.Log;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -27,6 +28,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     private View<?, ?> parent;
     private View<?, ?> preView; // 这个View的前一个View，用来处理margin属性
     private String parentId = "";
+    private String id;
     private final LinkedList<View<?, ?>> sonViews = new LinkedList<>();
     private final Map<String, View<?, ?>> containViewsById = new ConcurrentHashMap<>();
     private LayoutManager layoutManager;
@@ -61,6 +63,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     }
 
     public void removeAllSon() {
+        containViewsById.clear();
         sonViews.clear();
         component.removeAll();
     }
@@ -97,7 +100,10 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     }
 
     public void setSize(int width, int height) {
+        attribute.setWidth(width);
+        attribute.setHeight(height);
         component.setSize(width, height);
+        invalidate();
     }
 
     public int getWidth() {
@@ -214,12 +220,17 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      * @param id 新的ID
      */
     public void setId(String id) {
+        if (this.id != null && (id == null || id.isEmpty())) {
+            unbindViewWithId(this.id);
+            this.id = null;
+            return;
+        }
         try {
             if (!bindViewWithId(id, this)) {
-                throw new Exception("setId时，" + id + "无法被设置。");
+                throw new IllegalArgumentException("setId时，" + id + "无法被设置。");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("setId fail", e);
         }
     }
 
@@ -232,7 +243,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      */
     private boolean bindViewWithId(String id, View<?, ?> view) {
         View<?, ?> v = containViewsById.get(id);
-        if (v != null) {
+        if (v != null && v != view) {
             return false;
         } else {
             if (parent != null) {
@@ -245,7 +256,21 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
                 containViewsById.put(id, view);
             }
         }
+        this.id = id;
         return true;
+    }
+
+    /**
+     * 将这个视图的id从所有绑定了的试图中解除
+     * @param id 要解除的视图id
+     */
+    private void unbindViewWithId(String id) {
+        if (id != null) {
+            containViewsById.remove(id);
+            if (parent != null) {
+                parent.unbindViewWithId(id);
+            }
+        }
     }
 
     public View<?, ?> findViewById(String id) {
@@ -356,5 +381,9 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 
     public void setParent(View<?, ?> parent) {
         this.parent = parent;
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

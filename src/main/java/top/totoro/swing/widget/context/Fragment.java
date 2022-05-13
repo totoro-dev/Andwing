@@ -1,6 +1,7 @@
 package top.totoro.swing.widget.context;
 
 import top.totoro.swing.widget.base.BaseLayout;
+import top.totoro.swing.widget.manager.LayoutManager;
 import top.totoro.swing.widget.view.Span;
 import top.totoro.swing.widget.view.View;
 
@@ -16,7 +17,7 @@ public class Fragment extends Context {
      *               否则无法正常显示。
      * @return 动态创建的布局
      */
-    public View<?, ?> onCreateView(BaseLayout parent) {
+    public View<?, ?> onCreateView(LayoutManager layoutManager, BaseLayout parent) {
         return new Span(parent);
     }
 

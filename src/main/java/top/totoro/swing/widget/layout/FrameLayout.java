@@ -15,9 +15,18 @@ public class FrameLayout extends LinearLayout {
 
     private final List<Fragment> containFragments = new ArrayList<>();
     private Boolean addFragmentEnd = true;
+    private Fragment currFragment;
 
     public Boolean getAddFragmentEnd() {
         return addFragmentEnd;
+    }
+
+    public Fragment getCurrFragment() {
+        return currFragment;
+    }
+
+    public void setCurrFragment(Fragment currFragment) {
+        this.currFragment = currFragment;
     }
 
     public FrameLayout(View<?, ?> parent) {
@@ -50,6 +59,15 @@ public class FrameLayout extends LinearLayout {
     public boolean checkFragment(Fragment fragment) {
         if (fragment == null || containFragments.contains(fragment)) return true;
         return false;
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        if (currFragment != null) {
+            // 自身刷新的同时要刷新当前显示中的Fragment
+            currFragment.invalidate();
+        }
     }
 
     @Override
