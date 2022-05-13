@@ -11,6 +11,7 @@ import static java.lang.Thread.sleep;
 /**
  * 短暂性提示框
  */
+@SuppressWarnings("unused")
 public class Toast extends Dialog {
     private static final String TAG = "Toast";
 

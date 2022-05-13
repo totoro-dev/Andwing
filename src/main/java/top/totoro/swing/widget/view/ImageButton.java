@@ -7,11 +7,12 @@ import static top.totoro.swing.widget.util.AttributeDefaultValue.scaleFitCenter;
 /**
  * 图片按钮，图片只能居中缩放显示
  */
+@SuppressWarnings("unused")
 public class ImageButton extends ImageView {
 
     private final String TAG = getClass().getSimpleName();
 
-    public ImageButton(View parent) {
+    public ImageButton(View<?, ?> parent) {
         super(parent);
     }
 

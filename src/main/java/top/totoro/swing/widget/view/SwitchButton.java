@@ -17,6 +17,7 @@ import static top.totoro.swing.widget.util.AttributeKey.*;
 /**
  * 开关按钮
  */
+@SuppressWarnings("unused")
 public class SwitchButton extends View<ViewAttribute, JLabel> {
     private boolean mIsSwitchOn = false;
 
@@ -24,7 +25,7 @@ public class SwitchButton extends View<ViewAttribute, JLabel> {
             mSwitchOnIcon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("img/switch_on.png"))),
             mSwitchOffIcon = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("img/switch_off.png")));
 
-    public SwitchButton(View parent) {
+    public SwitchButton(View<?, ?> parent) {
         super(parent);
         component = new JLabel(mSwitchOffIcon, SwingConstants.CENTER);
         setEnterCursor(new Cursor(Cursor.HAND_CURSOR));

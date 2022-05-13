@@ -2,6 +2,7 @@ package top.totoro.swing.widget.event;
 
 import java.awt.event.MouseEvent;
 
+@SuppressWarnings("unused")
 public class MotionEvent extends InputEvent {
 
     private static final String TAG = "MotionEvent";

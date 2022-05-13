@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "SuspiciousNameCombination", "unused", "ConstantConditions"})
 public class ActionBar extends JComponent implements MouseListener, MouseMotionListener {
 
     private boolean canBack = false;
@@ -205,52 +206,53 @@ public class ActionBar extends JComponent implements MouseListener, MouseMotionL
         } else {
             iconColor = 2;
         }
+        ClassLoader classLoader = getClass().getClassLoader();
         if (iconColor == 1) {
             switch (height) {
                 case MIN:
-                    backIcon = new ImageIcon(getClass().getClassLoader().getResource("img/back_min.png"));
-                    minIcon = new ImageIcon(getClass().getClassLoader().getResource("img/min_min.png"));
-                    midIcon = new ImageIcon(getClass().getClassLoader().getResource("img/mid_min.png"));
-                    maxIcon = new ImageIcon(getClass().getClassLoader().getResource("img/max_min.png"));
-                    closeIcon = new ImageIcon(getClass().getClassLoader().getResource("img/close_min.png"));
+                    backIcon = new ImageIcon(classLoader.getResource("img/back_min.png"));
+                    minIcon = new ImageIcon(classLoader.getResource("img/min_min.png"));
+                    midIcon = new ImageIcon(classLoader.getResource("img/mid_min.png"));
+                    maxIcon = new ImageIcon(classLoader.getResource("img/max_min.png"));
+                    closeIcon = new ImageIcon(classLoader.getResource("img/close_min.png"));
                     break;
                 case MID:
-                    backIcon = new ImageIcon(getClass().getClassLoader().getResource("img/back_mid.png"));
-                    minIcon = new ImageIcon(getClass().getClassLoader().getResource("img/min_mid.png"));
-                    midIcon = new ImageIcon(getClass().getClassLoader().getResource("img/mid_mid.png"));
-                    maxIcon = new ImageIcon(getClass().getClassLoader().getResource("img/max_mid.png"));
-                    closeIcon = new ImageIcon(getClass().getClassLoader().getResource("img/close_mid.png"));
+                    backIcon = new ImageIcon(classLoader.getResource("img/back_mid.png"));
+                    minIcon = new ImageIcon(classLoader.getResource("img/min_mid.png"));
+                    midIcon = new ImageIcon(classLoader.getResource("img/mid_mid.png"));
+                    maxIcon = new ImageIcon(classLoader.getResource("img/max_mid.png"));
+                    closeIcon = new ImageIcon(classLoader.getResource("img/close_mid.png"));
                     break;
                 case MAX:
-                    backIcon = new ImageIcon(getClass().getClassLoader().getResource("img/back_max.png"));
-                    minIcon = new ImageIcon(getClass().getClassLoader().getResource("img/min_max.png"));
-                    midIcon = new ImageIcon(getClass().getClassLoader().getResource("img/mid_max.png"));
-                    maxIcon = new ImageIcon(getClass().getClassLoader().getResource("img/max_max.png"));
-                    closeIcon = new ImageIcon(getClass().getClassLoader().getResource("img/close_max.png"));
+                    backIcon = new ImageIcon(classLoader.getResource("img/back_max.png"));
+                    minIcon = new ImageIcon(classLoader.getResource("img/min_max.png"));
+                    midIcon = new ImageIcon(classLoader.getResource("img/mid_max.png"));
+                    maxIcon = new ImageIcon(classLoader.getResource("img/max_max.png"));
+                    closeIcon = new ImageIcon(classLoader.getResource("img/close_max.png"));
                     break;
             }
         } else {
             switch (height) {
                 case MIN:
-                    backIcon = new ImageIcon(getClass().getClassLoader().getResource("img/back_min_white.png"));
-                    minIcon = new ImageIcon(getClass().getClassLoader().getResource("img/min_min_white.png"));
-                    midIcon = new ImageIcon(getClass().getClassLoader().getResource("img/mid_min_white.png"));
-                    maxIcon = new ImageIcon(getClass().getClassLoader().getResource("img/max_min_white.png"));
-                    closeIcon = new ImageIcon(getClass().getClassLoader().getResource("img/close_min_white.png"));
+                    backIcon = new ImageIcon(classLoader.getResource("img/back_min_white.png"));
+                    minIcon = new ImageIcon(classLoader.getResource("img/min_min_white.png"));
+                    midIcon = new ImageIcon(classLoader.getResource("img/mid_min_white.png"));
+                    maxIcon = new ImageIcon(classLoader.getResource("img/max_min_white.png"));
+                    closeIcon = new ImageIcon(classLoader.getResource("img/close_min_white.png"));
                     break;
                 case MID:
-                    backIcon = new ImageIcon(getClass().getClassLoader().getResource("img/back_mid_white.png"));
-                    minIcon = new ImageIcon(getClass().getClassLoader().getResource("img/min_mid_white.png"));
-                    midIcon = new ImageIcon(getClass().getClassLoader().getResource("img/mid_mid_white.png"));
-                    maxIcon = new ImageIcon(getClass().getClassLoader().getResource("img/max_mid_white.png"));
-                    closeIcon = new ImageIcon(getClass().getClassLoader().getResource("img/close_mid_white.png"));
+                    backIcon = new ImageIcon(classLoader.getResource("img/back_mid_white.png"));
+                    minIcon = new ImageIcon(classLoader.getResource("img/min_mid_white.png"));
+                    midIcon = new ImageIcon(classLoader.getResource("img/mid_mid_white.png"));
+                    maxIcon = new ImageIcon(classLoader.getResource("img/max_mid_white.png"));
+                    closeIcon = new ImageIcon(classLoader.getResource("img/close_mid_white.png"));
                     break;
                 case MAX:
-                    backIcon = new ImageIcon(getClass().getClassLoader().getResource("img/back_max.png"));
-                    minIcon = new ImageIcon(getClass().getClassLoader().getResource("img/min_max.png"));
-                    midIcon = new ImageIcon(getClass().getClassLoader().getResource("img/mid_max.png"));
-                    maxIcon = new ImageIcon(getClass().getClassLoader().getResource("img/max_max.png"));
-                    closeIcon = new ImageIcon(getClass().getClassLoader().getResource("img/close_max.png"));
+                    backIcon = new ImageIcon(classLoader.getResource("img/back_max.png"));
+                    minIcon = new ImageIcon(classLoader.getResource("img/min_max.png"));
+                    midIcon = new ImageIcon(classLoader.getResource("img/mid_max.png"));
+                    maxIcon = new ImageIcon(classLoader.getResource("img/max_max.png"));
+                    closeIcon = new ImageIcon(classLoader.getResource("img/close_max.png"));
                     break;
             }
         }

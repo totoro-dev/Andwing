@@ -12,11 +12,12 @@ import java.awt.*;
 /**
  * 文本框
  */
+@SuppressWarnings("unused")
 public class TextView extends View<ViewAttribute, JLabel> {
 
     private String alignment = AttributeDefaultValue.center;
 
-    public TextView(View parent) {
+    public TextView(View<?, ?> parent) {
         super(parent);
     }
 
@@ -37,6 +38,7 @@ public class TextView extends View<ViewAttribute, JLabel> {
         setAlignment();
         // add end
         super.setAttribute(attribute);
+        //noinspection MagicConstant
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
         component.setText(attribute.getText());
         component.setForeground(Color.decode(attribute.getTextColor()));
@@ -154,6 +156,7 @@ public class TextView extends View<ViewAttribute, JLabel> {
     public void setTextSize(int size) {
         if (attribute.getTextSize() == size) return;
         attribute.setTextSize(size);
+        //noinspection MagicConstant
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
         invalidateSuper();
     }
@@ -179,6 +182,7 @@ public class TextView extends View<ViewAttribute, JLabel> {
      */
     public void setTextStyle(String style) {
         attribute.setTextStyle(style);
+        //noinspection MagicConstant
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
     }
 
@@ -191,6 +195,7 @@ public class TextView extends View<ViewAttribute, JLabel> {
      */
     public void setTextFont(String font) {
         attribute.setTextFont(font);
+        //noinspection MagicConstant
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
     }
 

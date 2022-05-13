@@ -14,6 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * 使用同步锁来处理服务的同步和记录、移除
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class ServiceManager {
 
     private static final String TAG = ServiceManager.class.getSimpleName();

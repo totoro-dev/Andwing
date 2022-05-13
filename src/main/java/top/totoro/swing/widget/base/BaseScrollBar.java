@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+@SuppressWarnings("unused")
 public abstract class BaseScrollBar extends JComponent {
 
     private Graphics graphics;

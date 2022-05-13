@@ -19,8 +19,6 @@ public class DefaultActivityResizeMouseListener {
     public void init(Activity activity) {
         this.activity = activity;
         resetFrameBoundRect();
-//        activity.getFrame().addMouseListener(this);
-//        activity.getFrame().addMouseMotionListener(this);
     }
 
     public void resetFrameBoundRect() {

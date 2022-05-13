@@ -95,7 +95,7 @@ public class AttributeUtil {
      * @param resName           所在的xml文件
      * @param nodeName          View节点的名字
      * @param ele               节点的Element对象
-     * @param initNecessaryAttr
+     * @param initNecessaryAttr 是否需要验证必要的属性
      * @return 是否初始化成功
      */
     private static boolean initialNecessaryAttribute(BaseAttribute baseAttribute, String resName, String nodeName, Element ele, boolean initNecessaryAttr) {

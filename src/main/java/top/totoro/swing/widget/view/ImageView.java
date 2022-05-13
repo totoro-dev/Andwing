@@ -17,6 +17,7 @@ import static top.totoro.swing.widget.util.AttributeDefaultValue.*;
 /**
  * 图片显示
  */
+@SuppressWarnings("unused")
 public class ImageView extends View<ViewAttribute, JPanel> {
 
     private final String TAG = getClass().getSimpleName();
@@ -32,7 +33,7 @@ public class ImageView extends View<ViewAttribute, JPanel> {
     public static final String FIT_START = scaleFitStart;
     public static final String FIT_END = scaleFitEnd;
 
-    public ImageView(View parent) {
+    public ImageView(View<?, ?> parent) {
         super(parent);
         component = new JPanel(null);
         mImageContainer = new JLabel("", JLabel.CENTER) {

@@ -6,10 +6,10 @@ import java.awt.*;
 
 public class HorizontalScrollBar extends BaseScrollBar.Horizontal {
 
-    private Color c1 = Color.decode("#d8d8d8");
-    private Color c2 = Color.decode("#cbcbcb");
-    private Color c3 = Color.decode("#c7c7c7");
-    private Color c4 = Color.decode("#bababa");
+    private final Color c1 = Color.decode("#d8d8d8");
+    private final Color c2 = Color.decode("#cbcbcb");
+    private final Color c3 = Color.decode("#c7c7c7");
+    private final Color c4 = Color.decode("#bababa");
 
     private int height = 0;
 

@@ -18,19 +18,17 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-//import javax.swing.JComponent;
-//import java.awt.Color;
-
+@SuppressWarnings("unused")
 public class View<Attribute extends BaseAttribute, Component extends JComponent> implements MouseListener, MouseMotionListener {
 
     private int minWidth = 0;
     private int minHeight = 0;
 
-    private View parent;
+    private View<?, ?> parent;
     private View<?, ?> preView; // 这个View的前一个View，用来处理margin属性
     private String parentId = "";
-    private LinkedList<View> sonViews = new LinkedList<>();
-    private Map<String, View> containViewsById = new ConcurrentHashMap<>();
+    private final LinkedList<View<?, ?>> sonViews = new LinkedList<>();
+    private final Map<String, View<?, ?>> containViewsById = new ConcurrentHashMap<>();
     private LayoutManager layoutManager;
     private OnClickListener clickListener;
     private boolean listenClickEvent = false;
@@ -41,7 +39,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     /* 当前正在显示的下拉框 */
     public static Spinner mShowingSpinner;
 
-    public View(View parent) {
+    public View(View<?, ?> parent) {
         this.parent = parent;
         if (parent != null && parent.attribute != null) {
             parentId = parent.attribute.getId();
@@ -67,7 +65,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         component.removeAll();
     }
 
-    public LinkedList<View> getSonViews() {
+    public LinkedList<View<?, ?>> getSonViews() {
         return sonViews;
     }
 
@@ -115,7 +113,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      *
      * @param son 子View
      */
-    public void addSon(View son) {
+    public void addSon(View<?, ?> son) {
         sonViews.add(son);
     }
 
@@ -125,7 +123,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      * @param index 子View的位置
      * @return 子View的ID，不存在则返回“”
      */
-    public View getSonByIndex(int index) {
+    public View<?, ?> getSonByIndex(int index) {
         return sonViews.size() == 0 ? null : sonViews.get(index);
     }
 
@@ -143,7 +141,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      *
      * @return 父视图
      */
-    public View getParent() {
+    public View<?, ?> getParent() {
         return parent;
     }
 
@@ -232,8 +230,8 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      * @param view 将要绑定的View
      * @return 绑定是否成功，如果失败的话，其所有父节点也不会修改这个View的ID
      */
-    private boolean bindViewWithId(String id, View view) {
-        View v = containViewsById.get(id);
+    private boolean bindViewWithId(String id, View<?, ?> view) {
+        View<?, ?> v = containViewsById.get(id);
         if (v != null) {
             return false;
         } else {
@@ -250,8 +248,8 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         return true;
     }
 
-    public View findViewById(String id) {
-        View view = containViewsById.get(id);
+    public View<?, ?> findViewById(String id) {
+        View<?, ?> view = containViewsById.get(id);
         try {
             if (view == null) throw new Exception("找不到id为" + id + "的View");
         } catch (Exception e) {
@@ -356,7 +354,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         }
     }
 
-    public void setParent(View parent) {
+    public void setParent(View<?, ?> parent) {
         this.parent = parent;
     }
 }

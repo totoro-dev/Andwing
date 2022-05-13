@@ -3,7 +3,7 @@ package top.totoro.swing.widget.util;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("unused")
 public class PaintUtil {
 
     public static void drawRadius(Graphics g, Color color, int radius, int startX, int startY) {
@@ -14,7 +14,7 @@ public class PaintUtil {
             for (int j = -radius; j < 0; j++) {
                 int x = j;
                 int y1 = (int) Math.sqrt(radius * radius - x * x);
-                int y2 = -y1;
+                int y2;
                 x += startX + radius;
                 y1 = startY + radius - y1;
                 y2 = startY + 2 * radius - (y1 - startY);
@@ -273,7 +273,7 @@ public class PaintUtil {
      * @return 截屏的图像流
      */
     public static BufferedImage getBufferedImage(int x, int y, int width, int height) {
-        Robot rb = null; // 可以用来抓取屏幕，即截屏。
+        Robot rb; // 可以用来抓取屏幕，即截屏。
         try {
             rb = new Robot();
         } catch (AWTException e) {
@@ -296,7 +296,6 @@ public class PaintUtil {
      */
     private static Color getColor(BufferedImage bi, int x, int y) {
         int pixelColor = bi.getRGB(x, y);
-        Color color = new Color(16777216 + pixelColor);
-        return color; // pixelColor的值为负，经过实践得出：加上颜色最大值就是实际颜色值。
+        return new Color(16777216 + pixelColor); // pixelColor的值为负，经过实践得出：加上颜色最大值就是实际颜色值。
     }
 }

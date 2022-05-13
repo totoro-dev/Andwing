@@ -11,8 +11,8 @@ public class ViewUtil {
 
     private static final String VIEW_PACKAGE = "top.totoro.swing.widget.view.";
 
-    public static <T extends View> T createView(View parent, String viewName, ViewAttribute attribute) {
-        Class clazz;
+    public static <T extends View> T createView(View<?, ?> parent, String viewName, ViewAttribute attribute) {
+        Class<?> clazz;
         try {
             if (viewName == null) {
                 throw new LayoutException(attribute.getResName() + "文件中View节点解析错误。");

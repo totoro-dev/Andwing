@@ -16,10 +16,11 @@ import static top.totoro.swing.widget.util.AttributeKey.*;
 /**
  * 带文本的复选框
  */
+@SuppressWarnings("unused")
 public class CheckBox extends View<ViewAttribute, JPanel> {
 
-    private JLabel boxImgLabel;
-    private JLabel boxTextLabel;
+    private final JLabel boxImgLabel;
+    private final JLabel boxTextLabel;
     private boolean isSelected = false;
 
     private ImageIcon
@@ -39,6 +40,7 @@ public class CheckBox extends View<ViewAttribute, JPanel> {
     @Override
     public void setAttribute(ViewAttribute attribute) {
         super.setAttribute(attribute);
+        //noinspection MagicConstant
         boxTextLabel.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
         boxTextLabel.setForeground(Color.decode(attribute.getTextColor()));
         Element element = attribute.getElement();

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@SuppressWarnings("unused")
 public class ActivityManager {
     private static final String TAG = ActivityManager.class.getSimpleName();
     private static Activity mTopActivity = null;

@@ -4,6 +4,7 @@ import top.totoro.swing.widget.context.Fragment;
 import top.totoro.swing.widget.layout.FrameLayout;
 import top.totoro.swing.widget.util.Log;
 
+@SuppressWarnings("unused")
 public class FragmentManager {
     public FragmentManager() {
         // 一个Activity全局只能拥有一个实例，因为fragment的切换是原子性的事物

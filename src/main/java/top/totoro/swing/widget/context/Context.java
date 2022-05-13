@@ -92,7 +92,7 @@ public class Context implements ContextWrapper {
      * @param id 视图id
      * @return 视图元素（对象）
      */
-    public View findViewById(String id) {
+    public View<?, ?> findViewById(String id) {
         return mainView.findViewById(id);
     }
 

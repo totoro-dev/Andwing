@@ -7,13 +7,14 @@ import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.util.AttributeKey;
 import top.totoro.swing.widget.view.View;
 
+@SuppressWarnings("unused")
 public class GridLayout extends BaseLayout {
 
     private int column = 1; // 默认只有一列
     private int gapVertical = 0;
     private int gapHorizontal = 0;
 
-    public GridLayout(View parent) {
+    public GridLayout(View<?, ?> parent) {
         super(parent);
     }
 

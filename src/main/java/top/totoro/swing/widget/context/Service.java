@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@SuppressWarnings("unused")
 public abstract class Service extends Context {
 
     // 为了不阻塞主线程，所有的后台服务需要进入线程池中执行相应的服务

@@ -13,13 +13,14 @@ import java.awt.event.MouseListener;
 /**
  * 对话框
  */
+@SuppressWarnings({"unused", "FieldMayBeFinal"})
 public class Dialog extends Context {
     private final long mDialogId = System.currentTimeMillis();
     private final JWindow mDialogMarkWindow; // 蒙版
     protected final JWindow mDialogWindow;
     private final Context mContext;
-    private int mContextWidth = 0, mContextHeight = 0;
-    protected int width = 0, height = 0;
+    private int mContextWidth, mContextHeight;
+    protected int width, height;
     private boolean mShowing = false; // 是否处于显示状态（不受窗口最小化的影响）
 
     public Dialog(Context context, boolean showMarkWindow) {
@@ -43,6 +44,9 @@ public class Dialog extends Context {
         }
 
         // Todo:解决焦点问题
+        if (!(context instanceof Activity)) {
+            throw new AssertionError("init dialog error, context must Activity");
+        }
         mDialogMarkWindow = new JWindow(((Activity) context).getFrame());
         if (showMarkWindow) {
             mDialogMarkWindow.setSize(mContextWidth, mContextHeight);

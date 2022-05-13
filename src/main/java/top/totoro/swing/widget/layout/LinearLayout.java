@@ -6,7 +6,7 @@ import top.totoro.swing.widget.view.View;
 
 public class LinearLayout extends BaseLayout {
 
-    public LinearLayout(View parent) {
+    public LinearLayout(View<?, ?> parent) {
         super(parent);
     }
 

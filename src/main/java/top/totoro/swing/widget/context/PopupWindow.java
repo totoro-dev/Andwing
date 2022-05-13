@@ -10,6 +10,7 @@ import java.awt.*;
 /**
  * 悬浮框
  */
+@SuppressWarnings("unused")
 public class PopupWindow extends Context {
 
     public static PopupWindow mShowingPopupWindow;

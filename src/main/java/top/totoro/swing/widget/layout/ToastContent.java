@@ -1,8 +1,5 @@
 package top.totoro.swing.widget.layout;
 
-import top.totoro.swing.widget.bean.LayoutAttribute;
-import top.totoro.swing.widget.bean.ViewAttribute;
-import top.totoro.swing.widget.layout.LinearLayout;
 import top.totoro.swing.widget.util.PaintUtil;
 import top.totoro.swing.widget.util.SwingConstants;
 import top.totoro.swing.widget.view.View;
@@ -15,7 +12,7 @@ public class ToastContent extends LinearLayout {
     private JLabel content;
     private final Color backgroundColor = Color.decode("#d0d0d0");
 
-    public ToastContent(View parent) {
+    public ToastContent(View<?, ?> parent) {
         super(parent);
         component = new JPanel() {
             @Override
@@ -29,7 +26,7 @@ public class ToastContent extends LinearLayout {
         component.setLayout(null);
     }
 
-    public ToastContent(View parent, String text) {
+    public ToastContent(View<?, ?> parent, String text) {
         this(parent);
         setText(text);
     }

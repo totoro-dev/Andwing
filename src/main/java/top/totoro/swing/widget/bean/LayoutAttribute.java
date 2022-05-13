@@ -3,6 +3,7 @@ package top.totoro.swing.widget.bean;
 import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
 
+@SuppressWarnings("unused")
 public class LayoutAttribute extends BaseAttribute {
 
     public static final int VERTICAL = 0;

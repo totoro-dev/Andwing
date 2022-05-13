@@ -8,7 +8,6 @@ import org.dom4j.io.SAXReader;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
 import top.totoro.swing.widget.util.Log;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.List;
 
@@ -40,10 +39,10 @@ public final class DefaultAttribute {
             Element root = document.getRootElement();
             if (root == null) return;
             Element defaultElement = root.element("default");
-            List elements = defaultElement.elements();
+            List<?> elements = defaultElement.elements();
             for (Object element : elements) {
                 if (element instanceof Element) {
-                    List attributes = ((Element) element).attributes();
+                    List<?> attributes = ((Element) element).attributes();
                     for (Object attribute : attributes) {
                         if (attribute instanceof Attribute) {
                             String name = ((Attribute) attribute).getValue();

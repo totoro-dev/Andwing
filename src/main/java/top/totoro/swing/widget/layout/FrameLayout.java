@@ -1,7 +1,6 @@
 package top.totoro.swing.widget.layout;
 
 import top.totoro.swing.widget.context.Fragment;
-import top.totoro.swing.widget.util.Log;
 import top.totoro.swing.widget.view.View;
 
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ import java.util.List;
  * 为fragment提供布局节点
  * 允许在这个节点中替换子布局，从而切换布局
  */
+@SuppressWarnings("unused")
 public class FrameLayout extends LinearLayout {
 
     private final List<Fragment> containFragments = new ArrayList<>();
@@ -20,7 +20,7 @@ public class FrameLayout extends LinearLayout {
         return addFragmentEnd;
     }
 
-    public FrameLayout(View parent) {
+    public FrameLayout(View<?, ?> parent) {
         super(parent);
     }
 

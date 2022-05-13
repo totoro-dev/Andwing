@@ -9,5 +9,5 @@ public interface OnClickListener {
      *
      * @param view 被点击的View
      */
-    void onClick(View view);
+    void onClick(View<?, ?> view);
 }

@@ -8,6 +8,7 @@ import top.totoro.swing.widget.util.AttributeDefaultValue;
 import java.awt.*;
 import java.net.URL;
 
+@SuppressWarnings("unused")
 public class BaseAttribute {
     /* 布局节点元素，不同的视图可以自己处理自己想要的属性 */
     private Element element;

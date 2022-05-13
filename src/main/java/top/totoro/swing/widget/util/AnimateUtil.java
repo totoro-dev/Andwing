@@ -10,6 +10,7 @@ import static java.lang.Thread.sleep;
 /**
  * 一些动画工具
  */
+@SuppressWarnings("unused")
 public class AnimateUtil {
     public enum Direction {
         LTR,    // 从左到右

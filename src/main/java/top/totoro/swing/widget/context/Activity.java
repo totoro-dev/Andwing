@@ -96,9 +96,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
                 defaultActivityResizeMouseListener.mouseReleased();
                 break;
             case ACTION_CLICKED:
-                break;
             case ACTION_INSIDE:
-                break;
             case ACTION_OUTSIDE:
                 break;
             case ACTION_MOVE:
@@ -386,11 +384,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     private void resetActionBar() {
         actionBarPanel.setSize(frame.getWidth(), actionBarPanel.getHeight());
         Dimension screenSize = SwingConstants.getScreenSize();
-        if (frame.getWidth() < screenSize.width || frame.getHeight() < screenSize.getHeight()) {
-            mainBar.canMidScreen(false);
-        } else {
-            mainBar.canMidScreen(true);
-        }
+        mainBar.canMidScreen(frame.getWidth() >= screenSize.width && !(frame.getHeight() < screenSize.getHeight()));
         mainBar.resize();
     }
 
@@ -607,9 +601,8 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         resetSize();
     }
 
-    /************************* 启动后台服务 add on 2020/09/19 *************************/
-
-    /**
+    /************************* 启动后台服务 add on 2020/09/19 *************************
+     **
      * 独立模式启动后台服务
      *
      * @param intent 具体的服务意图，指向调用服务的上下文和一个具体服务

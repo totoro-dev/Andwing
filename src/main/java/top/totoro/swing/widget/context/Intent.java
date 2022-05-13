@@ -5,17 +5,18 @@ import top.totoro.swing.widget.util.Log;
 /**
  * 动作意图的封装
  */
+@SuppressWarnings("unused")
 public class Intent {
 
     private Context currentContext;
-    private Context targetContext;
+    private volatile Context targetContext;
     private Class<? extends Context> targetContextClass;
 
     public Intent() {
     }
 
     public Intent(String targetContextPackage) {
-        Class<?> targetContext = null;
+        Class<?> targetContext;
         try {
             targetContext = Class.forName(targetContextPackage);
             Log.d(this, "targetContext super class  = " + targetContext.getSuperclass().getSuperclass().getSimpleName());

@@ -8,7 +8,7 @@ import javax.swing.*;
  * 一个简单的占位视图
  */
 public class Span extends View<ViewAttribute, JPanel> {
-    public Span(View parent) {
+    public Span(View<?, ?> parent) {
         super(parent);
         component = new JPanel();
     }

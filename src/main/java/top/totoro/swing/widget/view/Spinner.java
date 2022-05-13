@@ -122,7 +122,7 @@ public class Spinner extends View<ViewAttribute, JPanel> implements OnClickListe
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View<?, ?> view) {
         if (View.mShowingSpinner != null) {
             View.mShowingSpinner.dismiss();
         }

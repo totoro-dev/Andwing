@@ -12,12 +12,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * 编辑框
  */
+@SuppressWarnings("unused")
 public class EditText extends View<ViewAttribute, JTextField> {
 
     private OnTextChangeListener onTextChangeListener;
     private String origin = "";
 
-    public EditText(View parent) {
+    public EditText(View<?, ?> parent) {
         super(parent);
         component = new JTextField();
         // 设置制表符占位数
@@ -120,6 +121,7 @@ public class EditText extends View<ViewAttribute, JTextField> {
         if (text == null || "".equals(text)) {
             setHint(attribute.getHintText());
         }
+        //noinspection MagicConstant
         component.setFont(new Font(attribute.getTextStyle(), attribute.getTextFont(), attribute.getTextSize()));
         component.setForeground(Color.decode(attribute.getTextColor()));
         component.setText(text);

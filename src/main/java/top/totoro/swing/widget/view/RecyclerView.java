@@ -18,23 +18,22 @@ import java.util.WeakHashMap;
 /**
  * 列表
  */
-@SuppressWarnings("Duplicates")
+@SuppressWarnings("unused")
 public class RecyclerView extends LinearLayout implements InvalidateListener {
 
-    private LayoutManager layoutManager = new LayoutManager();
+    private final LayoutManager layoutManager = new LayoutManager();
 
     public static final int HORIZONTAL = 1, VERTICAL = 2;
-    //    private JPanel parent; // 放置这个RecyclerView的容器
-    //    private JPanel component; // 在这个RecyclerView中放置子控件的容器
-    private BaseLayout container = new BaseLayout(this);
-    private LayoutAttribute containerAttribute = new LayoutAttribute();
+    private final BaseLayout container = new BaseLayout(this);
+    private final LayoutAttribute containerAttribute = new LayoutAttribute();
     private BaseScrollBar.Vertical verticalScrollBar; // 垂直滚动条
     private BaseScrollBar.Horizontal horizontalScrollBar; // 水平滚动条
     private int orientation; // 这个RecyclerView的布局方向
+    @SuppressWarnings("rawtypes")
     private Adapter adapter; // 这个RecyclerView持有的适配器
     /* 适配器对应的所有RecyclerView实例，用于在适配器的数据集发生改变时进行通知这些RecyclerView实例
      * 使用Weak的弱引用模式，确保在适配器不再有RecyclerView持有时，从映射关系中自动删除并GC*/
-    private static final WeakHashMap<Adapter, List<RecyclerView>> instances = new WeakHashMap<>();
+    private static final WeakHashMap<Adapter<?>, List<RecyclerView>> instances = new WeakHashMap<>();
 
     private boolean mousePressing; // 鼠标是否按住
     private boolean shiftPressing; // Shift键是否按住
@@ -49,7 +48,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
     private int horizontalBarX = 0, clickX = 0;
     private int maxHorizontalBarX = 0;
 
-    public RecyclerView(View parent) {
+    public RecyclerView(View<?, ?> parent) {
         super(parent);
         verticalScrollBar = new VerticalScrollBar();
         horizontalScrollBar = new HorizontalScrollBar();
@@ -203,7 +202,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         } else if (tmp < 0) {
             // 垂直方向上，设置滚动至顶部
             container.getComponent().setLocation(container.getComponent().getX(), 0);
-        } else if (gap >= 1 || gap <= -1) {
+        } else if (gap != 0) {
             if (component.getHeight() == verticalBarHeight) return true;
             // 滚动比例，带符号。"+"：垂直向下滚动；"-"：垂直向上滚动
             // getHeight() - verticalBarHeight可滚动的长度，相当于容器的不可见长度
@@ -234,7 +233,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         } else if (tmp < 0) {
             // 水平方向上，设置滚动至左端
             container.getComponent().setLocation(0, container.getComponent().getY());
-        } else if (gap >= 1 || gap <= -1) {
+        } else if (gap != 0) {
             if (component.getWidth() == horizontalBarWidth) return true;
             // getWidth() - horizontalBarWidth可滚动的宽度，相当于容器的不可见宽度
             // 滚动比例，带符号。"+"：水平向右滚动；"-"：水平向左滚动
@@ -292,14 +291,14 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         }
     }
 
-    public static class ViewHolder {
-        private View item;
+    public static abstract class ViewHolder {
+        private final View<?, ?> item;
 
-        public ViewHolder(View item) {
+        public ViewHolder(View<?, ?> item) {
             this.item = item;
         }
 
-        public View getView() {
+        public View<?, ?> getView() {
             return item;
         }
     }
@@ -423,7 +422,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         });
     }
 
-    private MouseListener verticalMouseListener = new MouseListener() {
+    private final MouseListener verticalMouseListener = new MouseListener() {
         @Override
         public void mouseClicked(MouseEvent e) {
         }
@@ -456,7 +455,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             verticalScrollBar.setVisible(false);
         }
     };
-    private MouseMotionListener verticalMouseMotionLister = new MouseMotionListener() {
+    private final MouseMotionListener verticalMouseMotionLister = new MouseMotionListener() {
         @Override
         public void mouseDragged(MouseEvent e) {
             int gap = e.getY() - clickY;
@@ -469,7 +468,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         public void mouseMoved(MouseEvent e) {
         }
     };
-    private MouseListener horizontalMouseListener = new MouseListener() {
+    private final MouseListener horizontalMouseListener = new MouseListener() {
         @Override
         public void mouseClicked(MouseEvent e) {
         }
@@ -504,7 +503,7 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             horizontalScrollBar.setVisible(false);
         }
     };
-    private MouseMotionListener horizontalMouseMotionLister = new MouseMotionListener() {
+    private final MouseMotionListener horizontalMouseMotionLister = new MouseMotionListener() {
         @Override
         public void mouseDragged(MouseEvent e) {
             int gap = e.getX() - clickX;

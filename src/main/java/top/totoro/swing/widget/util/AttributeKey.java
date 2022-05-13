@@ -1,5 +1,6 @@
 package top.totoro.swing.widget.util;
 
+@SuppressWarnings("unused")
 public final class AttributeKey {
 
     public static final String ID = "id";

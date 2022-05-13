@@ -2,6 +2,7 @@ package top.totoro.swing.widget.exception;
 
 import top.totoro.swing.widget.base.BaseAttribute;
 
+@SuppressWarnings("unused")
 public class AttributeException extends Exception {
     public AttributeException() {
         super();
@@ -16,10 +17,10 @@ public class AttributeException extends Exception {
     }
 
     public static AttributeException getAttrNameInvalid(BaseAttribute attribute, String attrName) {
-        return new AttributeException(new StringBuffer().append(attribute.getResName()).append("文件中").append(attribute.getNodeName()).append("组件的").append(attrName).append("属性无效。").toString());
+        return new AttributeException(attribute.getResName() + "文件中" + attribute.getNodeName() + "组件的" + attrName + "属性无效。");
     }
 
     public static AttributeException getValueInvalid(BaseAttribute attribute, String attrName, String value, String msg) {
-        return new AttributeException(new StringBuffer().append(attribute.getResName()).append("文件中").append(attribute.getNodeName()).append("组件的").append(attrName).append("属性值: ").append(value).append(" ").append(msg).append("。").toString());
+        return new AttributeException(attribute.getResName() + "文件中" + attribute.getNodeName() + "组件的" + attrName + "属性值: " + value + " " + msg + "。");
     }
 }

@@ -1,7 +1,6 @@
 package top.totoro.swing.widget.manager;
 
 import top.totoro.swing.widget.context.Dialog;
-import top.totoro.swing.widget.context.Toast;
 
 public class DialogManager {
     private static Dialog mTopDialog;

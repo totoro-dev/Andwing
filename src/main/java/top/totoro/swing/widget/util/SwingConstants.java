@@ -2,6 +2,7 @@ package top.totoro.swing.widget.util;
 
 import java.awt.*;
 
+@SuppressWarnings("unused")
 public class SwingConstants {
 
     public static final Font TOAST_FONT = new Font(Font.SERIF, Font.PLAIN, 14);

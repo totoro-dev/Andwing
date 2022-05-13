@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 public class LayoutUtil {
     private static final String LAYOUT_PACKAGE = "top.totoro.swing.widget.layout.";
 
-    public static <T extends BaseLayout> T createLayout(View parent, String layoutName, LayoutAttribute attribute) {
+    public static <T extends BaseLayout> T createLayout(View<?, ?> parent, String layoutName, LayoutAttribute attribute) {
         Class clazz = null;
         try {
             if (layoutName == null) {
