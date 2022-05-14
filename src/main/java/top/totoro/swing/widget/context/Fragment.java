@@ -7,6 +7,16 @@ import top.totoro.swing.widget.view.View;
 
 public class Fragment extends Context {
 
+    private boolean visible = false;
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
     /**
      * 加载fragment时，需要动态创建布局，
      *
