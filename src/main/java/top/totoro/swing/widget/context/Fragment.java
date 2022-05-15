@@ -7,7 +7,14 @@ import top.totoro.swing.widget.view.View;
 
 public class Fragment extends Context {
 
+    /**
+     * 在layout节点上是否可见
+     */
     private boolean visible = false;
+    /**
+     * commit的时候是否需要执行操作
+     */
+    private boolean committable = false;
 
     public boolean isVisible() {
         return visible;
@@ -15,6 +22,14 @@ public class Fragment extends Context {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public boolean isCommittable() {
+        return committable;
+    }
+
+    public void setCommittable(boolean committable) {
+        this.committable = committable;
     }
 
     /**
@@ -33,6 +48,10 @@ public class Fragment extends Context {
 
     @Override
     public String toString() {
-        return "Fragment{}";
+        return getClass().getSimpleName() +
+                "{" +
+                "visible=" + visible +
+                ", committable=" + committable +
+                '}';
     }
 }

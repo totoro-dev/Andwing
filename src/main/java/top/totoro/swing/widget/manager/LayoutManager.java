@@ -281,6 +281,9 @@ public class LayoutManager {
             measureAllViewSizeAsValue(mainLayout);
             measureLayoutSizeAsWrap(mainLayout);
             measureSizeAsMatch(mainLayout);
+            if (mainLayout.getParent() != null) {
+                ((BaseLayout) mainLayout.getParent()).clearMatch();
+            }
             mainLayout.remeasureMatchParentChildView();
             measureLocation(mainLayout);
         } else if (mainView != null) {
@@ -297,6 +300,9 @@ public class LayoutManager {
             measureAllViewSizeAsValue(startLayout);
             measureLayoutSizeAsWrap(startLayout);
             measureSizeAsMatch(startLayout);
+            if (startLayout.getParent() != null) {
+                ((BaseLayout) startLayout.getParent()).clearMatch();
+            }
             startLayout.remeasureMatchParentChildView();
             measureLocation(startLayout);
         } else System.err.println("父节点的Layout不能为空。");

@@ -55,7 +55,7 @@ public class BaseLayout extends View<LayoutAttribute, JPanel> {
     /**
      * 重新测量所有含match_parent属性的子控件的宽度
      */
-    public void remeasureMatchParentChildViewWidth() {
+    private void remeasureMatchParentChildViewWidth() {
         if (getAttribute().getVisible() == BaseAttribute.GONE) {
             getComponent().setSize(0, 0);
             return;
@@ -85,15 +85,19 @@ public class BaseLayout extends View<LayoutAttribute, JPanel> {
         }
     }
 
+    public void clearMatch() {
+        currNoMatchWidth = 0;
+        currNoMatchHeight = 0;
+        matchParentWidthViews.clear();
+        matchParentHeightViews.clear();
+    }
+
     /**
      * 刷新该节点布局，及其子布局
      */
     public void invalidate() {
         super.invalidate();
-        currNoMatchWidth = 0;
-        currNoMatchHeight = 0;
-        matchParentWidthViews.clear();
-        matchParentHeightViews.clear();
+        clearMatch();
         LinkedList<View<?, ?>> sonViews = getSonViews();
         for (View<?, ?> son : sonViews) {
             if (son == null) continue;

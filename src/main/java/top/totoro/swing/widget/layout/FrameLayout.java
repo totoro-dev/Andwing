@@ -55,10 +55,8 @@ public class FrameLayout extends LinearLayout {
      * @param fragment 需要检查的fragment布局
      * @return 是：已经添加过了，或是fragment为空；否：未曾添加
      */
-    @SuppressWarnings("RedundantIfStatement")
     public boolean checkFragment(Fragment fragment) {
-        if (fragment == null || containFragments.contains(fragment)) return true;
-        return false;
+        return fragment == null || containFragments.contains(fragment);
     }
 
     @Override

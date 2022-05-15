@@ -66,6 +66,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         containViewsById.clear();
         sonViews.clear();
         component.removeAll();
+        component.repaint();
     }
 
     public LinkedList<View<?, ?>> getSonViews() {
@@ -229,6 +230,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
             if (!bindViewWithId(id, this)) {
                 throw new IllegalArgumentException("setId时，" + id + "无法被设置。");
             }
+            this.id = id;
         } catch (Exception e) {
             Log.e("setId fail", e);
         }
@@ -256,7 +258,6 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
                 containViewsById.put(id, view);
             }
         }
-        this.id = id;
         return true;
     }
 

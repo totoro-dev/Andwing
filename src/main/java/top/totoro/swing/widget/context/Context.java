@@ -29,8 +29,13 @@ public class Context implements ContextWrapper {
     }
 
     public void requestInvalidateListener(InvalidateListener listener) {
+        if (!invalidateListenerList.contains(listener)) {
+            invalidateListenerList.add(listener);
+        }
+    }
+
+    public void unRequestInvalidateListener(InvalidateListener listener) {
         invalidateListenerList.remove(listener);
-        invalidateListenerList.add(listener);
     }
 
     public Context() {
