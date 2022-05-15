@@ -281,8 +281,7 @@ public class LayoutManager {
             measureAllViewSizeAsValue(mainLayout);
             measureLayoutSizeAsWrap(mainLayout);
             measureSizeAsMatch(mainLayout);
-            mainLayout.remeasureMatchParentChildViewWidth();
-            mainLayout.remeasureMatchParentChildViewHeight();
+            mainLayout.remeasureMatchParentChildView();
             measureLocation(mainLayout);
         } else if (mainView != null) {
             measureAllViewSizeAsValue(mainView);
@@ -298,8 +297,7 @@ public class LayoutManager {
             measureAllViewSizeAsValue(startLayout);
             measureLayoutSizeAsWrap(startLayout);
             measureSizeAsMatch(startLayout);
-            startLayout.remeasureMatchParentChildViewWidth();
-            startLayout.remeasureMatchParentChildViewHeight();
+            startLayout.remeasureMatchParentChildView();
             measureLocation(startLayout);
         } else System.err.println("父节点的Layout不能为空。");
         Log.d(this, "end");
@@ -568,8 +566,7 @@ public class LayoutManager {
         }
         if (item instanceof BaseLayout) {
             if (item.getParent() != null) {
-                ((BaseLayout) item.getParent()).remeasureMatchParentChildViewWidth();
-                ((BaseLayout) item.getParent()).remeasureMatchParentChildViewHeight();
+                ((BaseLayout) item.getParent()).remeasureMatchParentChildView();
             }
             sonViews = item.getSonViews();
             for (View<?, ?> son : sonViews) {
@@ -577,8 +574,7 @@ public class LayoutManager {
                 measureSizeAsMatch(son);
             }
             // 只有子节点都遍历结束才刷新match属性，防止抖动
-            ((BaseLayout) item).remeasureMatchParentChildViewWidth();
-            ((BaseLayout) item).remeasureMatchParentChildViewHeight();
+            ((BaseLayout) item).remeasureMatchParentChildView();
         }
 //        Log.d("measureSizeAsMatch", item.getAttribute().getId() + ", " + item.getComponent().getSize());
     }
