@@ -2,6 +2,7 @@ package top.totoro.swing.widget.view;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
 import top.totoro.swing.widget.util.AttributeKey;
@@ -135,7 +136,11 @@ public class TextView extends View<ViewAttribute, JLabel> {
     public void setText(String text) {
         attribute.setText(text);
         component.setText(text);
-        invalidateSuper();
+        if (attribute.getWidth() == BaseAttribute.WRAP_CONTENT) {
+            invalidateSuper();
+        } else {
+            invalidate();
+        }
     }
 
     /**
