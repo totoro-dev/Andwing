@@ -15,7 +15,7 @@ import top.totoro.swing.widget.manager.ActivityManager;
 import top.totoro.swing.widget.manager.DialogManager;
 import top.totoro.swing.widget.manager.ServiceManager;
 import top.totoro.swing.widget.util.AnimateUtil;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 import top.totoro.swing.widget.util.SwingConstants;
 import top.totoro.swing.widget.view.View;
 
@@ -121,7 +121,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     }
 
     public void setParentActivity(Activity parentActivity) {
-        Log.d(this, "setParentActivity = " + parentActivity);
+        SLog.d(this, "setParentActivity = " + parentActivity);
         this.parentActivity = parentActivity;
     }
 
@@ -232,7 +232,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
             frame.setOpacity(0);
             frame.setVisible(true);
             setLocation(Location.getLocation(frame));
-            Log.d(this, "x = " + getLocation().xOnParent + ", y = " + getLocation().yOnParent);
+            SLog.d(this, "x = " + getLocation().xOnParent + ", y = " + getLocation().yOnParent);
         }
 
         mainBar.addOnActionBarClickListener(this);
@@ -287,7 +287,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         AnimateUtil.transparentOut(this, 0.5f, () -> {
             frame.setVisible(false);
             frame.dispose();
-            Log.d(this, "finish() dispose " + (ActivityManager.getTopActivity() != null));
+            SLog.d(this, "finish() dispose " + (ActivityManager.getTopActivity() != null));
             if (parentActivity != null && ActivityManager.getTopActivity() != null) {
                 parentActivity.onStart();
                 AnimateUtil.transparentIn(parentActivity, 0.75f, () -> {
@@ -338,7 +338,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
             if (url != null) {
                 frame.setIconImage(Toolkit.getDefaultToolkit().getImage(url));
             } else {
-                Log.e(this, "Can't load icon with path ：" + iconPath);
+                SLog.e(this, "Can't load icon with path ：" + iconPath);
             }
         }
     }
@@ -373,7 +373,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
      */
     public void setCanBack(boolean canBack) {
         if (mainBar != null && parentActivity != null) {
-            Log.d(this, "canBack : " + canBack);
+            SLog.d(this, "canBack : " + canBack);
             mainBar.canBack(true);
         }
     }
@@ -660,7 +660,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     public void bindService(Intent intent) {
         Service service = ((Service) intent.getTargetContext());
         if (service.isBinding()) {
-            Log.e(this, "bindService had bound, please unbind first");
+            SLog.e(this, "bindService had bound, please unbind first");
         } else {
             service.bindService(intent);
             ServiceManager.putBoundService(intent.getCurrentContext(), service);
@@ -707,7 +707,7 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
         if (service.isBinding()) {
             service.stopService();
         } else {
-            Log.e(this, "unbindService never bound");
+            SLog.e(this, "unbindService never bound");
         }
     }
 

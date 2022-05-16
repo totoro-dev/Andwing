@@ -1,6 +1,6 @@
 package top.totoro.swing.widget.context;
 
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 
 /**
  * 动作意图的封装
@@ -19,7 +19,7 @@ public class Intent {
         Class<?> targetContext;
         try {
             targetContext = Class.forName(targetContextPackage);
-            Log.d(this, "targetContext super class  = " + targetContext.getSuperclass().getSuperclass().getSimpleName());
+            SLog.d(this, "targetContext super class  = " + targetContext.getSuperclass().getSuperclass().getSimpleName());
             if (targetContext.getSuperclass().getSuperclass().getSimpleName().equals(Context.class.getSimpleName())) {
                 //noinspection unchecked
                 this.targetContextClass = (Class<? extends Context>) targetContext;

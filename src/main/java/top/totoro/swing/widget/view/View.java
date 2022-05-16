@@ -7,7 +7,7 @@ import top.totoro.swing.widget.context.PopupWindow;
 import top.totoro.swing.widget.event.MotionEvent;
 import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.manager.LayoutManager;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -236,7 +236,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
             }
             this.id = id;
         } catch (Exception e) {
-            Log.e(this, "setId fail" + e);
+            SLog.e(this, "setId fail" + e);
         }
     }
 

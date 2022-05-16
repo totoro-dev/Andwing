@@ -5,7 +5,7 @@ import org.dom4j.Element;
 import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.util.AttributeKey;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,7 +76,7 @@ public class ImageView extends View<ViewAttribute, JPanel> {
             float heightScale = component.getHeight() / (float) height;
             float scale = Math.min(widthScale, heightScale);
             if ((widthScale < 1 || heightScale < 1) && scale != 1) {
-                Log.d(TAG, "scale = " + scale);
+                SLog.d(TAG, "scale = " + scale);
                 width *= scale;
                 height *= scale;
                 imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_FAST));
@@ -93,7 +93,7 @@ public class ImageView extends View<ViewAttribute, JPanel> {
      */
     public void setImage(String src, boolean invalidateParent) {
         if (src == null || "".equals(src)) {
-            Log.e(TAG, "为id为" + attribute.getId() + "的" + TAG + "设置背景图片时，图片路径不能为空");
+            SLog.e(TAG, "为id为" + attribute.getId() + "的" + TAG + "设置背景图片时，图片路径不能为空");
             return;
         }
         URL url = getClass().getClassLoader().getResource(src);
@@ -101,7 +101,7 @@ public class ImageView extends View<ViewAttribute, JPanel> {
             attribute.setSrc(src);
             imageIcon = new ImageIcon(url);
         } else {
-            Log.e(TAG, "为id为" + attribute.getId() + "的" + TAG + "设置背景图片时，图片路径不正确");
+            SLog.e(TAG, "为id为" + attribute.getId() + "的" + TAG + "设置背景图片时，图片路径不正确");
             imageIcon = null;
         }
         mImageContainer.setIcon(imageIcon);

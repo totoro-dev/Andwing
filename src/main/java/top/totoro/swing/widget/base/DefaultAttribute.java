@@ -6,7 +6,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import top.totoro.swing.widget.util.AttributeDefaultValue;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 
 import java.net.URL;
 import java.util.List;
@@ -30,7 +30,7 @@ public final class DefaultAttribute {
         hadLoad = true;
         URL url = app.getClassLoader().getResource(DEFAULT_ATTRIBUTE_CONFIG_FILE);
         if (url == null) {
-            Log.d("DefaultAttribute", "no exist default resource file");
+            SLog.d("DefaultAttribute", "no exist default resource file");
             return;
         }
         try {

@@ -3,7 +3,7 @@ package top.totoro.swing.widget.manager;
 import top.totoro.swing.widget.base.Location;
 import top.totoro.swing.widget.base.Size;
 import top.totoro.swing.widget.context.Activity;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +58,7 @@ public class ActivityManager {
         if ((CREATED_ACTIVITY_SIZE == 1 /* 只有一个现存的Activity，直接退出 */
                 || copy.size() == 0 /* 已经全部finish，可以退出 */)
                 && ServiceManager.isEmpty() /* 没有驻留的后台服务了 */) {
-            Log.e(TAG, "system exit for activity");
+            SLog.e(TAG, "system exit for activity");
             System.exit(0);
         }
     }
@@ -76,7 +76,7 @@ public class ActivityManager {
     public static <A extends Activity> A getOrCreateActivity(Class<A> target) {
         AtomicBoolean isNewActivity = new AtomicBoolean(false);
         A targetActivity = (A) CREATED_ACTIVITY.computeIfAbsent(target, targetActivityType -> {
-            Log.d(TAG, "getOrCreateActivity create a new activity type = " + target);
+            SLog.d(TAG, "getOrCreateActivity create a new activity type = " + target);
             isNewActivity.set(true);
             // CREATED_ACTIVITY中不存在target类型的窗口 需要重新创建一个窗口并添加到CREATED_ACTIVITY中。
             A activity = null;
@@ -88,7 +88,7 @@ public class ActivityManager {
             }
             return activity;
         });
-        Log.d(TAG, "get activity is " + targetActivity);
+        SLog.d(TAG, "get activity is " + targetActivity);
         if (targetActivity != null)
             targetActivity.setOnRestart(!isNewActivity.get());
         return targetActivity;

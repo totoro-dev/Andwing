@@ -4,7 +4,7 @@ import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.context.Fragment;
 import top.totoro.swing.widget.layout.FrameLayout;
 import top.totoro.swing.widget.manager.FragmentManager;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 import top.totoro.swing.widget.view.View;
 
 import java.util.LinkedList;
@@ -79,7 +79,7 @@ public class FragmentTransaction {
     public void show(Fragment fragment) {
         checkInputFragment(fragment);
         if (fragment.isVisible()) {
-            Log.d(this, "fragment is visible, not necessary show again");
+            SLog.d(this, "fragment is visible, not necessary show again");
             return;
         }
         // 将fragment移到所在列表中的最后一个
@@ -151,7 +151,7 @@ public class FragmentTransaction {
             if (frameLayout != null && fragments != null && !fragments.isEmpty()) {
                 for (int i = 0; i < fragments.size(); i++) {
                     Fragment fragment = fragments.get(i);
-                    Log.d(this, "commit fragment " + fragment);
+                    SLog.d(this, "commit fragment " + fragment);
                     if (!fragment.isCommittable()) {
                         continue;
                     }
@@ -204,7 +204,7 @@ public class FragmentTransaction {
             fragment.root = fragment.onCreateView(fragment.getLayoutManager(), fragment.getMainView());
         }
         if (fragment.root == null) {
-            Log.e(this, "commit fail for fragment view is null");
+            SLog.e(this, "commit fail for fragment view is null");
             return;
         }
 

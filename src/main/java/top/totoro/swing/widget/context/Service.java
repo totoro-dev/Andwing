@@ -2,7 +2,7 @@ package top.totoro.swing.widget.context;
 
 import top.totoro.swing.widget.manager.ActivityManager;
 import top.totoro.swing.widget.manager.ServiceManager;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 
 import java.awt.Frame;
 import java.util.concurrent.ExecutorService;
@@ -45,7 +45,7 @@ public abstract class Service extends Context {
      */
     public void startService(Intent intent) {
         if (hasStarted) {
-            Log.e(this, "startService has started, can not start again");
+            SLog.e(this, "startService has started, can not start again");
         } else {
             if (mFrame == null) {
                 mFrame = new Frame();
@@ -66,7 +66,7 @@ public abstract class Service extends Context {
      */
     public void bindService(Intent intent) {
         if (isBinding) {
-            Log.e(this, "bindService has bound, can not bind again");
+            SLog.e(this, "bindService has bound, can not bind again");
             return;
         } else {
             isBinding = true;
@@ -140,7 +140,7 @@ public abstract class Service extends Context {
         onDestroy();
         if (ServiceManager.isEmpty() /* 没有后台服务了 */
                 && ActivityManager.getTopActivity() == null /* 没有前台活动了 */) {
-            Log.e(this, "system exit for service");
+            SLog.e(this, "system exit for service");
             System.exit(0);
         }
     }

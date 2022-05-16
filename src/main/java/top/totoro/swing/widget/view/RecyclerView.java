@@ -8,7 +8,7 @@ import top.totoro.swing.widget.bean.LayoutAttribute;
 import top.totoro.swing.widget.layout.LinearLayout;
 import top.totoro.swing.widget.listener.InvalidateListener;
 import top.totoro.swing.widget.manager.LayoutManager;
-import top.totoro.swing.widget.util.Log;
+import top.totoro.swing.widget.util.SLog;
 
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -344,11 +344,11 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
     private void initMainListener() {
         component.addMouseWheelListener(e -> {
             if (component.getHeight() >= container.getComponent().getHeight() && orientation == VERTICAL) {
-                Log.d("mouseWheelMoved", "is vertical but not scroll");
+                SLog.d("mouseWheelMoved", "is vertical but not scroll");
                 return;
             }
             if (component.getWidth() >= container.getComponent().getWidth() && orientation == HORIZONTAL) {
-                Log.d("mouseWheelMoved", "is horizontal but not scroll");
+                SLog.d("mouseWheelMoved", "is horizontal but not scroll");
                 return;
             }
             int gap = e.getWheelRotation() * e.getScrollAmount();
@@ -377,11 +377,11 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (component.getHeight() >= container.getComponent().getHeight() && orientation == VERTICAL) {
-                    Log.d("mouseEntered", "is vertical but not visible");
+                    SLog.d("mouseEntered", "is vertical but not visible");
                     return;
                 }
                 if (component.getWidth() >= container.getComponent().getWidth() && orientation == HORIZONTAL) {
-                    Log.d("mouseEntered", "is horizontal but not visible");
+                    SLog.d("mouseEntered", "is horizontal but not visible");
                     return;
                 }
                 if (orientation == VERTICAL) {
@@ -439,11 +439,11 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         @Override
         public void mouseEntered(MouseEvent e) {
             if (component.getHeight() >= container.getComponent().getHeight() && orientation == VERTICAL) {
-                Log.d("mouseEntered", "is vertical but not visible");
+                SLog.d("mouseEntered", "is vertical but not visible");
                 return;
             }
             if (component.getWidth() >= container.getComponent().getWidth() && orientation == HORIZONTAL) {
-                Log.d("mouseEntered", "is horizontal but not visible");
+                SLog.d("mouseEntered", "is horizontal but not visible");
                 return;
             }
             verticalScrollBar.setVisible(true);
@@ -487,11 +487,11 @@ public class RecyclerView extends LinearLayout implements InvalidateListener {
         @Override
         public void mouseEntered(MouseEvent e) {
             if (component.getHeight() >= container.getComponent().getHeight() && orientation == VERTICAL) {
-                Log.d("mouseEntered", "is vertical but not visible");
+                SLog.d("mouseEntered", "is vertical but not visible");
                 return;
             }
             if (component.getWidth() >= container.getComponent().getWidth() && orientation == HORIZONTAL) {
-                Log.d("mouseEntered", "is horizontal but not visible");
+                SLog.d("mouseEntered", "is horizontal but not visible");
                 return;
             }
             horizontalScrollBar.setVisible(true);

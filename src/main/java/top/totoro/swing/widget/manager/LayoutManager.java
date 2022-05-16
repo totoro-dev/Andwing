@@ -86,7 +86,7 @@ public class LayoutManager {
      * @param attachRoot 是否将解析后的View绑定到mainLayout的子ID列表中，不绑定的话，就不会发生id冲突，绑定的话id就要保持一个全局视图中是唯一的
      */
     public View<?, ?> inflate(BaseLayout mainLayout, String res, boolean attachRoot) {
-        Log.d("inflate", res);
+        SLog.d(this, "inflate " + res);
         if (mainLayout != null && mainLayout.getComponent() != null) {
             mainLayout.getComponent().removeAll();
         }
@@ -176,7 +176,7 @@ public class LayoutManager {
         List<Element> childElements = rootElement.elements();
         for (Element childElement : childElements) {
             BaseAttribute childAttribute;
-            Log.d(this, "element name = " + childElement.getName());
+            SLog.d(this, "element name = " + childElement.getName());
             if (childElement.elements().size() > 0 || childElement.getName().equals(FrameLayout.class.getSimpleName())) {
                 // 这个子节点是一个Layout
                 childAttribute = AttributeUtil.getLayoutAttribute(res, childElement, false);
@@ -213,7 +213,7 @@ public class LayoutManager {
         List<Element> childElements = rootElement.elements();
         for (Element childElement : childElements) {
             BaseAttribute childAttribute;
-            Log.d(this, "element name = " + childElement.getName());
+//            SLog.d(this, "element name = " + childElement.getName());
             if (childElement.elements().size() > 0 || childElement.getName().equals(FrameLayout.class.getSimpleName())) {
                 // 这个子节点是一个Layout
                 childAttribute = AttributeUtil.getLayoutAttribute(res, childElement, true);
@@ -292,7 +292,7 @@ public class LayoutManager {
             measureSizeAsMatch(mainView);
             measureLocation(mainView);
         } else System.err.println("资源文件未加载或不存在。");
-        Log.d(this, "end");
+        SLog.d(this, "invalidate end");
     }
 
     public void invalidate(BaseLayout startLayout) {
@@ -306,7 +306,7 @@ public class LayoutManager {
             startLayout.remeasureMatchParentChildView();
             measureLocation(startLayout);
         } else System.err.println("父节点的Layout不能为空。");
-        Log.d(this, "end");
+        SLog.d(this, "end");
     }
 
     /**
