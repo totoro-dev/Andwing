@@ -15,6 +15,14 @@ public class Fragment extends Context {
      * commit的时候是否需要执行操作
      */
     private boolean committable = false;
+    /**
+     * 是否需要重新创建视图 {@link Fragment#onCreateView(LayoutManager, BaseLayout)}
+     */
+    private boolean reCreateView = false;
+    /**
+     * 当前创建了的View
+     */
+    public View<?, ?> root;
 
     public boolean isVisible() {
         return visible;
@@ -30,6 +38,14 @@ public class Fragment extends Context {
 
     public void setCommittable(boolean committable) {
         this.committable = committable;
+    }
+
+    public boolean isReCreateView() {
+        return reCreateView;
+    }
+
+    public void setReCreateView(boolean reCreateView) {
+        this.reCreateView = reCreateView;
     }
 
     /**

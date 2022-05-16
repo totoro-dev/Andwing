@@ -73,6 +73,10 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         return sonViews;
     }
 
+    public Map<String, View<?, ?>> getContainViewsId() {
+        return containViewsById;
+    }
+
     public LayoutManager getLayoutManager() {
         return layoutManager;
     }
@@ -232,7 +236,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
             }
             this.id = id;
         } catch (Exception e) {
-            Log.e("setId fail", e);
+            Log.e(this, "setId fail" + e);
         }
     }
 
@@ -243,7 +247,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      * @param view 将要绑定的View
      * @return 绑定是否成功，如果失败的话，其所有父节点也不会修改这个View的ID
      */
-    private boolean bindViewWithId(String id, View<?, ?> view) {
+    public boolean bindViewWithId(String id, View<?, ?> view) {
         View<?, ?> v = containViewsById.get(id);
         if (v != null && v != view) {
             return false;
@@ -265,7 +269,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      * 将这个视图的id从所有绑定了的试图中解除
      * @param id 要解除的视图id
      */
-    private void unbindViewWithId(String id) {
+    public void unbindViewWithId(String id) {
         if (id != null) {
             containViewsById.remove(id);
             if (parent != null) {

@@ -176,6 +176,13 @@ public class FragmentTransaction {
     }
 
     private void commitInternalHide(FrameLayout frameLayout, Fragment fragment) {
+        if (fragment.root == fragment.getMainView()/*fragment的视图attach到了mainView，说明id是绑定的，需要全部解绑*/) {
+            for (View<?, ?> sonView : fragment.getMainView().getSonViews()) {
+                for (String id : sonView.getContainViewsId().keySet()) {
+                    frameLayout.unbindViewWithId(id);
+                }
+            }
+        }
         frameLayout.removeAllSon();
         frameLayout.setCurrFragment(null);
         frameLayout.invalidate();
@@ -185,23 +192,33 @@ public class FragmentTransaction {
         // 1) 清除frame layout原本fragment的布局，添加新的fragment的布局
         // 清空Layout的子View，防止View的积累
         frameLayout.removeAllSon();
-        fragment.getMainView().removeAllSon();
 
         // 2) 动态创建fragment的布局
         // 将该layout节点的属性复制给fragment的父视图，决定了fragment的显示
-        LayoutAttribute layoutAttr = frameLayout.getAttribute();
-        fragment.getMainView().setAttribute(new LayoutAttribute());
-        fragment.getMainView().setSize(layoutAttr.getWidth(), layoutAttr.getHeight());
-        fragment.getMainView().getComponent().setSize(frameLayout.getComponent().getSize());
-        View<?, ?> root = fragment.onCreateView(fragment.getLayoutManager(), fragment.getMainView());
-        if (root == null) {
+        if (fragment.root == null || fragment.isReCreateView()) {
+            fragment.getMainView().removeAllSon();
+            LayoutAttribute layoutAttr = frameLayout.getAttribute();
+            fragment.getMainView().setAttribute(new LayoutAttribute());
+            fragment.getMainView().setSize(layoutAttr.getWidth(), layoutAttr.getHeight());
+            fragment.getMainView().getComponent().setSize(frameLayout.getComponent().getSize());
+            fragment.root = fragment.onCreateView(fragment.getLayoutManager(), fragment.getMainView());
+        }
+        if (fragment.root == null) {
             Log.e(this, "commit fail for fragment view is null");
             return;
         }
 
+        if (fragment.root == fragment.getMainView()/*fragment的视图attach到了mainView，说明id是绑定的，需要全部重新绑定*/) {
+            for (View<?, ?> sonView : fragment.getMainView().getSonViews()) {
+                for (String id : sonView.getContainViewsId().keySet()) {
+                    frameLayout.bindViewWithId(id, sonView.getContainViewsId().get(id));
+                }
+            }
+        }
+
         // 3) 添加fragment的布局到该frame layout节点中
         // 实现局部布局切换的基础
-        frameLayout.addChildView(root);
+        frameLayout.addChildView(fragment.root);
         frameLayout.setCurrFragment(fragment);
 
         // 4) 加载fragment布局
