@@ -1,7 +1,7 @@
 package top.totoro.swing.widget.manager;
 
-import top.totoro.swing.widget.base.BaseAttribute;
-import top.totoro.swing.widget.event.MotionEvent;
+import top.totoro.swing.widget.base.Location;
+import top.totoro.swing.widget.context.PopupWindow;
 import top.totoro.swing.widget.view.View;
 
 import java.awt.event.MouseEvent;
@@ -27,21 +27,32 @@ public class RightClickMenuManager {
         return instance;
     }
 
-    private View<?, ?> menuContainer;
+    private PopupWindow menuWindow;
+    private View<?, ?> target;
 
-    public void showMenu(MouseEvent e, View<?, ?> listener) {
-        if (listener == null) {
+    public void showMenu(MouseEvent e, View<?, ?> target) {
+        if (target == null) {
             return;
         }
-        hideMenu();
-        menuContainer = listener.createMenuView();
-        menuContainer.invalidateSuper();
+        if (this.target != target) {
+            menuWindow = target.createMenuWindow();
+        }
+        this.target = target;
+        Location gapLocation = Location.getLocation(target.getComponent());
+        gapLocation.xOnParent = e.getXOnScreen() - gapLocation.xOnScreen;
+        gapLocation.yOnParent = e.getYOnScreen() - gapLocation.yOnScreen;
+        menuWindow.showAsInside(target, gapLocation);
     }
 
+    @SuppressWarnings("unused")
     public void hideMenu() {
-        if (menuContainer != null) {
-            menuContainer.getSonByIndex(1).setVisible(BaseAttribute.GONE);
-            menuContainer.invalidateSuper();
+        if (menuWindow != null) {
+            menuWindow.dismiss();
         }
+    }
+
+    @SuppressWarnings("unused")
+    public PopupWindow getMenuWindow() {
+        return menuWindow;
     }
 }

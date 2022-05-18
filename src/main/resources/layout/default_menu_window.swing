@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout
+	width="match_parent"
+	height="match_parent"
+	orientation="vertical">
+	<TextView
+	    id="abc"
+		width="match_parent"
+		height="match_parent"
+		textColor="#515151"
+		text="请适配右键菜单布局"/>
+</LinearLayout>

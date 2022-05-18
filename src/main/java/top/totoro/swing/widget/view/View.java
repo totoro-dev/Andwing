@@ -1,7 +1,6 @@
 package top.totoro.swing.widget.view;
 
 import top.totoro.swing.widget.base.BaseAttribute;
-import top.totoro.swing.widget.base.BaseLayout;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.context.Context;
 import top.totoro.swing.widget.context.PopupWindow;
@@ -23,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public class View<Attribute extends BaseAttribute, Component extends JComponent> implements MouseListener, MouseMotionListener {
+
+    private static final String DEFAULT_MENU_WINDOW_RES_FILE = "default_menu_window.swing";
 
     private int minWidth = 0;
     private int minHeight = 0;
@@ -131,7 +132,17 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
      * @param son 子View
      */
     public void addSon(View<?, ?> son) {
+        if (son == null) {
+            return;
+        }
         sonViews.add(son);
+    }
+
+    public void removeSon(View<?, ?> son) {
+        if (son == null) {
+            return;
+        }
+        sonViews.remove(son);
     }
 
     /**
@@ -273,6 +284,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
 
     /**
      * 将这个视图的id从所有绑定了的试图中解除
+     *
      * @param id 要解除的视图id
      */
     public void unbindViewWithId(String id) {
@@ -324,9 +336,13 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         return showMenuAble;
     }
 
-    public View<?, ?> createMenuView() {
-        View<?, ?> view = context.getLayoutManager().inflate(((BaseLayout) this.getParent()), "menu.swing");
-        return view;
+    /**
+     * 任何需要右键弹出菜单的View都要适配该方法返回自定义的菜单
+     *
+     * @return 默认创建系统组件的默认菜单，可以自定义菜单弹框
+     */
+    public PopupWindow createMenuWindow() {
+        return new PopupWindow(DEFAULT_MENU_WINDOW_RES_FILE, 160, 40);
     }
 
     @Override
@@ -334,7 +350,8 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         if (mShowingSpinner != null && !(this instanceof Spinner)) {
             mShowingSpinner.dismiss();
         }
-        if (PopupWindow.mShowingPopupWindow != null) {
+        if (context != PopupWindow.mShowingPopupWindow && PopupWindow.mShowingPopupWindow != null) {
+            // 当前点击的view不属于悬浮框的view时才可以dismiss，相当于点击悬浮框外部才能够销毁
             PopupWindow.mShowingPopupWindow.dismiss();
         }
         if (listenClickEvent) {
@@ -343,8 +360,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         if (context != null) {
             context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_CLICKED));
         }
-        if (showMenuAble && e.getButton() == MouseEvent.BUTTON3) {
-            SLog.d(this, "button 3");
+        if (showMenuAble && e.getButton() == MouseEvent.BUTTON3/*鼠标右键*/) {
             RightClickMenuManager.getInstance().showMenu(e, this);
         } else if (parent != null) {
             // 向上冒泡

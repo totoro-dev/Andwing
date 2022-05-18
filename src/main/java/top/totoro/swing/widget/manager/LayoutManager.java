@@ -86,7 +86,7 @@ public class LayoutManager {
      * @param attachRoot 是否将解析后的View绑定到mainLayout的子ID列表中，不绑定的话，就不会发生id冲突，绑定的话id就要保持一个全局视图中是唯一的
      */
     public View<?, ?> inflate(BaseLayout mainLayout, String res, boolean attachRoot) {
-        SLog.d(this, "inflate " + res);
+        SLog.d(this, "inflate res %s", res);
         if (mainLayout != null && mainLayout.getComponent() != null) {
             mainLayout.getComponent().removeAll();
         }
@@ -291,7 +291,9 @@ public class LayoutManager {
             measureLayoutSizeAsWrap(mainView);
             measureSizeAsMatch(mainView);
             measureLocation(mainView);
-        } else System.err.println("资源文件未加载或不存在。");
+        } else {
+            SLog.e(this, "资源文件未加载或不存在。");
+        }
         SLog.d(this, "invalidate end");
     }
 
@@ -306,7 +308,7 @@ public class LayoutManager {
             startLayout.remeasureMatchParentChildView();
             measureLocation(startLayout);
         } else System.err.println("父节点的Layout不能为空。");
-        SLog.d(this, "end");
+        SLog.d(this, "invalidate startLayout end");
     }
 
     /**

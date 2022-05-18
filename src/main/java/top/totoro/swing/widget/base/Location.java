@@ -27,4 +27,11 @@ public class Location {
         this.xOnParent = xOnParent;
         this.yOnParent = yOnParent;
     }
+
+    public Location(int xOnParent, int yOnParent, int xOnScreen, int yOnScreen) {
+        this.xOnParent = xOnParent;
+        this.yOnParent = yOnParent;
+        this.xOnScreen = xOnScreen;
+        this.yOnScreen = yOnScreen;
+    }
 }
