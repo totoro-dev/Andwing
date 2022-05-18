@@ -1,12 +1,14 @@
 package top.totoro.swing.widget.view;
 
 import top.totoro.swing.widget.base.BaseAttribute;
+import top.totoro.swing.widget.base.BaseLayout;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.context.Context;
 import top.totoro.swing.widget.context.PopupWindow;
 import top.totoro.swing.widget.event.MotionEvent;
 import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.manager.LayoutManager;
+import top.totoro.swing.widget.manager.RightClickMenuManager;
 import top.totoro.swing.widget.util.SLog;
 
 import javax.swing.*;
@@ -40,6 +42,10 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     protected Context context;
     /* 当前正在显示的下拉框 */
     public static Spinner mShowingSpinner;
+    /**
+     * 是否可以右键弹出菜单选项
+     */
+    protected boolean showMenuAble = false;
 
     public View(View<?, ?> parent) {
         this.parent = parent;
@@ -310,6 +316,19 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         return attribute.getVisible() == ViewAttribute.VISIBLE;
     }
 
+    public void setShowMenuAble(boolean showMenuAble) {
+        this.showMenuAble = showMenuAble;
+    }
+
+    public boolean isShowMenuAble() {
+        return showMenuAble;
+    }
+
+    public View<?, ?> createMenuView() {
+        View<?, ?> view = context.getLayoutManager().inflate(((BaseLayout) this.getParent()), "menu.swing");
+        return view;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         if (mShowingSpinner != null && !(this instanceof Spinner)) {
@@ -321,12 +340,15 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         if (listenClickEvent) {
             clickListener.onClick(this);
         }
-        if (parent != null) {
-            // 向上冒泡
-            parent.mouseClicked(e);
-        }
         if (context != null) {
             context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_CLICKED));
+        }
+        if (showMenuAble && e.getButton() == MouseEvent.BUTTON3) {
+            SLog.d(this, "button 3");
+            RightClickMenuManager.getInstance().showMenu(e, this);
+        } else if (parent != null) {
+            // 向上冒泡
+            parent.mouseClicked(e);
         }
     }
 
