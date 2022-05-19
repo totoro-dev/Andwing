@@ -1,6 +1,7 @@
 package top.totoro.swing.widget.view;
 
 import top.totoro.swing.widget.bean.ViewAttribute;
+import top.totoro.swing.widget.context.PopupWindow;
 import top.totoro.swing.widget.listener.OnTextChangeListener;
 
 import javax.swing.*;
@@ -181,4 +182,10 @@ public class EditText extends View<ViewAttribute, JTextField> {
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
+    private static final String EDITTEXT_MENU_WINDOW_RES_FILE = "exittext_menu_window.swing";
+
+    @Override
+    public PopupWindow createMenuWindow() {
+        return new PopupWindow(EDITTEXT_MENU_WINDOW_RES_FILE, 160, 64);
+    }
 }
