@@ -1,8 +1,14 @@
 package top.totoro.swing.widget.view;
 
+import swing.R;
+import top.totoro.swing.widget.base.BaseLayout;
+import top.totoro.swing.widget.base.DefaultAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
 import top.totoro.swing.widget.context.PopupWindow;
+import top.totoro.swing.widget.event.MotionEvent;
+import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.listener.OnTextChangeListener;
+import top.totoro.swing.widget.util.SLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -186,6 +192,63 @@ public class EditText extends View<ViewAttribute, JTextField> {
 
     @Override
     public PopupWindow createMenuWindow() {
-        return new PopupWindow(EDITTEXT_MENU_WINDOW_RES_FILE, 160, 64);
+        return new PopupWindow(EDITTEXT_MENU_WINDOW_RES_FILE, 160, 122){
+
+            private OnClickListener opClickListener;
+
+            @Override
+            public void setContentView(String layoutId) {
+                super.setContentView(layoutId);
+                if (opClickListener == null) {
+                    opClickListener = createOpListener();
+                }
+                findViewById("selectAll").addOnClickListener(opClickListener);
+                findViewById("cutAll").addOnClickListener(opClickListener);
+                findViewById("copyAll").addOnClickListener(opClickListener);
+                findViewById("pasteAll").addOnClickListener(opClickListener);
+            }
+
+            @Override
+            public void dispatchMotionEvent(View<?, ?> view, MotionEvent event) {
+                super.dispatchMotionEvent(view, event);
+                if (view instanceof BaseLayout) {
+                    return;
+                }
+                if (event.getAction() == MotionEvent.ACTION_INSIDE) {
+                    view.setBackgroundColor(Color.decode(DefaultAttribute.defaultBorderColor));
+                } else if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                    view.setBackgroundColor(Color.WHITE);
+                }
+            }
+
+            private OnClickListener createOpListener() {
+                return view -> {
+                    switch (view.getId()) {
+                        case "selectAll":
+                            if (component != null) {
+                                component.requestFocus();
+                                component.selectAll();
+                            }
+                            break;
+                        case "cutAll":
+                            if (component != null) {
+                                component.cut();
+                            }
+                            break;
+                        case "copyAll":
+                            if (component != null) {
+                                component.copy();
+                            }
+                            break;
+                        case "pasteAll":
+                            if (component != null) {
+                                component.paste();
+                            }
+                            break;
+                    }
+                };
+            }
+
+        };
     }
 }

@@ -358,7 +358,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
             clickListener.onClick(this);
         }
         if (context != null) {
-            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_CLICKED));
+            context.dispatchMotionEvent(this, new MotionEvent(e, MotionEvent.ACTION_CLICKED));
         }
         if (showMenuAble && e.getButton() == MouseEvent.BUTTON3/*鼠标右键*/) {
             RightClickMenuManager.getInstance().showMenu(e, this);
@@ -371,14 +371,14 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
     @Override
     public void mousePressed(MouseEvent e) {
         if (context != null) {
-            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_DOWN));
+            context.dispatchMotionEvent(this, new MotionEvent(e, MotionEvent.ACTION_DOWN));
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         if (context != null) {
-            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_UP));
+            context.dispatchMotionEvent(this, new MotionEvent(e, MotionEvent.ACTION_UP));
         }
     }
 
@@ -391,7 +391,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
             parent.mouseEntered(e);
         }
         if (context != null) {
-            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_INSIDE));
+            context.dispatchMotionEvent(this, new MotionEvent(e, MotionEvent.ACTION_INSIDE));
         }
     }
 
@@ -404,21 +404,21 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
             parent.mouseExited(e);
         }
         if (context != null) {
-            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_OUTSIDE));
+            context.dispatchMotionEvent(this, new MotionEvent(e, MotionEvent.ACTION_OUTSIDE));
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         if (context != null) {
-            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_DRAG));
+            context.dispatchMotionEvent(this, new MotionEvent(e, MotionEvent.ACTION_DRAG));
         }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         if (context != null) {
-            context.dispatchMotionEvent(new MotionEvent(e, MotionEvent.ACTION_MOVE));
+            context.dispatchMotionEvent(this, new MotionEvent(e, MotionEvent.ACTION_MOVE));
         }
     }
 

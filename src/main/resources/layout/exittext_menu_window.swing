@@ -1,23 +1,47 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout
 	width="match_parent"
-	height="64"
+	height="122"
 	orientation="vertical"
 	bottomBorder="1"
 	topBorder="1"
 	leftBorder="1"
 	rightBorder="1">
 	<TextView
+	    id="selectAll"
 		width="match_parent"
 		height="30"
 		textColor="#515151"
-		text="Hello World"
+		text="全选"
 		bottomBorder="1"
-		margin="1"/>
+		marginLeft="1"
+		marginRight="1"
+		marginTop="1"/>
 	<TextView
+	    id="cutAll"
 		width="match_parent"
 		height="30"
 		textColor="#515151"
-		text="Hello World"
-		margin="1"/>
+		text="剪切"
+		bottomBorder="1"
+		marginLeft="1"
+		marginRight="1"/>
+	<TextView
+	    id="copyAll"
+		width="match_parent"
+		height="30"
+		textColor="#515151"
+		text="复制"
+		bottomBorder="1"
+		marginLeft="1"
+		marginRight="1"/>
+	<TextView
+	    id="pasteAll"
+		width="match_parent"
+		height="30"
+		textColor="#515151"
+		text="粘贴"
+		marginLeft="1"
+		marginRight="1"
+		marginBottom="1"/>
 </LinearLayout>

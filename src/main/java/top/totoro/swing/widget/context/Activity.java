@@ -85,8 +85,8 @@ public class Activity extends Context implements OnActionBarClickListener, OnAct
     }
 
     @Override
-    public void dispatchMotionEvent(MotionEvent event) {
-        super.dispatchMotionEvent(event);
+    public void dispatchMotionEvent(View<?, ?> view, MotionEvent event) {
+        super.dispatchMotionEvent(view, event);
         int x, y;
         switch (event.getAction()) {
             case ACTION_DOWN:

@@ -4,7 +4,6 @@
 	height="match_parent"
 	orientation="vertical">
 	<TextView
-	    id="abc"
 		width="match_parent"
 		height="match_parent"
 		textColor="#515151"

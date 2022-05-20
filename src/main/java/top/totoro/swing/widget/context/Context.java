@@ -124,7 +124,7 @@ public class Context implements ContextWrapper {
         }
     }
 
-    public void dispatchMotionEvent(MotionEvent event) {
+    public void dispatchMotionEvent(View<?, ?> view, MotionEvent event) {
         // just for handle view event
     }
 
