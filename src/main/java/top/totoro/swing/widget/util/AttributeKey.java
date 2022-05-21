@@ -10,7 +10,13 @@ public final class AttributeKey {
     public static final String ORIENTATION = "orientation";
 
     public static final String SRC = "src";
-    public static final String scaleType = "scaleType";
+
+    public static final String GRAVITY = "gravity";
+
+    public static final String TOP_BORDER = "topBorder";
+    public static final String BOTTOM_BORDER = "bottomBorder";
+    public static final String LEFT_BORDER = "leftBorder";
+    public static final String RIGHT_BORDER = "rightBorder";
 
     public static final String MARGIN = "margin";
     public static final String MARGIN_LEFT = "marginLeft";
@@ -37,20 +43,27 @@ public final class AttributeKey {
 
     public static final String HINT_TEXT = "hintText";
 
+    public static final String SHOW_MENU_ABLE = "showMenuAble";
+
+    // Spinner
     public static final String arrayAttrKey = "array";
     public static final String selectedColorKey = "selectedColor";
     public static final String enterColorKey = "enterColor";
 
+    // SwitchButton
     public static final String switchOnKey = "switchOnIcon";
     public static final String switchOffKey = "switchOffIcon";
     public static final String isSwitchOnKey = "isSwitchOn";
 
+    // CheckBox
     public static final String selectedBoxIconKey = "selectedIcon";
     public static final String unselectedBoxIconKey = "unselectedIcon";
     public static final String isSelectedOnKey = "isSelected";
 
+    // GridLayout
     public static final String column = "column";
 
-    public static final String GRAVITY = "gravity";
+    // ImageView
+    public static final String scaleType = "scaleType";
 
 }

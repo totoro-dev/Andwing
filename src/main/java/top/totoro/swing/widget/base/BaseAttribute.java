@@ -55,6 +55,8 @@ public class BaseAttribute {
     private int marginBottom = 0;
     /* add end */
 
+    private int showMenuAble = GONE;
+
     public Element getElement() {
         return element;
     }
@@ -217,6 +219,14 @@ public class BaseAttribute {
 
     public void setMarginBottom(int marginBottom) {
         this.marginBottom = marginBottom;
+    }
+
+    public int getShowMenuAble() {
+        return showMenuAble;
+    }
+
+    public void setShowMenuAble(int showMenuAble) {
+        this.showMenuAble = showMenuAble;
     }
 
     /**

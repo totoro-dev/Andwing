@@ -198,6 +198,7 @@ public class View<Attribute extends BaseAttribute, Component extends JComponent>
         if (attribute == null) return;
         this.attribute = attribute;
 //        setId(attribute.getId());
+        setShowMenuAble(attribute.getShowMenuAble() == BaseAttribute.VISIBLE);
         component.setVisible(attribute.getVisible() == ViewAttribute.VISIBLE);
         component.setOpaque(attribute.getOpaque() == ViewAttribute.OPAQUE);
         component.setBackground(attribute.getBackground());

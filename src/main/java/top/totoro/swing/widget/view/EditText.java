@@ -1,6 +1,7 @@
 package top.totoro.swing.widget.view;
 
 import swing.R;
+import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.base.BaseLayout;
 import top.totoro.swing.widget.base.DefaultAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
@@ -8,6 +9,7 @@ import top.totoro.swing.widget.context.PopupWindow;
 import top.totoro.swing.widget.event.MotionEvent;
 import top.totoro.swing.widget.listener.OnClickListener;
 import top.totoro.swing.widget.listener.OnTextChangeListener;
+import top.totoro.swing.widget.util.AttributeKey;
 import top.totoro.swing.widget.util.SLog;
 
 import javax.swing.*;
@@ -45,32 +47,6 @@ public class EditText extends View<ViewAttribute, JTextField> {
                 }
             }
         });
-        component.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
         component.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -92,6 +68,9 @@ public class EditText extends View<ViewAttribute, JTextField> {
     @SuppressWarnings("Duplicates")
     @Override
     public void setAttribute(ViewAttribute attribute) {
+        if (attribute.getElement().attribute(AttributeKey.SHOW_MENU_ABLE) == null) {
+            attribute.setShowMenuAble(BaseAttribute.VISIBLE);
+        }
         super.setAttribute(attribute);
         remeasureSize();
         component.setSize(attribute.getWidth(), attribute.getHeight());
@@ -189,10 +168,14 @@ public class EditText extends View<ViewAttribute, JTextField> {
     }
 
     private static final String EDITTEXT_MENU_WINDOW_RES_FILE = "exittext_menu_window.swing";
+    private static final String SELECT_ALL_VIEW_ID = "selectAll";
+    private static final String CUT_ALL_VIEW_ID = "cutAll";
+    private static final String COPY_ALL_VIEW_ID = "copyAll";
+    private static final String PASTE_ALL_VIEW_ID = "pasteAll";
 
     @Override
     public PopupWindow createMenuWindow() {
-        return new PopupWindow(EDITTEXT_MENU_WINDOW_RES_FILE, 160, 122){
+        return new PopupWindow(EDITTEXT_MENU_WINDOW_RES_FILE, 160, 122) {
 
             private OnClickListener opClickListener;
 
@@ -202,10 +185,10 @@ public class EditText extends View<ViewAttribute, JTextField> {
                 if (opClickListener == null) {
                     opClickListener = createOpListener();
                 }
-                findViewById("selectAll").addOnClickListener(opClickListener);
-                findViewById("cutAll").addOnClickListener(opClickListener);
-                findViewById("copyAll").addOnClickListener(opClickListener);
-                findViewById("pasteAll").addOnClickListener(opClickListener);
+                findViewById(SELECT_ALL_VIEW_ID).addOnClickListener(opClickListener);
+                findViewById(CUT_ALL_VIEW_ID).addOnClickListener(opClickListener);
+                findViewById(COPY_ALL_VIEW_ID).addOnClickListener(opClickListener);
+                findViewById(PASTE_ALL_VIEW_ID).addOnClickListener(opClickListener);
             }
 
             @Override
@@ -223,27 +206,23 @@ public class EditText extends View<ViewAttribute, JTextField> {
 
             private OnClickListener createOpListener() {
                 return view -> {
+                    if (EditText.this.component == null) {
+                        SLog.e(EditText.this, "click menu item, but component is null");
+                        return;
+                    }
                     switch (view.getId()) {
-                        case "selectAll":
-                            if (component != null) {
-                                component.requestFocus();
-                                component.selectAll();
-                            }
+                        case SELECT_ALL_VIEW_ID:
+                            component.requestFocus();
+                            component.selectAll();
                             break;
-                        case "cutAll":
-                            if (component != null) {
-                                component.cut();
-                            }
+                        case CUT_ALL_VIEW_ID:
+                            component.cut();
                             break;
-                        case "copyAll":
-                            if (component != null) {
-                                component.copy();
-                            }
+                        case COPY_ALL_VIEW_ID:
+                            component.copy();
                             break;
-                        case "pasteAll":
-                            if (component != null) {
-                                component.paste();
-                            }
+                        case PASTE_ALL_VIEW_ID:
+                            component.paste();
                             break;
                     }
                 };

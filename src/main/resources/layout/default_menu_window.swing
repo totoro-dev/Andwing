@@ -2,10 +2,15 @@
 <LinearLayout
 	width="match_parent"
 	height="match_parent"
-	orientation="vertical">
+	orientation="vertical"
+	bottomBorder="1"
+	topBorder="1"
+	leftBorder="1"
+	rightBorder="1">
 	<TextView
 		width="match_parent"
 		height="match_parent"
 		textColor="#515151"
-		text="请适配右键菜单布局"/>
+		text="请适配右键菜单布局"
+		margin="1"/>
 </LinearLayout>
