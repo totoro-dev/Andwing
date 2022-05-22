@@ -3,12 +3,27 @@ package top.totoro.swing.widget.view;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 import top.totoro.swing.widget.base.BaseAttribute;
+import top.totoro.swing.widget.base.BaseLayout;
+import top.totoro.swing.widget.base.DefaultAttribute;
 import top.totoro.swing.widget.bean.ViewAttribute;
+import top.totoro.swing.widget.context.PopupWindow;
+import top.totoro.swing.widget.context.Toast;
+import top.totoro.swing.widget.event.MotionEvent;
+import top.totoro.swing.widget.listener.OnClickListener;
+import top.totoro.swing.widget.manager.ActivityManager;
 import top.totoro.swing.widget.util.AttributeKey;
 import top.totoro.swing.widget.util.SLog;
+import top.totoro.swing.widget.util.ThreadPoolUtil;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -123,6 +138,9 @@ public class ImageView extends View<ViewAttribute, JPanel> {
 
     @Override
     public void setAttribute(ViewAttribute attribute) {
+        if (attribute.getElement().attribute(AttributeKey.SHOW_MENU_ABLE) == null) {
+            attribute.setShowMenuAble(BaseAttribute.VISIBLE);
+        }
         super.setAttribute(attribute);
         // 背景透明
         component.setOpaque(false);
@@ -207,6 +225,128 @@ public class ImageView extends View<ViewAttribute, JPanel> {
         mImageContainer.setSize(width, height);
         // 具体的位置只有在绘制的时候才能确定
 //        mImageContainer.setLocation((component.getWidth() - width) / 2, (component.getHeight() - height) / 2);
+    }
+
+    private static final String IMAGE_VIEW_MENU_WINDOW_RES_FILE = "imageview_menu_window.swing";
+    private static final String COPY_IMAGE_VIEW_ID = "copyImage";
+    private static final String SAVE_IMAGE_VIEW_ID = "saveImage";
+
+    @Override
+    public PopupWindow createMenuWindow() {
+        return new PopupWindow(IMAGE_VIEW_MENU_WINDOW_RES_FILE, 160, 62) {
+
+            private OnClickListener opClickListener;
+
+            @Override
+            public void setContentView(String layoutId) {
+                super.setContentView(layoutId);
+                if (opClickListener == null) {
+                    opClickListener = createOpListener();
+                }
+                findViewById(COPY_IMAGE_VIEW_ID).addOnClickListener(opClickListener);
+                findViewById(SAVE_IMAGE_VIEW_ID).addOnClickListener(opClickListener);
+            }
+
+            @Override
+            public void dispatchMotionEvent(View<?, ?> view, MotionEvent event) {
+                super.dispatchMotionEvent(view, event);
+                if (view instanceof BaseLayout) {
+                    return;
+                }
+                if (event.getAction() == MotionEvent.ACTION_INSIDE) {
+                    view.setBackgroundColor(Color.decode(DefaultAttribute.defaultBorderColor));
+                } else if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                    view.setBackgroundColor(Color.WHITE);
+                }
+            }
+
+            private OnClickListener createOpListener() {
+                return view -> {
+                    if (ImageView.this.component == null) {
+                        SLog.e(ImageView.this, "click menu item, but component is null");
+                        return;
+                    }
+                    if (COPY_IMAGE_VIEW_ID.equals(view.getId())) {
+                        copyImageToClipboard();
+                        dismiss();
+                    } else if (SAVE_IMAGE_VIEW_ID.equals(view.getId())) {
+                        saveImageToFile();
+                    }
+                };
+            }
+
+        };
+    }
+
+    private void saveImageToFile() {
+        ThreadPoolUtil.execute(() -> {
+            FileDialog saveDialog = new FileDialog(ActivityManager.getTopActivity().getFrame(), "保存图片", FileDialog.SAVE);
+            saveDialog.setVisible(true);
+            String dirPath = saveDialog.getDirectory();
+            String fileName = saveDialog.getFile();
+            if (dirPath == null) {
+                SLog.e(ImageView.this, "save image break for no directory");
+                return;
+            }
+            if (fileName == null) {
+                SLog.e(ImageView.this, "save image break for no file name");
+                return;
+            } else if (!fileName.contains(".")) {
+                fileName = fileName + ".png";
+            }
+            File file = new File(dirPath, fileName);
+            try {
+                BufferedImage image = getImage();
+                ImageIO.write(image, "png", file);
+                Toast.makeText(context, "图片已保存").show();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            } finally {
+                saveDialog.dispose();
+            }
+        }, 0);
+    }
+
+    private void copyImageToClipboard() {
+        ThreadPoolUtil.execute(() -> {
+            BufferedImage image = getImage();
+
+            Transferable trans = new Transferable() {
+
+                @Override
+                public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+                    if (isDataFlavorSupported(flavor)) {
+                        return image;
+                    }
+                    throw new UnsupportedFlavorException(flavor);
+                }
+
+                @Override
+                public DataFlavor[] getTransferDataFlavors() {
+                    return new DataFlavor[]{DataFlavor.imageFlavor};
+                }
+
+                @Override
+                public boolean isDataFlavorSupported(DataFlavor flavor) {
+                    return DataFlavor.imageFlavor.equals(flavor);
+                }
+
+            };
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+            Toast.makeText(ImageView.this.context, "图片已复制").show();
+        }, 0);
+
+    }
+
+    private BufferedImage getImage() {
+        Dimension size = mImageContainer.getSize();
+        BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = (Graphics2D) image.getGraphics();
+
+        mImageContainer.paint(g2);
+        g2.dispose();
+        return image;
     }
 
 }

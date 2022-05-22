@@ -1,6 +1,5 @@
 package top.totoro.swing.widget.view;
 
-import swing.R;
 import top.totoro.swing.widget.base.BaseAttribute;
 import top.totoro.swing.widget.base.BaseLayout;
 import top.totoro.swing.widget.base.DefaultAttribute;
@@ -14,7 +13,10 @@ import top.totoro.swing.widget.util.SLog;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -167,7 +169,7 @@ public class EditText extends View<ViewAttribute, JTextField> {
         }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
-    private static final String EDITTEXT_MENU_WINDOW_RES_FILE = "exittext_menu_window.swing";
+    private static final String EDITTEXT_MENU_WINDOW_RES_FILE = "exit_text_menu_window.swing";
     private static final String SELECT_ALL_VIEW_ID = "selectAll";
     private static final String CUT_ALL_VIEW_ID = "cutAll";
     private static final String COPY_ALL_VIEW_ID = "copyAll";
@@ -224,6 +226,7 @@ public class EditText extends View<ViewAttribute, JTextField> {
                         case PASTE_ALL_VIEW_ID:
                             component.paste();
                             break;
+                        default:
                     }
                 };
             }
