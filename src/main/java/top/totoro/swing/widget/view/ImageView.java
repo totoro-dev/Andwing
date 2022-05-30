@@ -299,8 +299,8 @@ public class ImageView extends View<ViewAttribute, JPanel> {
                 BufferedImage image = getImage();
                 ImageIO.write(image, "png", file);
                 Toast.makeText(context, "图片已保存").show();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
+            } catch (Exception e) {
+                SLog.e(ImageView.this, "save image error %s", e);
             } finally {
                 saveDialog.dispose();
             }
