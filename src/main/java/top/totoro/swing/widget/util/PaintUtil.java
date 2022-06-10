@@ -144,8 +144,8 @@ public class PaintUtil {
      */
     public static void drawToastRadius(Graphics g, Color bg, int width, int height) {
         Color origin = g.getColor();
-        Color c32 = getColor(bg, 0);
-        Color c16 = getColor(bg, 0);
+        Color c32 = ColorUtil.transparencyColor(bg, 0.33F);
+        Color c16 = ColorUtil.transparencyColor(bg, 0.67F);
         final int t2 = height - 2, t1 = height - 1;
         g.setColor(bg);
         for (int i = 0; i < height; i++) {
