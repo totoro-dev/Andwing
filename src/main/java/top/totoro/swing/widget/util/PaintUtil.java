@@ -6,6 +6,20 @@ import java.awt.image.BufferedImage;
 @SuppressWarnings("unused")
 public class PaintUtil {
 
+    private static final int MIN_ALPHA = 0;
+    private static final int MAX_ALPHA = 100;
+
+    protected Color calculateAlphaValue(Color c1, Color c2, int alpha) {
+        if (alpha < MIN_ALPHA)
+            alpha = MIN_ALPHA;
+        else if (alpha > MAX_ALPHA)
+            alpha = MAX_ALPHA;
+        int R = (c1.getRed() * (MAX_ALPHA - alpha) + c2.getRed() * alpha) / MAX_ALPHA;
+        int G = (c1.getGreen() * (MAX_ALPHA - alpha) + c2.getGreen() * alpha) / MAX_ALPHA;
+        int B = (c1.getBlue() * (MAX_ALPHA - alpha) + c2.getBlue() * alpha) / MAX_ALPHA;
+        return new Color(R, G, B);
+    }
+
     public static void drawRadius(Graphics g, Color color, int radius, int startX, int startY) {
         Color origin = g.getColor();
         g.setColor(color);
@@ -130,8 +144,8 @@ public class PaintUtil {
      */
     public static void drawToastRadius(Graphics g, Color bg, int width, int height) {
         Color origin = g.getColor();
-        Color c32 = getColor(bg, 32);
-        Color c16 = getColor(bg, 16);
+        Color c32 = getColor(bg, 0);
+        Color c16 = getColor(bg, 0);
         final int t2 = height - 2, t1 = height - 1;
         g.setColor(bg);
         for (int i = 0; i < height; i++) {

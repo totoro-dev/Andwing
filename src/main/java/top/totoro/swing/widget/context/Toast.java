@@ -1,6 +1,7 @@
 package top.totoro.swing.widget.context;
 
 import top.totoro.swing.widget.layout.ToastContent;
+import top.totoro.swing.widget.util.ColorUtil;
 import top.totoro.swing.widget.util.SLog;
 
 import java.awt.*;
@@ -48,6 +49,7 @@ public class Toast extends Dialog {
         }
         toast.mDialogWindow.setSize(toast.width, toast.height);
         toast.mDialogWindow.setAlwaysOnTop(true);
+        toast.mDialogWindow.setBackground(ColorUtil.transparencyColor(Color.BLACK, 0));
         return toast;
     }
 

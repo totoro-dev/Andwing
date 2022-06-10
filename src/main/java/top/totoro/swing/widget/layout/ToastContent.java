@@ -1,5 +1,6 @@
 package top.totoro.swing.widget.layout;
 
+import top.totoro.swing.widget.util.ColorUtil;
 import top.totoro.swing.widget.util.PaintUtil;
 import top.totoro.swing.widget.util.SwingConstants;
 import top.totoro.swing.widget.view.View;
@@ -23,6 +24,7 @@ public class ToastContent extends LinearLayout {
             }
         };
         component.setOpaque(false);
+        component.setBackground(ColorUtil.transparencyColor(Color.BLACK, 0));
         component.setLayout(null);
     }
 
@@ -36,6 +38,8 @@ public class ToastContent extends LinearLayout {
         content.setBackground(backgroundColor);
         content.setLocation(1, 1);
         content.setFont(SwingConstants.TOAST_FONT);
+        content.setOpaque(false);
+        content.setBackground(ColorUtil.transparencyColor(Color.BLACK, 0));
         component.add(content);
     }
 
