@@ -1,6 +1,7 @@
 package top.totoro.swing.widget.view;
 
 import top.totoro.swing.widget.bean.ViewAttribute;
+import top.totoro.swing.widget.util.ColorUtil;
 import top.totoro.swing.widget.util.PaintUtil;
 
 import javax.swing.*;

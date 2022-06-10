@@ -90,9 +90,9 @@ public class PaintUtil {
      */
     public static void drawButtonRadius(Graphics g, Color bg, int width, int height) {
         Color origin = g.getColor();
-        Color c180 = getColor(bg, 180);
-        Color c32 = getColor(bg, 32);
-        Color c16 = getColor(bg, 16);
+        Color c180 = ColorUtil.transparencyColor(bg, 0.25F);
+        Color c32 = ColorUtil.transparencyColor(bg, 0.5F);
+        Color c16 = ColorUtil.transparencyColor(bg, 0.75F);
         final int t2 = height - 2, t1 = height - 1;
         g.setColor(bg);
         for (int i = 0; i < height; i++) {
