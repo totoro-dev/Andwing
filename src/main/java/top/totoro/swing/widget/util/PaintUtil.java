@@ -49,32 +49,37 @@ public class PaintUtil {
      * @param color 背景色
      * @param width 主体宽度
      */
-    public static void drawButtonRadius(Graphics g, Color color, int width) {
+    public static void drawButtonRadius(Graphics g, Color color, int radius, int width, int height) {
         Color origin = g.getColor();
         g.setColor(color);
-        for (int i = 0; i < 30; i++) {
-            switch (i) {
-                case 0:
-                    g.drawLine(3, 0, width - 4, 0);
-                    break;
-                case 1:
-                    g.drawLine(2, 1, width - 3, 1);
-                    break;
-                case 2:
-                    g.drawLine(1, 2, width - 2, 2);
-                    break;
-                case 27:
-                    g.drawLine(1, 27, width - 2, 27);
-                    break;
-                case 28:
-                    g.drawLine(2, 28, width - 3, 28);
-                    break;
-                case 29:
-                    g.drawLine(3, 29, width - 4, 29);
-                    break;
-                default:
-                    g.drawLine(0, i, width - 1, i);
-                    break;
+        Color[] radiusColors = new Color[radius];
+        for (int i = 0; i < radius/2; i++) {
+            float op = (float)(2*i) / (float)(radius);
+            radiusColors[i] = ColorUtil.transparencyColor(color, Math.min(1, op));
+        }
+        for (int i = radius/2; i < radius; i++) {
+            float op = (float)(2*radius - 2*i) / (float)(radius);
+            radiusColors[i] = ColorUtil.transparencyColor(color, Math.min(1, op));
+        }
+        for (int i = 0; i < height; i++) {
+            if (i < radius) {
+                for (int i1 = 0; i1 < (radius - i); i1++) {
+                    drawPoint(g, radiusColors[i1], i1, i);
+                    drawPoint(g, radiusColors[i1], width - i1 - 1, i);
+//                    drawPoint(g, radiusColors[i], i1, i);
+//                    drawPoint(g, radiusColors[i], width - i1 - 1, i);
+                }
+                g.setColor(color);
+                g.drawLine(radius - i, i, width - radius + i -1, i);
+            } else if (i >= height - radius + 1) {
+                for (int i1 = 0; i1 < (radius - height + i); i1++) {
+                    drawPoint(g, radiusColors[height - i], i1, i);
+                    drawPoint(g, radiusColors[height - i], width - i1 - 1, i);
+                }
+                g.setColor(color);
+                g.drawLine((radius - height + i), i, width - (radius - height + i) -1, i);
+            } else {
+                g.drawLine(0, i, width - 1, i);
             }
         }
         g.setColor(origin);
@@ -102,7 +107,7 @@ public class PaintUtil {
                     drawPoint(g, c180, width - 1, 0);
                     drawPoint(g, c32, 1, 0);
                     drawPoint(g, c32, width - 2, 0);
-                    g.setColor(c16);
+                    g.setColor(bg);
                     g.drawLine(2, 0, width - 3, 0);
                     continue;
                 case 1:
@@ -122,7 +127,7 @@ public class PaintUtil {
                 drawPoint(g, c180, width - 1, t1);
                 drawPoint(g, c32, 1, t1);
                 drawPoint(g, c32, width - 2, t1);
-                g.setColor(c16);
+                g.setColor(bg);
                 g.drawLine(2, t1, width - 3, t1);
             } else {
                 drawPoint(g, c16, 0, i);
